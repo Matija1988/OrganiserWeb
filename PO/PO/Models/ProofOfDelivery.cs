@@ -32,8 +32,7 @@ namespace PO.Models
 
         
         public int? MemberID { get; set; }
-        public virtual Member? Member { get; set; }
-
+    
         public int? ActivityID { get; set; }
     }
 }

@@ -131,7 +131,7 @@ namespace PO.Controllers
                 proofOfDeliveryFromDB.DocumentName = proofOfDelivery.DocumentName;
                 proofOfDeliveryFromDB.Location = proofOfDelivery.Location;
                 proofOfDeliveryFromDB.DateCreated = proofOfDelivery.DateCreated;
-                proofOfDeliveryFromDB.Member = proofOfDelivery.Member;
+                proofOfDeliveryFromDB.MemberID = proofOfDelivery.MemberID;
                 proofOfDeliveryFromDB.ActivityID = proofOfDelivery.ActivityID;
 
                 _context.ProofOfDeliveries.Update(proofOfDeliveryFromDB);

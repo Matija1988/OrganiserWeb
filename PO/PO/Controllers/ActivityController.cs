@@ -135,7 +135,7 @@ namespace PO.Controllers
                 activityFromDB.DateFinish = activity.DateFinish;
                 activityFromDB.IsFinished = activity.IsFinished;
                 activityFromDB.DateAccepted = activity.DateAccepted;
-                activityFromDB.Project = activity.Project;
+                activityFromDB.ProjectID = activity.ProjectID;
 
                 _context.activities.Update(activityFromDB);
                 _context.SaveChanges();

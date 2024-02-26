@@ -1,5 +1,6 @@
 using Microsoft.EntityFrameworkCore;
 using PO.Data;
+using System.Reflection;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -19,7 +20,11 @@ var app = builder.Build();
 // Configure the HTTP request pipeline.
 
     app.UseSwagger();
-    app.UseSwaggerUI();
+app.UseSwaggerUI(opcije =>
+{
+    opcije.ConfigObject.
+    AdditionalItems.Add("requestSnippetsEnabled", true);
+});
 
 
 app.UseHttpsRedirection();

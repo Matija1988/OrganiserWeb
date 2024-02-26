@@ -75,7 +75,7 @@ namespace PO.Models
         [ForeignKey("Project")]
         public int ProjectID { get; set; }
 
-        public virtual Project Project { get; set; }  
+     
 
     }
 }
