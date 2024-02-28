@@ -12,9 +12,11 @@
 }
 
 body {
-    
+/*     
     background-image: url('/public/back29.jpg');
-    background-position: 50%;
+    background-position: 50%; */
+    background: rgb(5,10,19);
+background: radial-gradient(circle, rgba(5,10,19,1) 0%, rgba(5,10,0,1) 100%);
     /* background: #050A0E; */
      height: 100vh;
     display: grid;
