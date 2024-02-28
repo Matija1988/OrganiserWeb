@@ -1,3 +1,10 @@
 export const RoutesNames = {
-    HOME : '/'
+    HOME : '/',
+    PROJECTS_READ: '/projects',
+    PROJECTS_NEW: '/projects/add'
 }
+
+export const App = { 
+
+    DEV: true
+};

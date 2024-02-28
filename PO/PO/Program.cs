@@ -1,6 +1,7 @@
+using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using PO.Data;
-using System.Reflection;
+
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -11,9 +12,14 @@ builder.Services.AddControllers();
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
 
+
 builder.Services.AddDbContext<POContext>(po => 
 po.UseSqlServer(builder.Configuration.GetConnectionString(name: "POContext")));
 
+builder.Services.AddAuthorization();
+
+builder.Services.AddIdentityApiEndpoints<IdentityUser>()
+    .AddEntityFrameworkStores<POContext>();
 
 var app = builder.Build();
 
@@ -26,6 +32,7 @@ app.UseSwaggerUI(opcije =>
     AdditionalItems.Add("requestSnippetsEnabled", true);
 });
 
+app.MapIdentityApi<IdentityUser>(); 
 
 app.UseHttpsRedirection();
 

@@ -4,7 +4,11 @@ import Container from 'react-bootstrap/esm/Container';
 import 'bootstrap/dist/css/bootstrap.min.css'
 
 
+
+
 function FormFloatingBasicExample() {
+
+
   return (
     
    <Container fluid> 
@@ -18,6 +22,7 @@ function FormFloatingBasicExample() {
       <FloatingLabel controlId="floatingPassword" label = "password" >
         <Form.Control type="password"  placeholder="password" />
       </FloatingLabel>
+              
       </Container>
     
   );
