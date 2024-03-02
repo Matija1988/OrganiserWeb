@@ -1,0 +1,21 @@
+.FrontPageText{
+
+    font-family: "Rubik Doodle Shadow", system-ui;
+    font-size: 60px;
+    font-weight: 200;
+    color: #FF003C;
+    
+    flex-direction: column;
+    text-align: center;
+    
+}
+
+.FrontPageTextMarketingBS {
+    font-family: "Tomorrow", sans-serif;
+    color: #FF003C;
+    opacity: 100%;
+    font-size: 30px;
+    font-weight: 150;
+    
+
+}
