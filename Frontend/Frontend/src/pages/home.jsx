@@ -2,12 +2,14 @@ import Container from 'react-bootstrap/Container';
 import { RoutesNames } from '../constants';
 import FloatingLabel from 'react-bootstrap/esm/FloatingLabel';
 
-export default function Pocetna() {
+export default function Home() {
 
     return (
-        
-        <Container>
-       <FloatingLabel/>
-        </Container>
-   );
+        <>
+            <Container>
+                This is a home page
+            </Container>
+        </>
+
+    );
 }

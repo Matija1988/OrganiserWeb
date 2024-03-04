@@ -3,10 +3,11 @@ import { Container } from "react-bootstrap";
 import { Link } from "react-router-dom";
 import { RoutesNames } from "../../constants";
 import {ProjectService} from '../../services/ProjectService';
-
+import {IoIosAdd} from "react-icons/io";
 
 
 export default function Projects() {
+
     const [projects, setProjects] = useState();
 
     async function fetchProjects() {
@@ -23,7 +24,7 @@ export default function Projects() {
     return (
 
         <Container>
-            <Link to={RoutesNames.PROJECTS_NEW} className="btn btn-succes gumb">
+            <Link to={RoutesNames.PROJECTS_READ} className="btn btn-succes gumb">
                 <IoIosAdd 
                 size = {25}
                 /> ADD
@@ -43,7 +44,11 @@ export default function Projects() {
             <tbody>
                 {projects && projects.map((project, index)=>
                 <tr key={index}>
-                
+                    <td>{project.ProjectName}</td>
+                    <td className="textAlignRight">{project.UniqueID}</td>  
+                    <td>{project.DateStart}</td>
+                    <td>{project.DateEnd}</td>
+                    <td>{project.IsFinished}</td>              
                 </tr>
                 )}                
 
