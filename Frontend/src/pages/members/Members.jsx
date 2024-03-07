@@ -1,0 +1,103 @@
+import { useEffect, useState } from "react";
+import { Link, useNavigate } from "react-router-dom";
+import MembersService from "../../services/MembersService";
+import { Container, Button, Table } from "react-bootstrap";
+import { RoutesNames } from "../../constants";
+import { IoIosAdd } from 'react-icons/io';
+import { FaEdit, FaTrash } from 'react-icons/fa';
+import './membersStyle.css';
+
+
+export default function Members() {
+
+    const [Members, setMembers] = useState();
+    let navigate = useNavigate();
+
+    async function fetchMembers() {
+
+        await MembersService.getMembers()
+            .then((res) => {
+                setMembers(res.data)
+            })
+            .catch((e) => {
+                alert(e);
+            });
+    }
+
+    useEffect(() => {
+        fetchMembers();
+    }, []);
+
+    async function deleteMember(id) {
+        const reply = await MembersService.deleteMember(id)
+
+        if (reply.ok) {
+            fetchMembers();
+        } else {
+            alert(reply.message);
+        }
+    }
+
+    
+    function MemberStatusDisplayText(member) {
+        if (member.isTeamLeader == null) return 'No input';
+        if (member.isTeamLeader) return 'Team leader';
+        return 'Member';
+    }
+
+    return (
+
+        <Container>
+            <Link to={RoutesNames.MEMBERS_CREATE} className="btn btn-success gumb" >
+                <IoIosAdd size={25} /> ADD
+            </Link>
+            <Table striped bordered hover responsive variant="dark" className="tableStyle"> 
+            <thead>
+                <tr>
+                    <th>First Name</th>
+                    <th>Last Name</th>
+                    <th>Username</th>
+                    <th>Password</th>
+                    <th>Position</th>
+                    <th>Actions</th>
+                </tr>
+            </thead>
+            <tbody>
+                {Members && Members.map((member, index) =>(
+                    <tr key={index}>
+                        <td>{member.firstName}</td>
+                        <td>{member.lastName}</td>
+                        <td>{member.username}</td>
+                        <td>{member.password}</td>
+                        <td>{Text = MemberStatusDisplayText(member)}</td>
+                        <td className="alignCenter">
+                            <Button className="editBtn"
+                            variant="primary"
+                            onClick={() =>{navigate(`/members/${member, id}`)}}
+                            >
+                                <FaEdit 
+                                size={25}
+                                />
+                            </Button>
+
+                            <Button className="trashBtn"
+                            variant="danger"
+                            onClick={()=> deleteMember(member.id)}
+                            >
+                            <FaTrash  
+                            size = {25}
+                            />
+                            </Button>
+
+                        </td>
+
+                    </tr>
+                ))}
+            </tbody>
+            </Table>
+
+        </Container>
+
+    );
+
+}

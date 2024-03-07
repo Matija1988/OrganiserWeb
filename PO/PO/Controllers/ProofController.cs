@@ -65,6 +65,39 @@ namespace PO.Controllers
         }
 
         /// <summary>
+        /// Dohvaca dokaznicu sa odgovarajucom vrijednosti ID
+        /// Fetches proof of delivery with correspoding ID from the DB
+        /// </summary>
+        /// <returns></returns>
+        /// <response> code="200">Sve ok, ako nema podataka content-lenght:0</response>
+        /// <response> code="400">Zahtjev nije valjan</response>
+        /// <response> code="503">Baza na koju se spajam nije dostupna</response>
+
+        [HttpGet]
+        [Route("{id:int}")]
+
+        public IActionResult Get(int id)
+        {
+            if (!ModelState.IsValid) { return BadRequest(ModelState); }
+
+            try
+            {
+                var pod = _context.ProofOfDeliveries.Find(id);
+                if (pod == null)
+                {
+                    return new EmptyResult();
+                }
+                return new JsonResult(pod);
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(StatusCodes.Status503ServiceUnavailable,
+                    ex.Message);
+            }
+
+        }
+
+        /// <summary>
         /// Dodaje novu dokaznicu u bazu
         /// Adds new proof into DB
         /// </summary>

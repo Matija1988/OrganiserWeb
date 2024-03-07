@@ -80,6 +80,38 @@ namespace PO.Controllers
         /// <response> code="400">Zahtjev nije valjan</response>
         /// <response> code="503">Baza na koju se spajam nije dostupna</response>
 
+        /// <summary>
+        /// Dohvaca clana sa odgovarajucom vrijednosti ID
+        /// Fetches member with correspoding ID from the DB
+        /// </summary>
+        /// <returns></returns>
+        /// <response> code="200">Sve ok, ako nema podataka content-lenght:0</response>
+        /// <response> code="400">Zahtjev nije valjan</response>
+        /// <response> code="503">Baza na koju se spajam nije dostupna</response>
+
+        [HttpGet]
+        [Route("{id:int}")]
+
+        public IActionResult Get(int id)
+        {
+            if (!ModelState.IsValid) { return BadRequest(ModelState); }
+
+            try
+            {
+                var m = _context.members.Find(id);
+                if (m == null)
+                {
+                    return new EmptyResult();
+                }
+                return new JsonResult(m);
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(StatusCodes.Status503ServiceUnavailable,
+                    ex.Message);
+            }
+
+        }
 
         [HttpPost]
 
@@ -117,6 +149,9 @@ namespace PO.Controllers
         /// <response> code="200">Sve ok, ako nema podataka content-lenght:0</response>
         /// <response> code="400">Zahtjev nije valjan</response>
         /// <response> code="503">Baza na koju se spajam nije dostupna</response>
+
+         
+          
 
 
         [HttpPut]

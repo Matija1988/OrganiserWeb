@@ -80,6 +80,39 @@ namespace PO.Controllers
         }
 
         /// <summary>
+        /// Dohvaca projekt sa odgovarajucom vrijednosti ID
+        /// Fetches project with correspoding ID from the DB
+        /// </summary>
+        /// <returns></returns>
+        /// <response> code="200">Sve ok, ako nema podataka content-lenght:0</response>
+        /// <response> code="400">Zahtjev nije valjan</response>
+        /// <response> code="503">Baza na koju se spajam nije dostupna</response>
+
+        [HttpGet]
+        [Route("{id:int}")]
+
+        public IActionResult Get(int id)
+        {
+            if (!ModelState.IsValid) { return BadRequest(ModelState); }
+
+            try
+            {
+                var pro = _context.projects.Find(id);
+                if (pro == null)
+                {
+                    return new EmptyResult();
+                }
+                return new JsonResult(pro);
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(StatusCodes.Status503ServiceUnavailable,
+                    ex.Message);
+            }
+
+        }
+
+        /// <summary>
         /// Dodaje novi projekt u bazu
         /// Adds new project into DB
         /// </summary>
