@@ -1,7 +1,7 @@
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using PO.Data;
-
+using System.Reflection;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -14,34 +14,30 @@ builder.Services.AddSwaggerGen();
 
 builder.Services.AddCors(options =>
 {
-    options.AddPolicy("CorsPolicy", builder =>
+    options.AddPolicy("CorsPolicy",
+        builder =>
     builder.AllowAnyOrigin().AllowAnyMethod().AllowAnyHeader());
 });
 
-builder.Services.AddDbContext<POContext>(po => 
+builder.Services.AddDbContext<POContext>(po =>
 po.UseSqlServer(builder.Configuration.GetConnectionString(name: "POContext")));
 
-builder.Services.AddAuthorization();
-
-builder.Services.AddIdentityApiEndpoints<IdentityUser>()
-    .AddEntityFrameworkStores<POContext>();
 
 var app = builder.Build();
 
 // Configure the HTTP request pipeline.
 
-    app.UseSwagger();
+app.UseSwagger();
+
 app.UseSwaggerUI(opcije =>
 {
     opcije.ConfigObject.
     AdditionalItems.Add("requestSnippetsEnabled", true);
 });
 
-app.MapIdentityApi<IdentityUser>(); 
 
 app.UseHttpsRedirection();
 
-app.UseAuthentication();
 app.UseAuthorization();
 
 app.MapControllers();
@@ -50,7 +46,6 @@ app.UseStaticFiles();
 app.UseCors("CorsPolicy");
 
 app.UseDefaultFiles();
-
 app.UseDeveloperExceptionPage();
 app.MapFallbackToFile("index.html");
 

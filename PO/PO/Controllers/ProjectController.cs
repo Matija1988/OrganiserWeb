@@ -1,5 +1,6 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using Microsoft.Data.SqlClient;
+using Microsoft.EntityFrameworkCore.Query.SqlExpressions;
 using PO.Data;
 using PO.Models;
 
@@ -61,7 +62,7 @@ namespace PO.Controllers
             }
             try
             {
-                var projectsDB = _context.projects.ToList();
+                var projectsDB = _context.Projects.ToList();
 
                 if (projectsDB == null || projectsDB.Count == 0)
                 {
@@ -97,7 +98,7 @@ namespace PO.Controllers
 
             try
             {
-                var pro = _context.projects.Find(id);
+                var pro = _context.Projects.Find(id);
                 if (pro == null)
                 {
                     return new EmptyResult();
@@ -131,7 +132,7 @@ namespace PO.Controllers
 
             try
             {
-                _context.projects.Add(project);
+                _context.Projects.Add(project);
                 _context.SaveChanges();
                 return StatusCode(StatusCodes.Status200OK, project);
 
@@ -174,7 +175,7 @@ namespace PO.Controllers
             try
             {
 
-                var projectFromDB = _context.projects.Find(id);
+                var projectFromDB = _context.Projects.Find(id);
 
                 if (projectFromDB == null) { return StatusCode(StatusCodes.Status204NoContent, id); }
 
@@ -184,7 +185,7 @@ namespace PO.Controllers
                 projectFromDB.DateEnd = project.DateEnd;
                 projectFromDB.IsFinished = project.IsFinished;
 
-                _context.projects.Update(projectFromDB);
+                _context.Projects.Update(projectFromDB);
                 _context.SaveChanges();
 
                 return StatusCode(StatusCodes.Status200OK, projectFromDB);
@@ -220,14 +221,14 @@ namespace PO.Controllers
 
             try
             {
-                var projectFromDB = _context.projects.Find(id);
+                var projectFromDB = _context.Projects.Find(id);
 
                 if (projectFromDB == null) { return StatusCode(StatusCodes.Status204NoContent, id); }
 
-                _context.projects.Remove(projectFromDB);
+                _context.Projects.Remove(projectFromDB);
                 _context.SaveChanges();
 
-                return new JsonResult("{\"Message\":\"Deleted\"}");
+                return new JsonResult(new { message = "Deleted"}) ;
             }
             catch (SqlException ex)
             {
@@ -236,7 +237,7 @@ namespace PO.Controllers
 
             catch (Exception ex) 
             {
-                return StatusCode(StatusCodes.Status503ServiceUnavailable, ex.Message);
+                return StatusCode(StatusCodes.Status503ServiceUnavailable, ex.InnerException.Message);
              
             }
 

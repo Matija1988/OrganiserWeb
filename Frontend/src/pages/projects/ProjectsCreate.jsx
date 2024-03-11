@@ -1,18 +1,23 @@
 import { Container, Form, Row, Col, Button } from "react-bootstrap";
 import { RoutesNames } from "../../constants";
-import { Link, Route, useNavigate } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
+import DateTimePicker from "react-datetime-picker";
+
+
 import ProjectService from '../../services/ProjectService';
 import "bootstrap/dist/css/bootstrap.min.css";
 import './projectsStyle.css';
+import { useState } from "react";
 
 
-export default function projectCreate() {
+export default function ProjectsCreate() {
 
     const navigate = useNavigate();
+   
 
     async function createProject(project) {
 
-        const reply = await ProjectService.createProject(project)
+        const reply = await ProjectService.addProject(project)
         if(reply.ok) {
             navigate(RoutesNames.PROJECTS_READ);
         } else {
@@ -21,7 +26,8 @@ export default function projectCreate() {
         }
     }
 
-    function handleSubmit() {
+    function handleSubmit(e) {
+
         e.preventDefault();
 
         const information = new FormData(e.target);
@@ -34,7 +40,7 @@ export default function projectCreate() {
             isFinished: information.get('isFinished') == 'on' ? true : false
         };
 
-        projectCreate();           
+        createProject(project);           
 
     }
 

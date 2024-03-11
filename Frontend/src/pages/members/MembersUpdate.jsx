@@ -4,6 +4,8 @@ import { Link,  useNavigate, useParams } from "react-router-dom";
 import MembersService from "../../services/MembersService";
 import { RoutesNames } from "../../constants";
 
+import './membersStyle.css';
+
 export default function MembersUpdate() {
 
     const [member, setMember] = useState({});
@@ -13,7 +15,7 @@ export default function MembersUpdate() {
 
     async function fetchMember() {
 
-        await MembersService.getById(routeParams.getById)
+        await MembersService.getById(routeParams.id)
             .then((response) => {
                 console.log(response);
                 setMember(response.data);
@@ -45,18 +47,18 @@ export default function MembersUpdate() {
         UpdateMember({
             firstName: information.get('firstName'),
             lastName: information.get('lastName'),
-            username: information.get('username'),
+            username: information.get('userName'),
             password: information.get('password'),
-            isTeamLeader: information.get('isTeamLeader')
+            isTeamLeader: information.get('isTeamLeader') == 'on' ? true : false
         });
 
     }
 
     return (
-        <Container className="mt-4">
-            <Form onSubmit={handleSubmit}>
+        <Container>
+            <Form onSubmit={handleSubmit} className='FormMemberCreate'>
 
-                <Form.Group className="mb-3" controlId="firstName">
+                <Form.Group controlId="firstName">
                     <Form.Label>First Name</Form.Label>
                     <Form.Control
                         type='text'
@@ -67,7 +69,7 @@ export default function MembersUpdate() {
                     />
                 </Form.Group>
 
-                <Form.Group className="mb-3" controlId="lastName">
+                <Form.Group  controlId="lastName">
                     <Form.Label>First Name</Form.Label>
                     <Form.Control
                         type='text'
@@ -78,18 +80,18 @@ export default function MembersUpdate() {
                     />
                 </Form.Group>
 
-                <Form.Group className="mb-3" controlId="username">
+                <Form.Group  controlId="username">
                     <Form.Label>Username</Form.Label>
                     <Form.Control
                         type='text'
-                        name='username'
-                        defaultValue={member.username}
+                        name='userName'
+                        defaultValue={member.userName}
                         maxLength={50}
                         required
                     />
                 </Form.Group>
 
-                <Form.Group className="mb-3" controlId="password">
+                <Form.Group  controlId="password">
                     <Form.Label>Password</Form.Label>
                     <Form.Control
                         type='text'
@@ -100,7 +102,7 @@ export default function MembersUpdate() {
                     />
                 </Form.Group>
 
-                <Form.Group className="mb-3" controlId="isTeamLeader">
+                <Form.Group  controlId="isTeamLeader">
                     <Form.Label>Position</Form.Label>
                     <Form.Control
                         type='text'

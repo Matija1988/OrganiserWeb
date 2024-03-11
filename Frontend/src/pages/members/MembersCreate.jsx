@@ -3,6 +3,8 @@ import { Link, useNavigate } from "react-router-dom";
 import MembersService from '../../services/MembersService';
 import { RoutesNames } from '../../constants';
 
+import './membersStyle.css';
+
 
 export default function MembersCreate() {
 
@@ -14,7 +16,7 @@ export default function MembersCreate() {
         if (reply.ok) {
             navigate(RoutesNames.MEMBERS_READ);
         } else {
-            alert(reply.message.error);
+            alert(reply.message.errors);
         }
 
     }
@@ -24,21 +26,23 @@ export default function MembersCreate() {
 
         const information = new FormData(e.target);
 
-        addMember({
+        const member = {
             firstName: information.get('firstName'),
             lastName: information.get('lastName'),
-            username: information.get('username'),
+            userName: information.get('userName'),
             password: information.get('password'),
-            isTeamLeader: information.get('isTeamLeader')
-        });
+            isTeamLeader: information.get('isTeamLeader') == 'on' ? true : false
+        };
+
+        addMember(member);
 
     }
 
     return (
-        <Container className='mt-4'>
+        <Container>
             <Form onSubmit={handleSubmit} className='FormMemberCreate'>
 
-                <Form.Group className='mb-3' controlId='firstName'>
+                <Form.Group  controlId='firstName'>
                     <Form.Label>First Name</Form.Label>
                     <Form.Control
                         type='text'
@@ -49,7 +53,7 @@ export default function MembersCreate() {
                     />
                 </Form.Group>
 
-                <Form.Group className='mb-3' controlId='lastName'>
+                <Form.Group  controlId='lastName'>
                     <Form.Label>Last Name</Form.Label>
                     <Form.Control
                         type='text'
@@ -61,11 +65,11 @@ export default function MembersCreate() {
 
                 </Form.Group>
 
-                <Form.Group className='mb-3' controlId='username'>
-                    <Form.Label>Last Name</Form.Label>
+                <Form.Group  controlId='username'>
+                    <Form.Label>Username</Form.Label>
                     <Form.Control
                         type='text'
-                        name='username'
+                        name='userName'
                         placeholder='Username'
                         maxLength={50}
                         required
@@ -73,8 +77,8 @@ export default function MembersCreate() {
 
                 </Form.Group>
 
-                <Form.Group className='mb-3' controlId='password'>
-                    <Form.Label>Last Name</Form.Label>
+                <Form.Group  controlId='password'>
+                    <Form.Label>Password</Form.Label>
                     <Form.Control
                         type='text'
                         name='password'
@@ -85,7 +89,7 @@ export default function MembersCreate() {
 
                 </Form.Group>
 
-                <Form.Group className='mb-3' controlId="isTeamLeader">
+                <Form.Group  controlId="isTeamLeader">
                     <Form.Check
                         label="Status"
                         inline

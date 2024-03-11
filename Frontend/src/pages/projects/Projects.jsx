@@ -6,8 +6,10 @@ import { RoutesNames } from "../../constants";
 import { IoIosAdd } from 'react-icons/io';
 import { GrValidate } from 'react-icons/gr';
 import { FaEdit, FaTrash } from 'react-icons/fa';
+
 import "bootstrap/dist/css/bootstrap.min.css";
-import './projectsStyle.css';
+
+ import './projectsStyle.css';
 
 
 
@@ -32,16 +34,16 @@ export default function Projects() {
         readProjects();
     }, []);
 
-    const formatDateStart = (projects) => {
-        const date = new Date(projects.dateStart);
+    const formatDateStart = (project) => {
+        const date = new Date(project.dateStart);
         const day = date.getDate();
         const month = date.getMonth() + 1;
         const year = date.getFullYear();
         return `${day < 10 ? '0' + day : day} - ${month < 10 ? '0' + month : month} - ${year}`;
     };
 
-    const formatDateEnd = (projects) => {
-        const date = new Date(projects.dateEnd);
+    function formatDateEnd (project) {
+        const date = new Date(project.dateEnd);
         const day = date.getDate();
         const month = date.getMonth() + 1;
         const year = date.getFullYear();
@@ -65,7 +67,7 @@ export default function Projects() {
     async function projectDelete(id) {
         const reply = await ProjectService.deleteProject(id);
         if (reply.ok) {
-            console.log(reply.message);
+            console.log(reply.message.data.response);
             readProjects();
         }
     }
@@ -101,8 +103,8 @@ export default function Projects() {
                         <tr key={index}>
                             <td>{project.projectName}</td>
                             <td className="alignRight">{project.uniqueID}</td>
-                            <td >  {Text = formatDateStart(project)}</td>
-                            <td>{Text = formatDateEnd(project)}</td>
+                            <td >  {Text = formatDateStart(project.dateStart)}</td>
+                            <td>   {Text = formatDateEnd(project.dateEnd)}</td>
                             <td className="alignCenter" color={IsFinishedDisplayColor(project)} >
                                 {Text = IsFinishedDisplayText(project)}
 
@@ -111,7 +113,7 @@ export default function Projects() {
                             <td className="alignCenter">
                                 <Button className="editBtn"
                                     variant="primary"
-                                    onClick={() => { navigate(`/projects/$(project.id)`) }}>
+                                    onClick={() => { navigate(`/projects/${project.id}`) }}>
                                     <FaEdit
                                         size={20}
                                     />

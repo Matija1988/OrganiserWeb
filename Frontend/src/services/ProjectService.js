@@ -17,21 +17,23 @@ async function addProject(project) {
 
     const reply = await httpService.post('/Project', project)
     .then(()=> {
-        return {ok: true, message: 'Project added'}
+        return { ok: true, message: 'Project added'}
     })
     .catch((e) => {
-        return {ok: false, message: e.res.data}
+        //console.log(e.response.data.errors);
+        return {ok: false, message: e.res }
     });
     return reply;
 }
 
 async function changeProject(id, project) {
 
-    const reply = await httpService.put('/Project' + id, project)
+    const reply = await httpService.put('/Project/' + id, project)
     .then(()=>{
         return{ok:true, message: 'Project changed'}
     })
     .catch((e)=>{
+        console.log(e.responese.data.errors);
         return{ok: false, message: 'Task failed successfully'}
     });
     return reply;
@@ -58,8 +60,8 @@ async function getById(id) {
 
     }).catch((e)=>{
         console.log(e);
-        return{message : e};
+        return{message: e};
     });
 }
 
-export default { getProjects, addProject, changeProject, deleteProject, getById}
+export default { getProjects, addProject, changeProject, deleteProject, getById};

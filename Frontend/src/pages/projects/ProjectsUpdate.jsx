@@ -5,6 +5,8 @@ import ProjectService from "../../services/ProjectService";
 import { RoutesNames } from "../../constants";
 import { MdOutlineSettingsApplications } from "react-icons/md";
 
+import './projectsStyle.css';
+
 export default function ProjectsUpdate() {
 
     const navigate = useNavigate();
@@ -12,11 +14,12 @@ export default function ProjectsUpdate() {
     const [project, setProject] = useState({});
 
     async function fetchProject() {
+
         await ProjectService.getById(routeParams.id)
             .then((res) => {
                 setProject(res.data)
             }).catch((e) => {
-                alert.message;
+                alert(e.message);
             });
     }
 
@@ -47,13 +50,13 @@ export default function ProjectsUpdate() {
             dateEnd: information.get('dateEnd'),
             isFinished: information.get('isFinished') == 'on' ? true : false
         };
-        updateProject();
+        updateProject(project);
 
     }
 
     return (
         <Container>
-            <Form onSubmit={handleSubmit}>
+            <Form onSubmit={handleSubmit} className= "FormProjectCreate">
 
                 <Form.Group controlId="projectName">
                     <Form.Label>Project Name</Form.Label>
@@ -93,11 +96,11 @@ export default function ProjectsUpdate() {
                 </Form.Group>
 
                 <Form.Group controlId="isFinished">
-                    <Form.Label>Status</Form.Label>
-                    <Form.Control
-                        type='text'
-                        name='isFinished'
-                        defaultValue={project.isFinished}
+                    <Form.Check 
+                      label = "Status"
+                      defaultValue =  {project.isFinished}
+                      name ="isFinished"                   
+                    
                     />
                 </Form.Group>
 

@@ -73,7 +73,7 @@ export default function Members() {
                         <td className="alignCenter">
                             <Button className="editBtn"
                             variant="primary"
-                            onClick={() =>{navigate(`/members/${member, id}`)}}
+                            onClick={() =>{navigate(`/members/${member.id}`)}}
                             >
                                 <FaEdit 
                                 size={25}
