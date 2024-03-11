@@ -1,8 +1,11 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using Microsoft.Data.SqlClient;
+using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Query.SqlExpressions;
 using PO.Data;
+using PO.Extensions;
 using PO.Models;
+using System.Xml;
 
 namespace PO.Controllers
 {
@@ -69,7 +72,7 @@ namespace PO.Controllers
                     return new EmptyResult();
                 }
 
-                return new JsonResult(projectsDB);
+                return new JsonResult(projectsDB.MapProjectReadList());
             }
             catch (Exception ex)
             {
@@ -103,7 +106,7 @@ namespace PO.Controllers
                 {
                     return new EmptyResult();
                 }
-                return new JsonResult(pro);
+                return new JsonResult(pro.MapProjectReadToDTO());
             }
             catch (Exception ex)
             {
@@ -117,7 +120,7 @@ namespace PO.Controllers
         /// Dodaje novi projekt u bazu
         /// Adds new project into DB
         /// </summary>
-        /// <param name="project"></param>
+        /// <param name="projectDTO"></param>
         /// <returns></returns>
         /// <respons> code="200">Sve ok, ako nema podataka content-length:0</respons>>
         /// <response> code="400">Zahtjev nije valjan</response>
@@ -126,15 +129,18 @@ namespace PO.Controllers
 
         [HttpPost]
 
-        public IActionResult Post(Project project)
+        public IActionResult Post(ProjectDTOInsertUpdate projectDTO)
         {
-            if (!ModelState.IsValid || project == null) { return BadRequest(); }
+            if (!ModelState.IsValid || projectDTO == null) { return BadRequest(); }
 
             try
             {
+
+                var project = projectDTO.MapProjectInsertUpdateFromDTO();
+
                 _context.Projects.Add(project);
                 _context.SaveChanges();
-                return StatusCode(StatusCodes.Status200OK, project);
+                return StatusCode(StatusCodes.Status200OK, project.MapProjectReadToDTO());
 
             }
             catch (SqlException ex)
@@ -155,7 +161,7 @@ namespace PO.Controllers
         /// Updates existing project in DB
         /// </summary>
         /// <param name="id"></param>
-        /// <param name="project"></param>
+        /// <param name="projectDTO"></param>
         /// <returns></returns>
         /// <response> code="200">Sve ok, ako nema podataka content-lenght:0</response>
         /// <response> code="400">Zahtjev nije valjan</response>
@@ -165,9 +171,9 @@ namespace PO.Controllers
         [HttpPut]
         [Route("{id:int}")]
 
-        public IActionResult Put(int id, Project project)
+        public IActionResult Put(int id, ProjectDTOInsertUpdate projectDTO)
         {
-            if (id <= 0 || !ModelState.IsValid || project == null)
+            if (id <= 0 || !ModelState.IsValid || projectDTO == null)
             {
                 return BadRequest();
             }
@@ -179,11 +185,16 @@ namespace PO.Controllers
 
                 if (projectFromDB == null) { return StatusCode(StatusCodes.Status204NoContent, id); }
 
-                projectFromDB.UniqueID = project.UniqueID;
-                projectFromDB.ProjectName = project.ProjectName;
-                projectFromDB.DateStart = project.DateStart;
-                projectFromDB.DateEnd = project.DateEnd;
-                projectFromDB.IsFinished = project.IsFinished;
+                var project = projectDTO.MapProjectInsertUpdateFromDTO();
+                             
+
+
+                project.ID = id;
+                project.UniqueID = project.UniqueID;
+                project.ProjectName = project.ProjectName;
+                project.DateStart = project.DateStart;
+                project.DateEnd = project.DateEnd;
+                project.IsFinished = project.IsFinished;
 
                 _context.Projects.Update(projectFromDB);
                 _context.SaveChanges();
@@ -198,6 +209,7 @@ namespace PO.Controllers
 
 
         }
+        
 
         /// <summary>
         /// Brise postojeci projekt iz base

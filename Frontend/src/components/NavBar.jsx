@@ -30,7 +30,8 @@ const navigate = useNavigate();
               <NavDropdown.Item onClick={()=>navigate(RoutesNames.MEMBERS_READ)}>
                 Members
               </NavDropdown.Item>
-              <NavDropdown.Item href="#action/3.3">Something</NavDropdown.Item>
+              <NavDropdown.Item onClick={()=> navigate (RoutesNames.ACTIVITIES_READ)}>
+                Activities</NavDropdown.Item>
               <NavDropdown.Divider />
               <NavDropdown.Item href="#action/3.4">
                 Separated link

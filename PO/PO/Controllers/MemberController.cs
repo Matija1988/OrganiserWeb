@@ -2,6 +2,7 @@
 using Microsoft.Data.SqlClient;
 using PO.Data;
 using PO.Models;
+using PO.Extensions;
 
 namespace PO.Controllers
 {
@@ -60,7 +61,7 @@ namespace PO.Controllers
                     return new EmptyResult();
                 }
 
-                return new JsonResult(memberDB);
+                return new JsonResult(memberDB.MapMemberReadList());
             }
             catch (Exception ex)
             {
@@ -103,7 +104,7 @@ namespace PO.Controllers
                 {
                     return new EmptyResult();
                 }
-                return new JsonResult(m);
+                return new JsonResult(m.MapMemberReadToDTO());
             }
             catch (Exception ex)
             {
@@ -115,16 +116,17 @@ namespace PO.Controllers
 
         [HttpPost]
 
-        public IActionResult Post(Member member)
+        public IActionResult Post(MemberDTOInsertUpdate memberDTO)
         {
 
-            if (!ModelState.IsValid || member == null) { return BadRequest(); }
+            if (!ModelState.IsValid || memberDTO == null) { return BadRequest(); }
 
             try
             {
+                var member = memberDTO.MapMemberInsertUpdateFromDTO();
                 _context.members.Add(member);
                 _context.SaveChanges();
-                return StatusCode(StatusCodes.Status200OK, member);
+                return StatusCode(StatusCodes.Status200OK, member.MapMemberReadToDTO());
             }
             catch (SqlException ex)
             {
@@ -166,8 +168,9 @@ namespace PO.Controllers
 
             try
             {
+            
                 var memberFromDB = _context.members.Find(id);
-
+                
                 if (memberFromDB == null) { return StatusCode(StatusCodes.Status204NoContent, id); }
 
                 memberFromDB.FirstName = member.FirstName;
@@ -209,7 +212,8 @@ namespace PO.Controllers
 
             try
             {
-                var memberFromDB = _context.members.Find(id); 
+                var memberFromDB = _context.members.Find(id);
+
 
                 if (memberFromDB == null) { return StatusCode(StatusCodes.Status204NoContent, id); }
 

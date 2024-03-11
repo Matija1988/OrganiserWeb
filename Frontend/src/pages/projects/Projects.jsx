@@ -103,10 +103,10 @@ export default function Projects() {
                         <tr key={index}>
                             <td>{project.projectName}</td>
                             <td className="alignRight">{project.uniqueID}</td>
-                            <td >  {Text = formatDateStart(project.dateStart)}</td>
-                            <td>   {Text = formatDateEnd(project.dateEnd)}</td>
-                            <td className="alignCenter" color={IsFinishedDisplayColor(project)} >
-                                {Text = IsFinishedDisplayText(project)}
+                            <td >  {formatDateStart(project)}</td>
+                            <td>   {formatDateEnd(project)}</td>
+                            <td className="alignCenter" color={IsFinishedDisplayColor(project)}>
+                                {IsFinishedDisplayText(project)}
 
                             </td>
                             

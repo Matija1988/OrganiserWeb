@@ -7,6 +7,11 @@ export const RoutesNames = {
     MEMBERS_READ: '/members',
     MEMBERS_CREATE: '/members/create',
     MEMBERS_UPDATE: '/members/:id',
+
+    ACTIVITIES_READ : '/activities',
+    ACTIVITIES_CREATE : '/activities/create',
+    ACTIVITIES_UPDATE: '/activities/:id',
+
 };
 
 export const App = {

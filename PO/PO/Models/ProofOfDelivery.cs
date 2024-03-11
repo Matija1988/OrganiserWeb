@@ -1,4 +1,5 @@
 ﻿using System.ComponentModel;
+using System.ComponentModel.DataAnnotations.Schema;
 
 namespace PO.Models
 {
@@ -30,9 +31,10 @@ namespace PO.Models
         /// Who created the document
         /// </summary>
 
-        
+        [ForeignKey("memberID")]
         public int? MemberID { get; set; }
-    
-        public int? ActivityID { get; set; }
+
+        [ForeignKey("activityID")]
+        public Activity? ActivityID { get; set; }
     }
 }

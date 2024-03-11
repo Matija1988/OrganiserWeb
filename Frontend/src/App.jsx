@@ -14,6 +14,7 @@ import Members from './pages/members/Members';
 import MembersCreate from './pages/members/MembersCreate';
 import MembersUpdate from './pages/members/MembersUpdate';
 
+import Activities from './pages/activities/Activities';
 
 import './style.css';
 
@@ -36,6 +37,10 @@ function App() {
           <Route path={RoutesNames.MEMBERS_CREATE} element={<MembersCreate />} />
           <Route path={RoutesNames.MEMBERS_UPDATE} element={<MembersUpdate />} />
 
+          <Route path={RoutesNames.ACTIVITIES_READ} element={<Activities />} />
+          {/* <Route path={RoutesNames.ACTIVITIES_CREATE} element={<ActivitiesCreate />} />
+          <Route path={RoutesNames.ACTIVITIES_UPDATE} element={<ActivitiesUpdate />} />
+  */}
         </>
       </Routes>
     </>

@@ -28,7 +28,7 @@ namespace PO.Models
         /// Activity description
         /// </summary>
 
-        public string Description { get; set; }
+        public string? Description { get; set; }
 
         /// <summary>
         /// Planirani pocetak provedbe aktivnosti
@@ -55,7 +55,7 @@ namespace PO.Models
         /// </summary>
         
         
-        public bool IsFinished { get; set; }
+        public bool? IsFinished { get; set; }
 
         /// <summary>
         /// Datum zavrsetka aktivnosti / Datum na koji je Narucitelj 
@@ -72,8 +72,10 @@ namespace PO.Models
         /// </summary>
 
         [Required]
-        [ForeignKey("Project")]
-        public int ProjectID { get; set; }
+        [ForeignKey("projectID")]
+        public Project? ProjectID { get; set; }
+
+        public List<Member>? Members { get; set; }
 
      
 
