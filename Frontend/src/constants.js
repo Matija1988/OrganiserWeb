@@ -12,6 +12,10 @@ export const RoutesNames = {
     ACTIVITIES_CREATE : '/activities/create',
     ACTIVITIES_UPDATE: '/activities/:id',
 
+    PROOFS_READ: '/proofs',
+    PROOFS_CREATE: '/proofs/create',
+    PROOFS_UPDATE: '/proofs/:id'
+
 };
 
 export const App = {

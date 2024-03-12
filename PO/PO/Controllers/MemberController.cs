@@ -159,7 +159,7 @@ namespace PO.Controllers
         [HttpPut]
         [Route("{id:int}")]
 
-        public IActionResult Put(int id, Member member)
+        public IActionResult Put(int id, MemberDTOInsertUpdate memberDTO)
         {
             if (id == 0 || !ModelState.IsValid || member == null)
             {

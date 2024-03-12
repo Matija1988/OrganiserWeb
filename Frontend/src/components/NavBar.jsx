@@ -33,8 +33,8 @@ const navigate = useNavigate();
               <NavDropdown.Item onClick={()=> navigate (RoutesNames.ACTIVITIES_READ)}>
                 Activities</NavDropdown.Item>
               <NavDropdown.Divider />
-              <NavDropdown.Item href="#action/3.4">
-                Separated link
+              <NavDropdown.Item onClick={()=> navigate (RoutesNames.PROOFS_READ)}>
+                Proofs of delivery
               </NavDropdown.Item>
             </NavDropdown>
           </Nav>

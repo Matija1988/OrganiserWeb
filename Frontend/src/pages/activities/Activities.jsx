@@ -7,7 +7,7 @@ import { IoIosAdd } from 'react-icons/io';
 import { FaEdit, FaTrash } from 'react-icons/fa';
 
 import './activitiesStyle.css';
-import { format } from "date-fns";
+
 
 
 export default function Activities() {
