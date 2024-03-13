@@ -20,9 +20,21 @@ namespace PO.Models
     /// <param name="IsTeamLeader"></param>
     public record MemberDTOInsertUpdate(int id, string FirstName, string LastName,
         string Username, string Password, bool IsTeamLeader);
+
+
+    public record ProofDTORead(int id, string? documentName, string? member, string? location, 
+        DateTime? datecreated, string activity);
+
+    public record ProofDTOInsertUpdate(string? documentName, int? member, string? location,
+        DateTime? datecreated, int activity);
+
+    public record ActivityDTORead(int id,  string activityname, string? decsription, DateTime datestart, DateTime datefinished,
+        bool? isFinished, DateTime? dateaccepted, string project);
+
+
+    public record ActivityDTOInsertUpdate( string activityname, string? decsription, DateTime datestart, DateTime datefinished,
+        bool? isFinished, DateTime? dateaccepted, int? project);
+
+
+
 }
-
-
-//public static ProjectDTOInsertUpdate Create(string UniqueID, string ProjectName,
-//    DateTime DateStart, DateTime DateEnd, bool IsFinished)
-//    => new(UniqueID, ProjectName, DateStart, DateEnd, IsFinished);

@@ -1,7 +1,9 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.ModelBinding;
 using Microsoft.Data.SqlClient;
+using Microsoft.EntityFrameworkCore;
 using PO.Data;
+using PO.Extensions;
 using PO.Models;
 
 namespace PO.Controllers
@@ -54,13 +56,16 @@ namespace PO.Controllers
 
             try
             {
-                var ActivityFromDB = _context.activities.ToList();
+                var ActivityFromDB = _context.activities.Include(a => a.ProjectID)
+                    .Include(a => a.Members).ToList();
+
+
 
                 if (ActivityFromDB == null || ActivityFromDB.Count == 0)
                 {
                     return new EmptyResult();
                 }
-                return new JsonResult(ActivityFromDB);
+                return new JsonResult(ActivityFromDB.MapActivityReadList());
 
             }
             catch (Exception ex)
@@ -88,12 +93,14 @@ namespace PO.Controllers
 
             try
             {
-                var p = _context.activities.Find(id);
+                var p = _context.activities.Include(a => a.ProjectID).Include(a => a.Members)
+                    .FirstOrDefault(x => x.ID == id);
+
                 if (p == null)
                 {
                     return new EmptyResult();
                 }
-                return new JsonResult(p);
+                return new JsonResult(p.MapActivityInsertUpdateDTO());
             }
             catch (Exception ex)
             {
@@ -116,20 +123,27 @@ namespace PO.Controllers
 
         [HttpPost]
 
-        public IActionResult Post(Activity activity)
+        public IActionResult Post(ActivityDTOInsertUpdate dto)
         {
-            if (!ModelState.IsValid || activity == null) { return BadRequest(); }
+            if (!ModelState.IsValid || dto == null) { return BadRequest(); }
+
+            var project = _context.Projects.Find(dto.project);
+
+            if (project == null)
+            {
+                return BadRequest();
+            }
+
+            var entity = dto.MapActivityInsertUpdateFromDTO(new Activity());
+
+            entity.ProjectID = project;
 
             try
             {
-                _context.activities.Add(activity);
+                _context.activities.Add(entity);
                 _context.SaveChanges();
-                return StatusCode(StatusCodes.Status200OK, activity);
+                return StatusCode(StatusCodes.Status200OK, entity.MapReadActivityToDTO());
 
-            }
-            catch (SqlException ex)
-            {
-                return StatusCode(StatusCodes.Status503ServiceUnavailable, ex.Message);
             }
             catch (Exception ex)
             {
@@ -149,31 +163,32 @@ namespace PO.Controllers
         [HttpPut]
         [Route("{id:int}")]
 
-        public IActionResult Put(int id, Activity activity)
+        public IActionResult Put(int id, ActivityDTOInsertUpdate dto)
         {
-            if (id <= 0 || !ModelState.IsValid || activity == null)
+            if (id <= 0 || !ModelState.IsValid || dto == null)
             {
                 return BadRequest();
             }
 
             try
             {
-                var activityFromDB = _context.activities.Find(id);
+                var entity = _context.activities.Include(i => i.ProjectID).Include(i => i.Members)
+                    .FirstOrDefault(x => x.ID == id);
 
-                if (activityFromDB == null) { return StatusCode(StatusCodes.Status204NoContent, id); }
+                if (entity == null) { return StatusCode(StatusCodes.Status204NoContent, id); }
 
-                activityFromDB.activityName = activity.activityName;
-                activityFromDB.Description = activity.Description;
-                activityFromDB.DateStart = activity.DateStart;
-                activityFromDB.DateFinish = activity.DateFinish;
-                activityFromDB.IsFinished = activity.IsFinished;
-                activityFromDB.DateAccepted = activity.DateAccepted;
-                activityFromDB.ProjectID = activity.ProjectID;
+                var project = _context.Projects.Find(dto.project); 
 
-                _context.activities.Update(activityFromDB);
+                if(project == null) { return BadRequest(); }
+
+                entity = dto.MapActivityInsertUpdateFromDTO(entity);
+
+                entity.ProjectID = project;
+
+                _context.activities.Update(entity);
                 _context.SaveChanges();
 
-                return StatusCode(StatusCodes.Status200OK, activityFromDB);
+                return StatusCode(StatusCodes.Status200OK, entity.MapReadActivityToDTO());
             }
             catch (Exception ex)
             {
@@ -210,7 +225,7 @@ namespace PO.Controllers
                 _context.activities.Remove(activityFromDB);
                 _context.SaveChanges();
 
-                return new JsonResult("{\"Messages\":\"Deleted\"}");
+                return new JsonResult(new {message = "Deleted"});
 
             }
             catch (SqlException ex)
@@ -223,5 +238,61 @@ namespace PO.Controllers
             }
 
         }
+
+        [HttpGet]
+        [Route("Members/{activityID:int}")]
+
+        public IActionResult GetActivityMember(int activityID)
+        {
+            if (!ModelState.IsValid || activityID <= 0)
+            {
+                return BadRequest();
+            }
+
+            try
+            {
+                var entity = _context.activities.Include(i => i.Members).FirstOrDefault(x => x.ID == activityID);
+
+                if(entity == null)
+                {
+                    return new EmptyResult();
+                }
+                return new JsonResult(entity.Members!.MapMemberReadList());
+            }
+            catch (Exception e)
+            {
+                return StatusCode(StatusCodes.Status503ServiceUnavailable, e.Message);
+            }
+
+        }
+
+        [HttpGet]
+        [Route("Projects/{projectID:int}")]
+
+        public IActionResult ConnectProjectAndActivities(int projectID)
+        {
+            if (!ModelState.IsValid || projectID <= 0)
+            {
+                return BadRequest();
+            }
+
+            try
+            {
+                var entity = _context.activities.Include(i => i.ProjectID).All(x => x.ID == projectID);
+
+                if (entity == null)
+                {
+                    return new EmptyResult();
+                }
+                return new JsonResult(entity.);
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(StatusCodes.Status503ServiceUnavailable, ex.Message);
+            }
+
+
+        }
+
     }
 }

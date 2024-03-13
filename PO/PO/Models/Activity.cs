@@ -77,6 +77,9 @@ namespace PO.Models
 
         public List<Member>? Members { get; set; }
 
+       // public List<Project> ProjectsActivitiesConnector { get; set; } 
+      
+
      
 
     }

@@ -1,6 +1,7 @@
 ﻿using Microsoft.AspNetCore.Mvc;
-using Microsoft.Data.SqlClient;
+using Microsoft.EntityFrameworkCore;
 using PO.Data;
+using PO.Extensions;
 using PO.Models;
 
 namespace PO.Controllers
@@ -49,13 +50,14 @@ namespace PO.Controllers
 
             try
             {
-                var proofOfDeliveryFromDB = _context.ProofOfDeliveries.ToList();
+                var proofOfDeliveryFromDB = _context.ProofOfDeliveries.Include(i => i.ActivityID)
+                    .Include(i => i.MemberID).ToList();
 
                 if(proofOfDeliveryFromDB == null || proofOfDeliveryFromDB.Count == 0)
                 {
                     return new EmptyResult();
                 }
-                return new JsonResult(proofOfDeliveryFromDB);
+                return new JsonResult(proofOfDeliveryFromDB.MapProofReadList());
             } 
             catch (Exception ex) 
             { 
@@ -82,12 +84,14 @@ namespace PO.Controllers
 
             try
             {
-                var pod = _context.ProofOfDeliveries.Find(id);
+                var pod = _context.ProofOfDeliveries.Include(i => i.ActivityID)
+                    .Include (i => i.MemberID).FirstOrDefault(x=> x.ID == id);
+
                 if (pod == null)
                 {
                     return new EmptyResult();
                 }
-                return new JsonResult(pod);
+                return new JsonResult(pod.MapProofInsertUpdateToDTO());
             }
             catch (Exception ex)
             {
@@ -110,22 +114,38 @@ namespace PO.Controllers
 
         [HttpPost]
 
-        public IActionResult Post(ProofOfDelivery proofOfDelivery) 
+        public IActionResult Post(ProofDTOInsertUpdate dto) 
         { 
         
-            if(!ModelState.IsValid || proofOfDelivery == null) { return BadRequest(); }
+            if(!ModelState.IsValid || dto == null) { return BadRequest(); }
+
+            var member = _context.members.Find(dto.member);
+
+            if (member == null)
+            {
+                return BadRequest();
+            }
+
+            var activity = _context.activities.Find(dto.activity);
+
+            if(activity == null)
+            {
+                return BadRequest();
+            }
+
+            var entity = dto.MapProofInsertUpdateFromDTO(new ProofOfDelivery());
+
+            entity.MemberID = member;
+            entity.ActivityID = activity;
 
             try
             {
-                _context.ProofOfDeliveries.Add(proofOfDelivery);
+                _context.ProofOfDeliveries.Add(entity);
                 _context.SaveChanges();
 
-                return StatusCode(StatusCodes.Status200OK, proofOfDelivery);
+                return StatusCode(StatusCodes.Status200OK, entity.MapProofReadToDTO());
             }
-             catch (SqlException ex)
-            {
-                return StatusCode(StatusCodes.Status503ServiceUnavailable, ex.Message);
-            } 
+            
             catch (Exception ex)
             {
                 return StatusCode(StatusCodes.Status503ServiceUnavailable, ex.Message);
@@ -148,29 +168,37 @@ namespace PO.Controllers
         [HttpPut]
         [Route("{id:int}")]
 
-        public IActionResult Put(int id, ProofOfDelivery proofOfDelivery)
+        public IActionResult Put(int id, ProofDTOInsertUpdate dto)
         {
-            if (id <= 0 || !ModelState.IsValid || proofOfDelivery == null)
+            if (id <= 0 || !ModelState.IsValid || dto == null)
             {
                 return BadRequest();
             }
 
             try
             {
-                var proofOfDeliveryFromDB = _context.ProofOfDeliveries.Find(id);
+                var entity = _context.ProofOfDeliveries.Include(i => i.ActivityID)
+                    .Include(i => i.MemberID).FirstOrDefault(x => x.ID == id);
 
-                if(proofOfDeliveryFromDB == null) { return StatusCode(StatusCodes.Status204NoContent, id); }
+                if(entity == null) { return StatusCode(StatusCodes.Status204NoContent, id); }
 
-                proofOfDeliveryFromDB.DocumentName = proofOfDelivery.DocumentName;
-                proofOfDeliveryFromDB.Location = proofOfDelivery.Location;
-                proofOfDeliveryFromDB.DateCreated = proofOfDelivery.DateCreated;
-                proofOfDeliveryFromDB.MemberID = proofOfDelivery.MemberID;
-                proofOfDeliveryFromDB.ActivityID = proofOfDelivery.ActivityID;
+                var activity = _context.activities.Find(dto.activity);
 
-                _context.ProofOfDeliveries.Update(proofOfDeliveryFromDB);
+                if(activity == null) { return BadRequest(); }
+
+                var member = _context.members.Find(dto.member);
+
+                if(member == null) { return BadRequest(); }
+
+                entity = dto.MapProofInsertUpdateFromDTO(entity);
+
+                entity.ActivityID = activity;
+                entity.MemberID = member;
+                            
+                _context.ProofOfDeliveries.Update(entity);
                 _context.SaveChanges();
 
-                return StatusCode(StatusCodes.Status200OK, proofOfDeliveryFromDB);
+                return StatusCode(StatusCodes.Status200OK, entity.MapProofReadToDTO());
 
             } catch (Exception ex)
             {
@@ -208,17 +236,38 @@ namespace PO.Controllers
                 _context.ProofOfDeliveries.Remove(proofOfDeliveryFromDB);
                 _context.SaveChanges();
 
-                return new JsonResult("{\"Message\":\"Deleted\"}");
+                return new JsonResult(new { message = "Deleted"});
             }
-            catch (SqlException ex) 
-            {
-                return StatusCode(StatusCodes.Status503ServiceUnavailable, ex.ErrorCode);
-            }
-            catch(Exception ex) 
+             catch(Exception ex) 
             {
                 return StatusCode(StatusCodes.Status503ServiceUnavailable, ex.Message);
             
             }
+
+        }
+
+        [HttpGet]
+        [Route("Members/{idProof:int}")]
+
+        public IActionResult GetMembers(int idProof)
+        {
+            if (!ModelState.IsValid || idProof <= 0)
+            {
+                return BadRequest();
+            }
+
+            try
+            {
+                var pod = _context.ProofOfDeliveries.Include(i => i.MemberID).FirstOrDefault(x => x.ID == idProof);
+                if(pod == null) { return BadRequest(); }
+                return new JsonResult(pod.MemberID!.MapMemberReadToDTO());
+            } 
+            catch(Exception ex)
+            {
+                return StatusCode(StatusCodes.Status503ServiceUnavailable, ex.Message);
+            }
+
+
 
 
         }

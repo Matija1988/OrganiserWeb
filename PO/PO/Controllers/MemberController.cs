@@ -3,6 +3,7 @@ using Microsoft.Data.SqlClient;
 using PO.Data;
 using PO.Models;
 using PO.Extensions;
+using Microsoft.EntityFrameworkCore;
 
 namespace PO.Controllers
 {
@@ -104,7 +105,7 @@ namespace PO.Controllers
                 {
                     return new EmptyResult();
                 }
-                return new JsonResult(m.MapMemberReadToDTO());
+                return new JsonResult(m.MapMemberInsertUpdateToDTO());
             }
             catch (Exception ex)
             {
@@ -123,16 +124,12 @@ namespace PO.Controllers
 
             try
             {
-                var member = memberDTO.MapMemberInsertUpdateFromDTO();
+                var member = memberDTO.MapSmjerInsertUpdateFromDTO(new Member());
                 _context.members.Add(member);
                 _context.SaveChanges();
                 return StatusCode(StatusCodes.Status200OK, member.MapMemberReadToDTO());
             }
-            catch (SqlException ex)
-            {
-                return StatusCode(StatusCodes.Status503ServiceUnavailable, ex.Message);
-
-            }
+           
             catch (Exception ex)
             {
                 return StatusCode(StatusCodes.Status503ServiceUnavailable, ex.Message);
@@ -159,7 +156,7 @@ namespace PO.Controllers
         [HttpPut]
         [Route("{id:int}")]
 
-        public IActionResult Put(int id, MemberDTOInsertUpdate memberDTO)
+        public IActionResult Put(int id, MemberDTOInsertUpdate member)
         {
             if (id == 0 || !ModelState.IsValid || member == null)
             {
@@ -170,19 +167,16 @@ namespace PO.Controllers
             {
             
                 var memberFromDB = _context.members.Find(id);
+ 
                 
                 if (memberFromDB == null) { return StatusCode(StatusCodes.Status204NoContent, id); }
-
-                memberFromDB.FirstName = member.FirstName;
-                memberFromDB.LastName = member.LastName;
-                memberFromDB.Username = member.Username;
-                memberFromDB.Password = member.Password;
-                memberFromDB.IsTeamLeader = member.IsTeamLeader;
+                
+                var entity = member.MapSmjerInsertUpdateFromDTO(memberFromDB);
 
                 _context.members.Update(memberFromDB);
                 _context.SaveChanges();
 
-                return StatusCode(StatusCodes.Status200OK, memberFromDB);
+                return StatusCode(StatusCodes.Status200OK, memberFromDB.MapMemberInsertUpdateToDTO());
 
             } catch (Exception ex) {
 
@@ -220,12 +214,10 @@ namespace PO.Controllers
                 _context.members.Remove(memberFromDB);
                 _context.SaveChanges();
 
-                return new JsonResult("{\"Message\":\"Deleted\"}");
+                return new JsonResult(new { message = "Deleted" }); 
 
-            } catch (SqlException ex)
-            {
-                return StatusCode(StatusCodes.Status503ServiceUnavailable, ex.ErrorCode);
-            } catch (Exception ex)
+            } 
+            catch (Exception ex)
             {
                 return StatusCode(StatusCodes.Status503ServiceUnavailable, ex.Message);
             }
@@ -233,7 +225,26 @@ namespace PO.Controllers
         
         }
 
+        //[HttpGet]
+        //[Route("Activities/{memberID:int}")]
 
+        //public IActionResult MembersActivityConnector(int memberID)
+        //{
+        //    if (!ModelState.IsValid || memberID <= 0) { return BadRequest(); }
+
+        //    try
+        //    {
+        //        var a = _context.members.Include(i => i.ActivitiesToMembers).FirstOrDefault(x => x.ID == memberID);
+
+        //        if (a == null)
+        //        {
+        //            return new EmptyResult();
+        //        }
+
+        //        return new JsonResult(a.ActivitiesToMembers!.Map)
+        //    }
+
+        //}
 
     }
 }

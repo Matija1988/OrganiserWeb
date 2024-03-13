@@ -32,9 +32,9 @@ namespace PO.Models
         /// </summary>
 
         [ForeignKey("memberID")]
-        public int? MemberID { get; set; }
+        public Member? MemberID { get; set; }
 
         [ForeignKey("activityID")]
-        public Activity? ActivityID { get; set; }
+        public Activity ActivityID { get; set; }
     }
 }

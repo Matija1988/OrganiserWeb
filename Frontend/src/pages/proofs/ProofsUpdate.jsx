@@ -58,7 +58,7 @@ export default function ProofUpdate() {
         <Container>
             <Form onSubmit={handleSubmit} className='FormMemberCreate'>
 
-                <Form.Group controlId="deocumentName">
+                <Form.Group controlId="documentName">
                     <Form.Label>Document Name</Form.Label>
                     <Form.Control
                         type='text'

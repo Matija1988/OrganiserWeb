@@ -44,5 +44,7 @@ namespace PO.Models
         /// Marks project status true = finished, false = ongoing
         /// </summary>
         public bool? IsFinished { get; set; }
+
+        public List<Activity>? Activities { get; set; }
     }
 }

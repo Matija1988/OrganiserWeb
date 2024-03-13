@@ -97,7 +97,7 @@ namespace PO.Controllers
 
         public IActionResult Get(int id)
         {
-            if (!ModelState.IsValid) { return BadRequest(ModelState); }
+            if (!ModelState.IsValid || id <= 0) { return BadRequest(ModelState); }
 
             try
             {
@@ -136,17 +136,12 @@ namespace PO.Controllers
             try
             {
 
-                var project = projectDTO.MapProjectInsertUpdateFromDTO();
+                var project = projectDTO.MapProjectInsertUpdateFromDTO(new Project());
 
                 _context.Projects.Add(project);
                 _context.SaveChanges();
                 return StatusCode(StatusCodes.Status200OK, project.MapProjectReadToDTO());
 
-            }
-            catch (SqlException ex)
-            {
-
-                return StatusCode(StatusCodes.Status503ServiceUnavailable, ex.InnerException.Message);
             }
             catch (Exception ex)
             {
@@ -185,21 +180,13 @@ namespace PO.Controllers
 
                 if (projectFromDB == null) { return StatusCode(StatusCodes.Status204NoContent, id); }
 
-                var project = projectDTO.MapProjectInsertUpdateFromDTO();
+                var project = projectDTO.MapProjectInsertUpdateFromDTO(projectFromDB);
                              
-
-
-                project.ID = id;
-                project.UniqueID = project.UniqueID;
-                project.ProjectName = project.ProjectName;
-                project.DateStart = project.DateStart;
-                project.DateEnd = project.DateEnd;
-                project.IsFinished = project.IsFinished;
 
                 _context.Projects.Update(projectFromDB);
                 _context.SaveChanges();
 
-                return StatusCode(StatusCodes.Status200OK, projectFromDB);
+                return StatusCode(StatusCodes.Status200OK, projectFromDB.MapProjectInsertUpdateToDTO());
             }
             catch (Exception ex)
             {
@@ -242,14 +229,10 @@ namespace PO.Controllers
 
                 return new JsonResult(new { message = "Deleted"}) ;
             }
-            catch (SqlException ex)
-            {
-                return StatusCode(StatusCodes.Status503ServiceUnavailable, ex.ErrorCode);
-            }
-
+            
             catch (Exception ex) 
             {
-                return StatusCode(StatusCodes.Status503ServiceUnavailable, ex.InnerException.Message);
+                return StatusCode(StatusCodes.Status503ServiceUnavailable, ex.Message);
              
             }
 

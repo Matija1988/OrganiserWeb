@@ -53,7 +53,7 @@ namespace PO.Models
         [Required]
         public bool IsTeamLeader { get; set; }
 
-        public ICollection<Activity> Activity { get; } = new List<Activity>();
+        public ICollection<Activity> ActivitiesToMembers { get; } = new List<Activity>();
 
     }
 }
