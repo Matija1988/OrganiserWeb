@@ -27,13 +27,14 @@ export default function ActivitiesCreate() {
         const information = new FormData(e.target);
 
         const activity = {
-            activityName: information.get('activityName'),
+            activityname: information.get('activityname'),
             description: information.get('description'),
-            dateStart: information.get('dateStart'),
-            dateFinish: information.get('dateFinish'),
+            datestart: information.get('datestart'),
+            datefinished: information.get('datefinished'),
             isFinished: information.get('isFinished') == 'on' ? true : false,
-            dateAccepted: information.get('dateAccepted'),
-            projectID: information.get('projectID')
+            dateaccepted: information.get('dateaccepted'),
+            project: 1
+       
         };
 
         addActivity(activity);
@@ -44,11 +45,11 @@ export default function ActivitiesCreate() {
         <Container>
             <Form onSubmit={handleSubmit} className='FormActivity'>
 
-                <Form.Group  controlId='activityName'>
+                <Form.Group  controlId='activityname'>
                     <Form.Label>Activity</Form.Label>
                     <Form.Control
                         type='text'
-                        name='activityName'
+                        name='activityname'
                         placeholder='Activity'
                         maxLength={100}
                         required
@@ -67,11 +68,11 @@ export default function ActivitiesCreate() {
 
                 </Form.Group>
 
-                <Form.Group  controlId='dateStart'>
+                <Form.Group  controlId='datestart'>
                     <Form.Label>Date start</Form.Label>
                     <Form.Control
                         type='text'
-                        name='dateStart'
+                        name='datestart'
                         placeholder='dateStart'
                         
                         required
@@ -79,11 +80,11 @@ export default function ActivitiesCreate() {
 
                 </Form.Group>
 
-                <Form.Group  controlId='dateFinish'>
+                <Form.Group  controlId='datefinished'>
                     <Form.Label>Deadline</Form.Label>
                     <Form.Control
                         type='text'
-                        name='dateFinish'
+                        name='datefinished'
                         placeholder='dateFinish'
                         required
                     />
@@ -98,22 +99,22 @@ export default function ActivitiesCreate() {
                     />
 
                 </Form.Group>
-                <Form.Group  controlId='dateAccepted'>
+                <Form.Group  controlId='dateaccepted'>
                     <Form.Label>Date Accepted</Form.Label>
                     <Form.Control
                         type='text'
-                        name='dateAccepted'
+                        name='dateaccepted'
                         placeholder='dateAccepted'
                         required
                     />
 
                 </Form.Group>
 
-                <Form.Group  controlId='projectID'>
+                <Form.Group  controlId='project'>
                     <Form.Label>Associeted project</Form.Label>
                     <Form.Control
                         type='text'
-                        name='projectID'
+                        name='project'
                         placeholder='projectID'
                         required
                     />

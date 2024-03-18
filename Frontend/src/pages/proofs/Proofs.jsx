@@ -5,6 +5,8 @@ import { Container, Button, Table } from "react-bootstrap";
 import { RoutesNames } from "../../constants";
 import { IoIosAdd } from 'react-icons/io';
 import { FaEdit, FaTrash } from 'react-icons/fa';
+import moment from "moment";
+
 
 import './proofsStyle.css';
 
@@ -39,15 +41,6 @@ export default function Proofs() {
         }
     }
 
-    const formatDateCreated = (proof) => {
-        const date = new Date(proof.dateCreated);
-        const day = date.getDate();
-        const month = date.getMonth() + 1;
-        const year = date.getFullYear();
-        return `${day < 10 ? '0' + day : day} - ${month < 10 ? '0' + month : month} - ${year}`;
-    };
-
-
     return (
 
         <Container>
@@ -69,10 +62,11 @@ export default function Proofs() {
                 {Proofs && Proofs.map((proof, index) =>(
                     <tr key={index}>
                         <td>{proof.documentName}</td>
-                        <td>{proof.memberID}</td>
+                        <td>{proof.member}</td>
                         <td>{proof.location}</td>
-                        <td>{formatDateCreated(proof)}</td>
-                        <td>{proof.activityID}</td>
+                        <td>{proof.datecreated == null ? 'Not defined' 
+                        : moment.utc(proof.datecreated).format('DD.MM.YYYY. HH:mm')}</td>
+                        <td>{proof.activity}</td>
                         <td className="alignCenter">
                             <Button className="editBtn"
                             variant="primary"

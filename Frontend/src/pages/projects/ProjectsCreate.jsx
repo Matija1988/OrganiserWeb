@@ -79,7 +79,7 @@ export default function ProjectsCreate() {
                 <Form.Group controlId="isFinished">
                     <Form.Check 
                     label = "Status"
-                    inline
+              //      inline
                     name='isFinished'
                     />
 

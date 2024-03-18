@@ -28,11 +28,11 @@ namespace PO.Models
     public record ProofDTOInsertUpdate(string? documentName, int? member, string? location,
         DateTime? datecreated, int activity);
 
-    public record ActivityDTORead(int id,  string activityname, string? decsription, DateTime datestart, DateTime datefinished,
+    public record ActivityDTORead(int id,  string activityname, string? description, DateTime datestart, DateTime datefinished,
         bool? isFinished, DateTime? dateaccepted, string project);
 
 
-    public record ActivityDTOInsertUpdate( string activityname, string? decsription, DateTime datestart, DateTime datefinished,
+    public record ActivityDTOInsertUpdate( string activityname, string? description, DateTime datestart, DateTime datefinished,
         bool? isFinished, DateTime? dateaccepted, int? project);
 
 

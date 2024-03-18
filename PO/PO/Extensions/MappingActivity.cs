@@ -1,4 +1,5 @@
-﻿using PO.Models;
+﻿using PO.Mappers;
+using PO.Models;
 using System.Transactions;
 
 namespace PO.Extensions
@@ -42,67 +43,22 @@ namespace PO.Extensions
 
         public static ActivityDTORead MapReadActivityToDTO(this Activity a)
         {
-            int id;
-            string activityname, project;
-            string? description;
-            bool? isfinished;
-            DateTime datestart = DateTime.Now;
-            DateTime datefinish = DateTime.Now;
-            DateTime? dateaccepted = DateTime.Now;
-
-            id = a.ID;  
-            activityname = a.activityName;
-            description = a.Description;    
-            isfinished = a.IsFinished;
-
-            project = null;
-            if(a.ProjectID != null) 
-            { 
-             project= a.ProjectID.ProjectName;
-                           
-            }
-
-            dateaccepted = a.DateAccepted;
-            datestart = a.DateStart;
-            datefinish = a.DateFinish;
-
-            return new ActivityDTORead(id, activityname, description, datestart,
-                    datefinish, isfinished, dateaccepted, project);
-
+            var mapper = ActivityMapper.InitReadToDTO();
+            return mapper.Map<ActivityDTORead>(a);  
         }
 
 
         public static ActivityDTOInsertUpdate MapActivityInsertUpdateDTO(this Activity a)
         {
-            int project = 0;
-            string activityname;
-            string? description;
-            bool? isfinished;
-            DateTime datestart = DateTime.Now;
-            DateTime datefinish = DateTime.Now;
-            DateTime? dateaccepted = DateTime.Now;
-
-            activityname= a.activityName;
-            description =a.Description;
-            isfinished = a.IsFinished;
-            if(a.ProjectID != null)
-            {
-                project = a.ProjectID.ID;
-            }
-            datestart = a.DateStart;
-            datefinish = a.DateFinish;
-            dateaccepted = a.DateAccepted;
-
-
-            return new ActivityDTOInsertUpdate(activityname, description,datestart,datefinish, 
-                isfinished, dateaccepted,project);
+            var mapper = ActivityMapper.InitInsertUpdateToDTO();
+            return mapper.Map < ActivityDTOInsertUpdate>(a);
 
         }
 
         public static Activity MapActivityInsertUpdateFromDTO(this ActivityDTOInsertUpdate dto, Activity a)
         {
             a.activityName = dto.activityname;
-            a.Description = dto.decsription;
+            a.Description = dto.description;
             a.IsFinished = dto.isFinished;
             a.DateStart = dto.datestart;
             a.DateFinish = dto.datefinished;
