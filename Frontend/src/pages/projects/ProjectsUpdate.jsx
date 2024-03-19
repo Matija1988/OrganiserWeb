@@ -82,7 +82,7 @@ export default function ProjectsUpdate() {
                 <Form.Group controlId="dateStart">
                     <Form.Label>Start Date</Form.Label>
                     <Form.Control
-                        type='text'
+                        type='date'
                         name='dateStart'
                         defaultValue={project.dateStart}
                     />
@@ -91,7 +91,7 @@ export default function ProjectsUpdate() {
                 <Form.Group controlId="dateEnd">
                     <Form.Label>Deadline</Form.Label>
                     <Form.Control
-                        type='text'
+                        type='date'
                         name='dateEnd'
                         defaultValue={project.dateEnd}
                     />

@@ -71,7 +71,7 @@ export default function ActivitiesCreate() {
                 <Form.Group  controlId='datestart'>
                     <Form.Label>Date start</Form.Label>
                     <Form.Control
-                        type='text'
+                        type='date'
                         name='datestart'
                         placeholder='dateStart'
                         
@@ -83,7 +83,7 @@ export default function ActivitiesCreate() {
                 <Form.Group  controlId='datefinished'>
                     <Form.Label>Deadline</Form.Label>
                     <Form.Control
-                        type='text'
+                        type='date'
                         name='datefinished'
                         placeholder='dateFinish'
                         required
@@ -102,7 +102,7 @@ export default function ActivitiesCreate() {
                 <Form.Group  controlId='dateaccepted'>
                     <Form.Label>Date Accepted</Form.Label>
                     <Form.Control
-                        type='text'
+                        type='date'
                         name='dateaccepted'
                         placeholder='dateAccepted'
                         required
@@ -111,7 +111,7 @@ export default function ActivitiesCreate() {
                 </Form.Group>
 
                 <Form.Group  controlId='project'>
-                    <Form.Label>Associeted project</Form.Label>
+                    <Form.Label>Associated project</Form.Label>
                     <Form.Control
                         type='text'
                         name='project'

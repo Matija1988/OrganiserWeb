@@ -80,7 +80,7 @@ export default function ProofsCreate() {
                 <Form.Group  controlId='dateCreated'>
                     <Form.Label>Date created</Form.Label>
                     <Form.Control
-                        type='text'
+                        type='date'
                         name='dateCreated'
                         placeholder='Date created'
                         

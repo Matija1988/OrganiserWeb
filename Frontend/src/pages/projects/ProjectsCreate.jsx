@@ -65,14 +65,14 @@ export default function ProjectsCreate() {
                 <Form.Group controlId="dateStart">
                 <Form.Label>Starting date</Form.Label>
                 <Form.Control 
-                type = 'text'
+                type = 'date'
                 name = 'dateStart'
                 />
                 </Form.Group>
                 <Form.Group controlId="dateEnd">
                     <Form.Label>Deadline</Form.Label>
                     <Form.Control 
-                    type = 'text'
+                    type = 'date'
                     name = 'dateEnd'
                     />
                 </Form.Group>
