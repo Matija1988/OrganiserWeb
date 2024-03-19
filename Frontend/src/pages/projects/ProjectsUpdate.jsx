@@ -39,6 +39,17 @@ export default function ProjectsUpdate() {
 
     }
 
+    function FormatDateStart(project) {
+        return  project.dateStart == null ? 'Not defined' :
+        moment.utc(project.dateStart).format('DD.MM.YYYY.')
+       }
+    
+       function FormatDateEnd(project){ 
+        return  project.dateEnd == null ? 'Not defined' :
+        moment.utc(project.dateEnd).format('DD.MM.YYYY.')
+    
+       }
+
 
 
     function handleSubmit(e) {
@@ -84,7 +95,7 @@ export default function ProjectsUpdate() {
                     <Form.Control
                         type='date'
                         name='dateStart'
-                        defaultValue={project.dateStart}
+                        defaultValue= {project.dateStart}
                     />
                 </Form.Group>
 

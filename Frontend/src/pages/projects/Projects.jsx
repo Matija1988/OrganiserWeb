@@ -156,7 +156,7 @@ export default function Projects() {
                                 />
 
                             </td>
-                            <td className="alignCenter" color={IsFinishedDisplayColor(project)}>
+                            <td className="alignCenter">
                                 {IsFinishedDisplayText(project)}
 
                             </td>

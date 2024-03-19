@@ -1,6 +1,8 @@
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.OpenApi.Models;
 using PO.Data;
+using Swashbuckle.AspNetCore.Filters;
 using System.Reflection;
 
 var builder = WebApplication.CreateBuilder(args);
@@ -12,6 +14,20 @@ builder.Services.AddControllers();
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
 
+//options =>
+//{
+//    options.AddSecurityDefinition("oauth2", new OpenApiSecurityScheme
+//    {
+//        In = ParameterLocation.Header,
+//        Name = "Authorization",
+//        Type = SecuritySchemeType.ApiKey,
+
+//    });
+//    options.OperationFilter<SecurityRequirementsOperationFilter>();
+//}
+
+
+
 builder.Services.AddCors(options =>
 {
     options.AddPolicy("CorsPolicy",
@@ -22,6 +38,10 @@ builder.Services.AddCors(options =>
 builder.Services.AddDbContext<POContext>(po =>
 po.UseSqlServer(builder.Configuration.GetConnectionString(name: "POContext")));
 
+builder.Services.AddAuthorization();
+
+builder.Services.AddIdentityApiEndpoints<IdentityUser>()
+    .AddEntityFrameworkStores<POContext>();
 
 var app = builder.Build();
 
@@ -35,9 +55,10 @@ app.UseSwaggerUI(opcije =>
     AdditionalItems.Add("requestSnippetsEnabled", true);
 });
 
-
+app.MapIdentityApi<IdentityUser>();
 app.UseHttpsRedirection();
 
+app.UseAuthentication();
 app.UseAuthorization();
 
 app.MapControllers();

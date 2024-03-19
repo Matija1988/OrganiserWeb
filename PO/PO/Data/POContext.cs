@@ -1,4 +1,5 @@
 ﻿
+using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore;
 using PO.Models;
 
@@ -10,7 +11,7 @@ namespace PO.Data
     /// This is the class that contains datasets and methods to access the DB
     /// </summary>
 
-    public class POContext : DbContext
+    public class POContext : IdentityDbContext
     {
         /// <summary>
         /// 
