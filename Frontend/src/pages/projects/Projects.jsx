@@ -118,7 +118,7 @@ export default function Projects() {
     return (
 
         <Container className="mt-4">
-            <Link to={RoutesNames.PROJECTS_CREATE} className="btn btn-success gumb" hover>
+            <Link to={RoutesNames.PROJECTS_CREATE} className="btn btn-success gumb">
                 <IoIosAdd
                     size={25}
                 />ADD

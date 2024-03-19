@@ -8,37 +8,43 @@ namespace PO.Extensions
     {
         public static List<ActivityDTORead> MapActivityReadList(this List<Activity> activities)
         {
+            var mapper = ActivityMapper.InitReadToDTO();
             var returnResult = new List<ActivityDTORead>();
+           
+            activities.ForEach(activity => { returnResult.Add(mapper.Map<ActivityDTORead>(activity)); });  
+            
+            return returnResult;    
 
-            int id;
-            string activityname, project;
-            string? description;
-            bool? isfinished;
-            DateTime datestart = DateTime.Now;
-            DateTime datefinish = DateTime.Now;
-            DateTime? dateaccepted = DateTime.Now;
 
-            activities.ForEach(a =>
-            {
-                id = a.ID;
-                activityname = a.activityName;
-                description = a.Description;
-                isfinished = a.IsFinished;
-                datestart = a.DateStart;
-                datefinish = a.DateFinish;
-                dateaccepted = a.DateAccepted;
-                project = null; 
-                if (a.ProjectID != null)
-                {
-                    project = a.ProjectID.ProjectName;
-                }
+            //int id;
+            //string activityname, project;
+            //string? description;
+            //bool? isfinished;
+            //DateTime datestart = DateTime.Now;
+            //DateTime datefinish = DateTime.Now;
+            //DateTime? dateaccepted = DateTime.Now;
 
-                returnResult.Add(new ActivityDTORead(id, activityname, description, datestart,
-                    datefinish, isfinished, dateaccepted, project));
+            //activities.ForEach(a =>
+            //{
+            //    id = a.ID;
+            //    activityname = a.activityName;
+            //    description = a.Description;
+            //    isfinished = a.IsFinished;
+            //    datestart = a.DateStart;
+            //    datefinish = a.DateFinish;
+            //    dateaccepted = a.DateAccepted;
+            //    project = a.ProjectID.ProjectName; 
+            //    if (a.ProjectID.ProjectName == null)
+            //    {
+            //        project = null;
+            //    }
 
-            });
+            //    returnResult.Add(new ActivityDTORead(id, activityname, description, datestart,
+            //        datefinish, isfinished, dateaccepted, project));
 
-            return returnResult;
+            //});
+
+            //return returnResult;
         }
 
         public static ActivityDTORead MapReadActivityToDTO(this Activity a)

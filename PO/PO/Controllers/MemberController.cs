@@ -116,7 +116,6 @@ namespace PO.Controllers
         }
 
         [HttpPost]
-
         public IActionResult Post(MemberDTOInsertUpdate memberDTO)
         {
 
@@ -224,9 +223,6 @@ namespace PO.Controllers
 
 
         }
-
-
-
 
     }
 }

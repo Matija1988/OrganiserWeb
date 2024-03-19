@@ -3,6 +3,7 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.ModelBinding;
 using Microsoft.Data.SqlClient;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.Identity.Client;
 using PO.Data;
 using PO.Extensions;
 using PO.Mappers;
@@ -139,6 +140,7 @@ namespace PO.Controllers
             var entity = dto.MapActivityInsertUpdateFromDTO(new Activity());
 
             entity.ProjectID = project;
+            entity.Members = new List<Member>();
 
             try
             {
@@ -241,6 +243,13 @@ namespace PO.Controllers
 
         }
 
+        /// <summary>
+        /// Dohvaca sve clanove koji rade na aktivnosti
+        /// Lists all members assigned to a activity
+        /// </summary>
+        /// <param name="activityID"></param>
+        /// <returns></returns>
+
         [HttpGet]
         [Route("Members/{activityID:int}")]
 
@@ -268,6 +277,98 @@ namespace PO.Controllers
 
         }
 
+        /// <summary>
+        /// Dodaj aktivnost clanu
+        /// Assign activity to member
+        /// </summary>
+        /// <param name="id"></param>
+        /// <param name="memberID"></param>
+        /// <returns></returns>
+
+        [HttpPost]
+        [Route("{id:int}/add/{memberID:int}")] 
+
+        public IActionResult AssignMemberToActivity(int id, int memberID)
+        {
+            if(!ModelState.IsValid)
+            {
+                return BadRequest();
+            }
+
+            if(id <= 0 || memberID <= 0)
+            {
+                return BadRequest();
+            }
+
+            try
+            {
+                var memberToActivity = _context.activities.Include(i =>i.Members).FirstOrDefault(i => i.ID == id);
+
+                if(memberToActivity == null)
+                {
+                    return BadRequest();
+                }
+
+                var member = _context.members.Find(memberID);
+
+                if (member == null) return BadRequest();
+
+                memberToActivity.Members.Add(member);
+
+                _context.activities.Update(memberToActivity);
+                _context.SaveChanges();
+
+                return Ok();
+
+            } catch (Exception ex)
+            {
+                return StatusCode(StatusCodes.Status503ServiceUnavailable, ex.Message);
+            }
+
+        }
+
+        [HttpDelete]
+        [Route("{id:int}/delete/{memberID:int}")]
+
+        public IActionResult RemoveMemberFromActivity(int id, int memberID) 
+        {
+            if (!ModelState.IsValid) return BadRequest();
+
+            if (id <= 0 || memberID <= 0) return BadRequest();
+
+            try
+            {
+                var memberFromActivity = _context.activities.Include(i => i.Members)
+                    .FirstOrDefault(i => i.ID == id);
+
+                if (memberFromActivity == null) return BadRequest();
+
+                var member = _context.members.Find(memberID);
+
+                if (member == null) return BadRequest();
+
+                memberFromActivity.Members.Remove(member);
+
+                _context.activities.Update(memberFromActivity);
+                _context.SaveChanges();
+                return Ok();
+            }
+            catch (Exception ex) 
+            {
+                return StatusCode(StatusCodes.Status503ServiceUnavailable, ex.Message);
+            }
+
+        }
+
+
+
+        /// <summary>
+        /// Dohvaca sve aktivnosti jednog projekta
+        /// Lists all activities of a project
+        /// </summary>
+        /// <param name="projectID"></param>
+        /// <returns></returns>
+
         [HttpGet]
         [Route("Projects/{projectID:int}")]
 
@@ -280,23 +381,14 @@ namespace PO.Controllers
 
             try
             {
-                var entity = _context.activities.Include(i => i.ProjectID).FirstOrDefault(x => x.ProjectID.ID == projectID);
-
-                //var entity = _context.activities;
-
-
-
-                var projectActivities = _context.activities.Select(i => i.ProjectID.ID == projectID).ToList();
-
-                var mapper = ActivityMapper.InitInsertUpdateToDTO();
-
+                var entity = _context.activities.Where(i => i.ProjectID.ID == projectID).ToList();
 
 
                 if (entity == null)
                 {
                     return new EmptyResult();
                 }
-                return new JsonResult(projectActivities);
+                return new JsonResult(entity.MapActivityReadList());
             }
             catch (Exception ex)
             {
