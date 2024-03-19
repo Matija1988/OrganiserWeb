@@ -39,6 +39,8 @@ export default function ProjectsUpdate() {
 
     }
 
+
+
     function handleSubmit(e) {
         e.preventDefault();
         const information = new FormData(e.target);
@@ -48,7 +50,7 @@ export default function ProjectsUpdate() {
             uniqueID: information.get('uniqueID'),
             dateStart: information.get('dateStart'),
             dateEnd: information.get('dateEnd'),
-            isFinished: information.get('isFinished') == 'on' ? true : false
+            isFinished: information.get('isFinished')=='on' ? true : false
         };
         updateProject(project);
 

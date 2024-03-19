@@ -6,10 +6,12 @@ import { RoutesNames } from "../../constants";
 import { IoIosAdd } from 'react-icons/io';
 import { GrValidate } from 'react-icons/gr';
 import { FaEdit, FaTrash } from 'react-icons/fa';
+import moment from 'moment';
+import ProgressBar from "react-bootstrap/ProgressBar";
 
 import "bootstrap/dist/css/bootstrap.min.css";
 
- import './projectsStyle.css';
+import './projectsStyle.css';
 
 
 
@@ -34,21 +36,55 @@ export default function Projects() {
         readProjects();
     }, []);
 
-    const formatDateStart = (project) => {
-        const date = new Date(project.dateStart);
-        const day = date.getDate();
-        const month = date.getMonth() + 1;
-        const year = date.getFullYear();
-        return `${day < 10 ? '0' + day : day} - ${month < 10 ? '0' + month : month} - ${year}`;
-    };
+   
+   function FormatDateStart(project) {
+    return  project.dateStart == null ? 'Not defined' :
+    moment.utc(project.dateStart).format('DD.MM.YYYY.')
+   }
 
-    function formatDateEnd (project) {
-        const date = new Date(project.dateEnd);
-        const day = date.getDate();
-        const month = date.getMonth() + 1;
-        const year = date.getFullYear();
-        return `${day < 10 ? '0' + day : day} - ${month < 10 ? '0' + month : month} - ${year}`;
-    };
+   function FormatDateEnd(project){ 
+    return  project.dateEnd == null ? 'Not defined' :
+    moment.utc(project.dateEnd).format('DD.MM.YYYY.')
+
+   }
+
+   
+   function progresLabel(project) {
+    let date1 = new Date(project.dateStart);
+    let date2 = new Date(project.dateEnd);
+    let dateNow = Date.now();
+
+    let differenceInTime =  dateNow - date1.getTime();
+
+    let differenceInDays = Math.round(differenceInTime / (1000 * 3600 * 24));
+
+    if(date2 < dateNow) {
+        differenceInDays = 100; 
+    } 
+
+    return differenceInDays;
+   }
+
+   
+
+   function progresLabelMaxValue(project) {
+
+    let date1 = new Date(project.dateStart);
+    let date2 = new Date(project.dateEnd);
+    let dateNow = Date.now();
+
+    let differenceInTime = date2.getTime() - date1.getTime();
+
+    let differenceInDays = Math.round(differenceInTime / (1000 * 3600 * 24));
+
+    if(date2 < dateNow) {
+        differenceInDays = 100; 
+    }
+
+    return differenceInDays;
+
+   }
+
 
     function IsFinishedDisplayColor(project) {
         if (project.isFinished == null) return 'gray';
@@ -64,6 +100,7 @@ export default function Projects() {
 
 
 
+
     async function projectDelete(id) {
         const reply = await ProjectService.deleteProject(id);
         if (reply.ok) {
@@ -73,9 +110,9 @@ export default function Projects() {
     }
 
     const rowEvent = {
-     onClick: (row) => {
-        console.log(e, row);
-     }
+        onClick: (row) => {
+            console.log(e, row);
+        }
     }
 
     return (
@@ -86,14 +123,13 @@ export default function Projects() {
                     size={25}
                 />ADD
             </Link>
-            
-            <Table striped bordered hover responsive  variant="dark" className="tableStyle">
+
+            <Table striped bordered hover responsive variant="dark" className="tableStyle">
                 <thead>
                     <tr className="projectTableHead">
                         <th>Project Name</th>
                         <th className="projectTableHeadAlignCenter">Unique ID</th>
-                        <th>Date Start</th>
-                        <th>Deadline</th>
+                        <th>Start date / Deadline</th>
                         <th>Status</th>
                         <th>Actions</th>
                     </tr>
@@ -103,13 +139,28 @@ export default function Projects() {
                         <tr key={index}>
                             <td>{project.projectName}</td>
                             <td className="alignRight">{project.uniqueID}</td>
-                            <td >  {formatDateStart(project)}</td>
-                            <td>   {formatDateEnd(project)}</td>
+                            <td >
+
+                                <p>
+                                    {FormatDateStart(project)}
+                                     /    
+                                    {FormatDateEnd(project)}
+
+                                </p>
+                                <ProgressBar 
+                              //  label = {progresLabel(project)} 
+                                variant="danger" 
+                                now={progresLabel(project)} 
+                                max = {progresLabelMaxValue(project)}
+                                title="Measures days from the start date"
+                                />
+
+                            </td>
                             <td className="alignCenter" color={IsFinishedDisplayColor(project)}>
                                 {IsFinishedDisplayText(project)}
 
                             </td>
-                            
+
                             <td className="alignCenter">
                                 <Button className="editBtn"
                                     variant="primary"
@@ -121,7 +172,7 @@ export default function Projects() {
 
                                 <Button className="trashBtn"
                                     variant='danger'
-                                    onClick={()=> projectDelete(project.id)}
+                                    onClick={() => projectDelete(project.id)}
                                 >
                                     <FaTrash
                                         size={20}

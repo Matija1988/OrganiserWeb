@@ -2,6 +2,7 @@ import { Container } from "react-bootstrap";
 
 
 import "./home.css";
+import Login from "../components/Login";
 
 export default function Home() {
 
@@ -10,8 +11,10 @@ export default function Home() {
         <>
         <Container className="homeText">
             Welcome to C-project. 
+            <Login />
            
         </Container>
+
         </>
     );
 }

@@ -1,9 +1,11 @@
-﻿using Microsoft.AspNetCore.Mvc;
+﻿using AutoMapper;
+using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.ModelBinding;
 using Microsoft.Data.SqlClient;
 using Microsoft.EntityFrameworkCore;
 using PO.Data;
 using PO.Extensions;
+using PO.Mappers;
 using PO.Models;
 
 namespace PO.Controllers
@@ -269,7 +271,7 @@ namespace PO.Controllers
         [HttpGet]
         [Route("Projects/{projectID:int}")]
 
-        public IActionResult ConnectProjectAndActivities(int projectID)
+        public IActionResult ConnectActivitiesAndProjects(int projectID)
         {
             if (!ModelState.IsValid || projectID <= 0)
             {
@@ -278,13 +280,23 @@ namespace PO.Controllers
 
             try
             {
-                var entity = _context.activities.Include(i => i.ProjectID).All(x => x.ID == projectID);
+                var entity = _context.activities.Include(i => i.ProjectID).FirstOrDefault(x => x.ProjectID.ID == projectID);
+
+                //var entity = _context.activities;
+
+
+
+                var projectActivities = _context.activities.Select(i => i.ProjectID.ID == projectID).ToList();
+
+                var mapper = ActivityMapper.InitInsertUpdateToDTO();
+
+
 
                 if (entity == null)
                 {
                     return new EmptyResult();
                 }
-                return new JsonResult(entity.);
+                return new JsonResult(projectActivities);
             }
             catch (Exception ex)
             {

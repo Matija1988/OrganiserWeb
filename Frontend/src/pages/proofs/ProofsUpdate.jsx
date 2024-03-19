@@ -46,10 +46,10 @@ export default function ProofUpdate() {
 
         changeProof({
             documentName: information.get('documentName'),
-            memberID: information.get('memberID'),
-            Location: information.get('Location'),
-            dateCreated: information.get('dateCreated'),
-            activityID: information.get('activityID')
+            member: information.get('member'),
+            location: information.get('Location'),
+            datecreated: information.get('dateCreated'),
+            activity: information.get('activity')
         });
 
     }
@@ -73,8 +73,8 @@ export default function ProofUpdate() {
                     <Form.Label>Member</Form.Label>
                     <Form.Control
                         type='text'
-                        name='memberID'
-                        defaultValue={proof.memberID}
+                        name='member'
+                        defaultValue={proof.member}
                       
                     />
                 </Form.Group>
@@ -84,7 +84,7 @@ export default function ProofUpdate() {
                     <Form.Control
                         type='text'
                         name='Location'
-                        defaultValue={proof.Location}
+                        defaultValue={proof.location}
                         maxLength={200}
 
                     />
@@ -95,7 +95,7 @@ export default function ProofUpdate() {
                     <Form.Control
                         type='text'
                         name='dateCreated'
-                        defaultValue={proof.dateCreated}
+                        defaultValue={proof.datecreated}
                     />
                 </Form.Group>
 
@@ -103,8 +103,8 @@ export default function ProofUpdate() {
                     <Form.Label>ActivityID</Form.Label>
                     <Form.Control
                         type='text'
-                        name='activityID'
-                        defaultValue={proof.activityID}
+                        name='activity'
+                        defaultValue={proof.activity}
                     />
                 </Form.Group>
 

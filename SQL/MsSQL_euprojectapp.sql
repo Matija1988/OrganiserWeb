@@ -163,22 +163,22 @@ order by 1 asc;
 
 -------------PROCESS -------------
 
-CREATE PROC usp_Login(@username varchar(50), @password varchar(100))
-AS
-BEGIN 
-	Select * from members where username = @username and password = @password
-END 
+--CREATE PROC usp_Login(@username varchar(50), @password varchar(100))
+--AS
+--BEGIN 
+--	Select * from members where username = @username and password = @password
+--END 
 
-CREATE PROC usp_Registration(@firstname varchar(50), 
-@lastName varchar(50),
-@userName varchar(50),
-@password varchar(100),
-@isTeamLeader bit)
-AS
-BEGIN 
-	insert into members(firstName, lastName, userName, password, isTeamLeader) 
-	values (@firstname, @lastname,@username, @password, @isTeamLeader);
-END 
+--CREATE PROC usp_Registration(@firstname varchar(50), 
+--@lastName varchar(50),
+--@userName varchar(50),
+--@password varchar(100),
+--@isTeamLeader bit)
+--AS
+--BEGIN 
+--	insert into members(firstName, lastName, userName, password, isTeamLeader) 
+--	values (@firstname, @lastname,@username, @password, @isTeamLeader);
+--END 
 
 
 

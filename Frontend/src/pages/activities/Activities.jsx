@@ -6,6 +6,10 @@ import { RoutesNames } from "../../constants";
 import { IoIosAdd } from 'react-icons/io';
 import { FaEdit, FaTrash } from 'react-icons/fa';
 
+import moment from 'moment';
+import ProgressBar from "react-bootstrap/ProgressBar";
+
+
 import './activitiesStyle.css';
 
 
@@ -39,7 +43,56 @@ export default function Activities() {
             alert(reply.message);
         }
     }
-
+    
+    function FormatDateStart(activity) {
+        return  activity.datestart == null ? 'Not defined' :
+        moment.utc(activity.datestart).format('DD.MM.YYYY.')
+       }
+    
+       function FormatDateEnd(activity){ 
+        return  activity.datefinished == null ? 'Not defined' :
+        moment.utc(activity.datefinished).format('DD.MM.YYYY.')
+       }
+    
+       
+       function FormatDateAccepted(activity){ 
+        return  activity.dateaccepted == null ? 'Not defined' :
+        moment.utc(activity.dateaccepted).format('DD.MM.YYYY.')
+       }
+       
+       function progresLabel(activity) {
+        let date1 = new Date(activity.datestart);
+        let date2 = new Date(activity.datefinished);
+        let dateNow = Date.now();
+    
+        let differenceInTime =  dateNow - date1.getTime();
+    
+        let differenceInDays = Math.round(differenceInTime / (1000 * 3600 * 24));
+    
+        if(date2 < dateNow) {
+            differenceInDays = 100; 
+        } 
+    
+        return differenceInDays;
+       }
+    
+       function progresLabelMaxValue(activity) {
+    
+        let date1 = new Date(activity.datestart);
+        let date2 = new Date(activity.datefinished);
+        let dateNow = Date.now();
+    
+        let differenceInTime = date2.getTime() - date1.getTime();
+    
+        let differenceInDays = Math.round(differenceInTime / (1000 * 3600 * 24));
+    
+        if(date2 < dateNow) {
+            differenceInDays = 100; 
+        }
+    
+        return differenceInDays;
+    
+       }
     
     function ActivityStatusDisplayText(activity) {
         if (activity.isFinished == null) return 'No input';
@@ -48,30 +101,7 @@ export default function Activities() {
     }
 
 
-    const formatDateStart = (activity) => {
-        const date = new Date(activity.dateStart);
-        const day = date.getDate();
-        const month = date.getMonth() + 1;
-        const year = date.getFullYear();
-        return `${day < 10 ? '0' + day : day} - ${month < 10 ? '0' + month : month} - ${year}`;
-    };
 
-    const formatDateAccepted = (activity) => {
-        const date = new Date(activity.dateAccepted);
-        const day = date.getDate();
-        const month = date.getMonth() + 1;
-        const year = date.getFullYear();
-        return `${day < 10 ? '0' + day : day} - ${month < 10 ? '0' + month : month} - ${year}`;
-    };
-
-
-    function formatDateEnd (activity) {
-        const date = new Date(activity.dateFinish);
-        const day = date.getDate();
-        const month = date.getMonth() + 1;
-        const year = date.getFullYear();
-        return `${day < 10 ? '0' + day : day} - ${month < 10 ? '0' + month : month} - ${year}`;
-    };
 
 
     return (
@@ -85,8 +115,8 @@ export default function Activities() {
                 <tr>
                     <th>Activity</th>
                     <th>Description</th>
-                    <th>Date Start</th>
-                    <th>Deadline</th>
+                    <th>Start date / Deadline</th>
+                    
                     <th>Status</th>
                     <th>Date Accepted</th>
                     <th>Project</th>
@@ -96,13 +126,28 @@ export default function Activities() {
             <tbody>
                 {Activities && Activities.map((activity, index) =>(
                     <tr key={index}>
-                        <td>{activity.activityName}</td>
+                        <td>{activity.activityname}</td>
                         <td>{activity.description}</td>
-                        <td>{formatDateStart(activity)}</td>
-                        <td>{formatDateEnd(activity)}</td>
+                        <td>
+                        <p>
+                                    {FormatDateStart(activity)}
+                                     /    
+                                    {FormatDateEnd(activity)}
+
+                                </p>
+                                <ProgressBar 
+                               // label = {progresLabel(activity)}
+                                
+                                variant="danger" 
+                                now={progresLabel(activity)} 
+                                max = {progresLabelMaxValue(activity)}
+                                title="Measures days from the start date"
+                                />
+</td>
+                        
                         <td>{ActivityStatusDisplayText(activity)}</td>
-                        <td>{formatDateAccepted(activity)}</td>
-                        <td>{activity.projectID}</td>
+                        <td>{FormatDateAccepted(activity)}</td>
+                        <td>{activity.project}</td>
                         <td className="alignCenter">
                             <Button className="editBtn"
                             variant="primary"

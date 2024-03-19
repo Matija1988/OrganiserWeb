@@ -46,14 +46,16 @@ namespace PO.Models
         /// sto mu dodijeluje ovlasti za manipulaciju 
         /// korisnicima i brisanje unosa
         /// This represents is a user a team leader
-        /// a status that gives him authority 
+        /// a status that gives him authority Mem
         /// to manipulate other users and delete entries
         /// </summary>
 
         [Required]
         public bool IsTeamLeader { get; set; }
 
-        public ICollection<Activity> ActivitiesToMembers { get; } = new List<Activity>();
+        public ICollection<Activity> IActivities { get; } = new List<Activity>();
+
+     
 
     }
 }

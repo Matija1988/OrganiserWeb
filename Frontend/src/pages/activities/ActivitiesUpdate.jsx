@@ -46,13 +46,13 @@ export default function ActivitiesUpdate() {
         const information = new FormData(e.target);
 
         UpdateActivity({
-            activityName: information.get('activityName'),
+            activityname: information.get('activityname'),
             description: information.get('description'),
-            dateStart: information.get('dateStart'),
-            dateFinish: information.get('dateFinish'),
+            datestart: information.get('datestart'),
+            datefinish: information.get('datefinish'),
             isFinished: information.get('isFinished') == 'on' ? true : false,
-            dateAccepted: information.get('dateAccepted'),
-            projectID: information.get('projectID')
+            dateaccepted: information.get('dateaccepted'),
+            project: information.get('project')
         });
 
     }
@@ -61,12 +61,12 @@ export default function ActivitiesUpdate() {
         <Container>
             <Form onSubmit={handleSubmit} className='FormActivity'>
 
-                <Form.Group controlId="activityName">
+                <Form.Group controlId="activityname">
                     <Form.Label>Activity</Form.Label>
                     <Form.Control
                         type='text'
-                        name='activityName'
-                        defaultValue={activity.activityName}
+                        name='activityname'
+                        defaultValue={activity.activityname}
                         maxLength={100}
                         required
                     />
@@ -83,23 +83,23 @@ export default function ActivitiesUpdate() {
                     />
                 </Form.Group>
 
-                <Form.Group  controlId="dateStart">
+                <Form.Group  controlId="datestart">
                     <Form.Label>Date start</Form.Label>
                     <Form.Control
                         type='text'
                         name='dateStart'
-                        defaultValue={activity.dateStart}
+                        defaultValue={activity.datestart}
                         
                         required
                     />
                 </Form.Group>
 
-                <Form.Group  controlId="dateFinish">
+                <Form.Group  controlId="datefinished">
                     <Form.Label>Deadline</Form.Label>
                     <Form.Control
                         type='text'
-                        name='dateFinish'
-                        defaultValue={activity.dateFinish}
+                        name='datefinished'
+                        defaultValue={activity.datefinished}
                         required
                     />
                 </Form.Group>
@@ -114,23 +114,23 @@ export default function ActivitiesUpdate() {
                     />
                 </Form.Group>
 
-                <Form.Group  controlId="dateAccepted">
+                <Form.Group  controlId="dateaccepted">
                     <Form.Label>Date accepted</Form.Label>
                     <Form.Control
                         type='text'
-                        name='dateAccepted'
-                        defaultValue={activity.dateAccepted}
+                        name='dateaccepted'
+                        defaultValue={activity.dateaccepted}
                         required
                     />
                 </Form.Group>
 
                 
-                <Form.Group  controlId="projectID">
+                <Form.Group  controlId="project">
                     <Form.Label>Associated project</Form.Label>
                     <Form.Control
                         type='text'
-                        name='projectID'
-                        defaultValue={activity.projectID}
+                        name='project'
+                        defaultValue={activity.project}
                         required
                     />
                 </Form.Group>

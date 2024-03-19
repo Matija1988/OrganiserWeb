@@ -45,6 +45,6 @@ namespace PO.Models
         /// </summary>
         public bool? IsFinished { get; set; }
 
-        public List<Activity>? Activities { get; set; }
+     
     }
 }

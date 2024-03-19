@@ -129,7 +129,7 @@ namespace PO.Controllers
                 _context.SaveChanges();
                 return StatusCode(StatusCodes.Status200OK, member.MapMemberReadToDTO());
             }
-           
+
             catch (Exception ex)
             {
                 return StatusCode(StatusCodes.Status503ServiceUnavailable, ex.Message);
@@ -149,8 +149,8 @@ namespace PO.Controllers
         /// <response> code="400">Zahtjev nije valjan</response>
         /// <response> code="503">Baza na koju se spajam nije dostupna</response>
 
-         
-          
+
+
 
 
         [HttpPut]
@@ -165,12 +165,12 @@ namespace PO.Controllers
 
             try
             {
-            
+
                 var memberFromDB = _context.members.Find(id);
- 
-                
+
+
                 if (memberFromDB == null) { return StatusCode(StatusCodes.Status204NoContent, id); }
-                
+
                 var entity = member.MapSmjerInsertUpdateFromDTO(memberFromDB);
 
                 _context.members.Update(memberFromDB);
@@ -214,37 +214,19 @@ namespace PO.Controllers
                 _context.members.Remove(memberFromDB);
                 _context.SaveChanges();
 
-                return new JsonResult(new { message = "Deleted" }); 
+                return new JsonResult(new { message = "Deleted" });
 
-            } 
+            }
             catch (Exception ex)
             {
                 return StatusCode(StatusCodes.Status503ServiceUnavailable, ex.Message);
             }
-              
-        
+
+
         }
 
-        //[HttpGet]
-        //[Route("Activities/{memberID:int}")]
 
-        //public IActionResult MembersActivityConnector(int memberID)
-        //{
-        //    if (!ModelState.IsValid || memberID <= 0) { return BadRequest(); }
 
-        //    try
-        //    {
-        //        var a = _context.members.Include(i => i.ActivitiesToMembers).FirstOrDefault(x => x.ID == memberID);
-
-        //        if (a == null)
-        //        {
-        //            return new EmptyResult();
-        //        }
-
-        //        return new JsonResult(a.ActivitiesToMembers!.Map)
-        //    }
-
-        //}
 
     }
 }

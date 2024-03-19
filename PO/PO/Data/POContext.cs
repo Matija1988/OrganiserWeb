@@ -43,17 +43,22 @@ namespace PO.Data
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
             // implementacija veze 1:n
-            modelBuilder.Entity<Activity>().HasOne(a => a.ProjectID);
+            
             modelBuilder.Entity<ProofOfDelivery>().HasOne(pod => pod.ActivityID);
-           
+
+
+            modelBuilder.Entity<Activity>().HasOne(a => a.ProjectID);
+
 
             modelBuilder.Entity<Activity>().HasMany(m => m.Members)
-                .WithMany(a => a.ActivitiesToMembers)
+                .WithMany(a => a.IActivities)
                 .UsingEntity<Dictionary<string, object>>("activitiesConnector",
                 ac => ac.HasOne<Member>().WithMany().HasForeignKey("memberID"),
                 ac => ac.HasOne<Activity>().WithMany().HasForeignKey("activityID"),
                 ac => ac.ToTable("activitiesConnector")
                 );
+
+           
 
 
 
