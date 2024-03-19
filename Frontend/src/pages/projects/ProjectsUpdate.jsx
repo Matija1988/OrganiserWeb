@@ -100,7 +100,7 @@ export default function ProjectsUpdate() {
                 <Form.Group controlId="isFinished">
                     <Form.Check 
                       label = "Status"
-                      defaultValue =  {project.isFinished}
+                 
                       name ="isFinished"                   
                     
                     />

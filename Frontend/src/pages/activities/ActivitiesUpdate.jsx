@@ -4,6 +4,8 @@ import { Link,  useNavigate, useParams } from "react-router-dom";
 import ActivitiesService from "../../services/ActivitiesService";
 import { RoutesNames } from "../../constants";
 
+import moment from "moment";
+
 import './activitiesStyle.css';
 
 
@@ -86,7 +88,7 @@ export default function ActivitiesUpdate() {
                 <Form.Group  controlId="datestart">
                     <Form.Label>Date start</Form.Label>
                     <Form.Control
-                        type='text'
+                        type='date'
                         name='dateStart'
                         defaultValue={activity.datestart}
                         
@@ -97,7 +99,7 @@ export default function ActivitiesUpdate() {
                 <Form.Group  controlId="datefinished">
                     <Form.Label>Deadline</Form.Label>
                     <Form.Control
-                        type='text'
+                        type='date'
                         name='datefinished'
                         defaultValue={activity.datefinished}
                         required
@@ -108,7 +110,7 @@ export default function ActivitiesUpdate() {
                     <Form.Label>Status</Form.Label>
                     <Form.Check 
                       label = "Is finished?"
-                      defaultValue =  {activity.isFinished}
+                    //defaultValue =  {activity.isFinished}
                       name ="isFinished"                   
                     
                     />
@@ -117,7 +119,7 @@ export default function ActivitiesUpdate() {
                 <Form.Group  controlId="dateaccepted">
                     <Form.Label>Date accepted</Form.Label>
                     <Form.Control
-                        type='text'
+                        type='date'
                         name='dateaccepted'
                         defaultValue={activity.dateaccepted}
                         required

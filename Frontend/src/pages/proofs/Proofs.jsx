@@ -27,6 +27,11 @@ export default function Proofs() {
             });
     }
 
+    function FormatDateCreated(proof) {
+        return  proof.datecreated == null ? 'Not defined' :
+        moment.utc(proof.datecreated).format('DD.MM.YYYY.')
+       }
+
     useEffect(() => {
         fetchProofs();
     }, []);
@@ -64,8 +69,9 @@ export default function Proofs() {
                         <td>{proof.documentName}</td>
                         <td>{proof.member}</td>
                         <td>{proof.location}</td>
-                        <td>{proof.datecreated == null ? 'Not defined' 
-                        : moment.utc(proof.datecreated).format('DD.MM.YYYY. HH:mm')}</td>
+                        <td>
+                            {FormatDateCreated(proof)}
+                        </td>
                         <td>{proof.activity}</td>
                         <td className="alignCenter">
                             <Button className="editBtn"
