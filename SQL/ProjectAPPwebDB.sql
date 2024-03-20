@@ -29,7 +29,8 @@ id int not null primary key identity(1,1),
 firstName varchar(50) not null,
 lastName varchar(50) not null,
 userName varchar(50) not null,
-password varchar(100) not null,
+password varchar(255) not null,
+email varchar (255) not null
 isTeamLeader bit -- if true - pravo dodjeljivanja aktivnosti clanovima, promjene rokova, verifikacije 
 -- dokaznica
 );

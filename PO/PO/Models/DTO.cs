@@ -9,7 +9,7 @@ namespace PO.Models
         DateTime DateStart, DateTime DateEnd, bool IsFinished);
 
     public record MemberDTORead(int Id, string FirstName, string LastName, 
-        string Username, string Password, bool IsTeamLeader);
+        string Username, string Password, string Email, bool IsTeamLeader);
     /// <summary>
     /// 
     /// </summary>
@@ -17,9 +17,10 @@ namespace PO.Models
     /// <param name="LastName"></param>
     /// <param name="Username"></param>
     /// <param name="Password"></param>
+    /// <param name="Email"></param>
     /// <param name="IsTeamLeader"></param>
     public record MemberDTOInsertUpdate(int id, string FirstName, string LastName,
-        string Username, string Password, bool IsTeamLeader);
+        string Username, string Password, string Email, bool IsTeamLeader);
 
 
     public record ProofDTORead(int id, string? documentName, string? member, string? location, 

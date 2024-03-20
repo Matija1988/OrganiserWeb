@@ -49,6 +49,10 @@ namespace PO.Models
         /// a status that gives him authority Mem
         /// to manipulate other users and delete entries
         /// </summary>
+        /// 
+
+        [Required]
+        public string Email { get; set; }
 
         [Required]
         public bool IsTeamLeader { get; set; }

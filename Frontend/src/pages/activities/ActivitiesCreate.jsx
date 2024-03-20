@@ -4,11 +4,30 @@ import ActivitiesService from '../../services/ActivitiesService';
 import { RoutesNames } from '../../constants';
 
 import './activitiesStyle.css';
-
+import { useEffect, useState } from 'react';
+import ProjectService from '../../services/ProjectService';
+import momemnt from 'moment';
 
 export default function ActivitiesCreate() {
 
     const navigate = useNavigate();
+
+    const [project, setProject] = useState([]);
+    const [projectID, setProjectID] = useState(0);
+
+    async function fetchProject() {
+        await ProjectService.getProjects().then
+            ((response) => {
+            setProject(response.data);
+            setProjectID(response.data[0].projectID);
+        });
+    }
+
+    async function load() {
+        await fetchProject();
+    }
+
+    useEffect(()=>{load();},[]);
 
     async function addActivity(Activity) {
 
@@ -24,22 +43,60 @@ export default function ActivitiesCreate() {
     function handleSubmit(e) {
         e.preventDefault();
 
+
         const information = new FormData(e.target);
+
+        if(information.get('datestart') == '' && information.get('timestart')!='') {
+            alert('User must set date AND time values for start date and start time');
+            return;
+        } 
+        let datestart = '';
+
+        if(information.get('datestart') != '' && information.get('timestart') =='') {
+            datestart = information.get('datestart') + 'T00:00:00.000Z'; 
+        } else {
+            datestart = information.get('datestart') + 'T' + information.get('timestart') + '00.000Z';
+        }
+
+        if(information.get('datefinished') == '' && information.get('deadlinetime')!='') {
+            alert('User must set date AND time values for deadline and deadline time');
+            return;
+        } 
+        let dateend = '';
+
+        if(information.get('datefinished') != '' && information.get('deadlinetime') =='') {
+            dateend = information.get('datefinished') + 'T00:00:00.000Z'; 
+        } else {
+            dateend = information.get('datefinished') + 'T' + information.get('deadlinetime') + '00.000Z';
+        }
+        
+        let dateaccept = '';
+
+        if(information.get('dateaccepted').trim === '') {
+            dateaccept = null;
+        } else {
+            dateaccept = information.get('datefinished') + 'T00:00:00.000Z';
+        }
 
         const activity = {
             activityname: information.get('activityname'),
             description: information.get('description'),
-            datestart: information.get('datestart'),
-            datefinished: information.get('datefinished'),
+            datestart:  datestart,   
+            datefinished: dateend,
             isFinished: information.get('isFinished') == 'on' ? true : false,
-            dateaccepted: information.get('dateaccepted'),
-            project: 1
+            dateaccepted: dateaccept,
+            project: parseInt(projectID)
        
         };
+
+        console.log(activity);
 
         addActivity(activity);
 
     }
+
+
+
 
     return (
         <Container>
@@ -79,6 +136,10 @@ export default function ActivitiesCreate() {
                     />
 
                 </Form.Group>
+                <Form.Group controlId='time'> 
+                <Form.Label>Time</Form.Label>
+                <Form.Control type='time' name='timestart'/>   
+                </Form.Group>
 
                 <Form.Group  controlId='datefinished'>
                     <Form.Label>Deadline</Form.Label>
@@ -90,6 +151,12 @@ export default function ActivitiesCreate() {
                     />
 
                 </Form.Group>
+
+                <Form.Group controlId='time'> 
+                <Form.Label>Deadline time</Form.Label>
+                <Form.Control type='time' name='deadlinetime'/>   
+                </Form.Group>
+
 
                 <Form.Group  controlId="isFinished">
                     <Form.Check
@@ -105,20 +172,21 @@ export default function ActivitiesCreate() {
                         type='date'
                         name='dateaccepted'
                         placeholder='dateAccepted'
-                        required
+                        
                     />
 
                 </Form.Group>
 
+
                 <Form.Group  controlId='project'>
                     <Form.Label>Associated project</Form.Label>
-                    <Form.Control
-                        type='text'
-                        name='project'
-                        placeholder='projectID'
-                        required
-                    />
-
+                    <Form.Select
+                        onChange = {(e) => {setProjectID(e.target.value)}}
+                    >
+                    {project && project.map((e, index) =>(
+                        <option key ={index} value={e.id}>{e.projectName}</option>
+                    ))}
+                    </Form.Select>
                 </Form.Group>
 
                 <Row>

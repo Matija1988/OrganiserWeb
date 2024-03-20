@@ -47,8 +47,9 @@ export default function MembersUpdate() {
         UpdateMember({
             firstName: information.get('firstName'),
             lastName: information.get('lastName'),
-            username: information.get('userName'),
+            username: information.get('username'),
             password: information.get('password'),
+            email: information.get('email'),
             isTeamLeader: information.get('isTeamLeader') == 'on' ? true : false
         });
 
@@ -84,8 +85,8 @@ export default function MembersUpdate() {
                     <Form.Label>Username</Form.Label>
                     <Form.Control
                         type='text'
-                        name='userName'
-                        defaultValue={member.userName}
+                        name='username'
+                        defaultValue={member.username}
                         maxLength={50}
                         required
                     />
@@ -102,14 +103,24 @@ export default function MembersUpdate() {
                     />
                 </Form.Group>
 
+                <Form.Group  controlId="email">
+                    <Form.Label>Password</Form.Label>
+                    <Form.Control
+                        type='email'
+                        name='email'
+                        defaultValue={member.email}
+                        maxLength={255}
+                        required
+                    />
+                </Form.Group>
+
+
                 <Form.Group  controlId="isTeamLeader">
                     <Form.Label>Position</Form.Label>
-                    <Form.Control
-                        type='text'
+                    <Form.Check
+                        label= 'isTeamLeder'
                         name='isTeamLeader'
-                        defaultValue={member.isTeamLeader}
-                        maxLength={100}
-                        required
+                        
                     />
                 </Form.Group>
 

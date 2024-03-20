@@ -59,6 +59,7 @@ export default function Members() {
                     <th>Username</th>
                     <th>Password</th>
                     <th>Position</th>
+                    <th>Email</th>
                     <th>Actions</th>
                 </tr>
             </thead>
@@ -70,6 +71,7 @@ export default function Members() {
                         <td>{member.username}</td>
                         <td>{member.password}</td>
                         <td>{Text = MemberStatusDisplayText(member)}</td>
+                        <td>{member.email}</td>
                         <td className="alignCenter">
                             <Button className="editBtn"
                             variant="primary"

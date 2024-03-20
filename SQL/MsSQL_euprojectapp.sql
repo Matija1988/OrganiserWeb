@@ -26,7 +26,8 @@ id int not null primary key identity(1,1),
 firstName varchar(50) not null,
 lastName varchar(50) not null,
 userName varchar(50) not null,
-password varchar(100) not null,
+password varchar(255) not null,
+email varchar(255) not null,
 isTeamLeader bit -- if true - pravo dodjeljivanja aktivnosti clanovima, promjene rokova, verifikacije 
 -- dokaznica
 );
@@ -82,11 +83,11 @@ values
 ('INTER-HU-CRO-213-D-91','INTEREG-Hungary-Croatia cluster sustainability du dah'
 ,'2023-1-20 10:00:00','2023-10-20',1);
 
-insert into members (firstName, lastName, userName, password, isTeamLeader)
+insert into members (firstName, lastName, userName, password, email, isTeamLeader)
 values 
-('Chuck','Norris','N0rr1s','Sifra12345678889',1),
-('Marko','Marković','MM007','JamesBlond069',0),
-('Petar','Bočkaj','Guc2A','OsvetaKanižlićeve',0);
+('Chuck','Norris','N0rr1s','Sifra12345678889', 'matijapavkovic74@gmail.com' ,1),
+('Marko','Marković','MM007','JamesBlond069', 'matijapavkovic74@gmail.com',0),
+('Petar','Bočkaj','Guc2A','OsvetaKanižlićeve', 'matijapavkovic74@gmail.com',0);
 
 insert activities (activityName, description, dateStart, dateFinish, isFinished, dateAccepted, projectID)
 values 
@@ -138,17 +139,8 @@ values
 
 insert into activitiesConnector(activityID, memberID) 
 values 
-(1,1),
-(2,1),
-(3,1),
-(1,2),
-(2,3),
-(4,3),
-(5,1),
-(6,2), 
-(7,3), 
-(7,1), 
-(8,2); 
+(1,1), (2,1), (3,1), (1,2), (2,3), (4,3), (5,1), (6,2), (7,3), 
+(7,1), (8,2); 
 
 
 --------------SELECTS-------------	
@@ -158,8 +150,10 @@ select a.projectName, b.activityName, C.documentName, d.firstName, d.lastName
 from projects a inner join activities b on a.id = b.projectID
 inner join proofOfDeliveries c on c.activityID = b.id
 inner join members d on d.id = c.memberID
-where b.projectID is not null 
+where b.projectID is not null	
 order by 1 asc;
+
+select * from members;
 
 -------------PROCESS -------------
 

@@ -39,6 +39,7 @@ namespace PO.Extensions
             member.LastName = dto.LastName;
             member.Username = dto.Username; 
             member.Password = dto.Password;
+            member.Email = dto.Email;
             member.IsTeamLeader = dto.IsTeamLeader; 
             return member;
         }

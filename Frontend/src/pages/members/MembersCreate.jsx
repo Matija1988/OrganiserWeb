@@ -31,6 +31,7 @@ export default function MembersCreate() {
             lastName: information.get('lastName'),
             userName: information.get('userName'),
             password: information.get('password'),
+            email: information.get('email'),
             isTeamLeader: information.get('isTeamLeader') == 'on' ? true : false
         };
 
@@ -89,9 +90,21 @@ export default function MembersCreate() {
 
                 </Form.Group>
 
+                <Form.Group  controlId='email'>
+                    <Form.Label>Email</Form.Label>
+                    <Form.Control
+                        type='email'
+                        name='email'
+                        placeholder='email'
+                        maxLength={255}
+                        required
+                    />
+
+                </Form.Group>
+
                 <Form.Group  controlId="isTeamLeader">
                     <Form.Check
-                        label="Status"
+                        label="Is team leader?"
                         inline
                         name='isTeamLeader'
                     />
