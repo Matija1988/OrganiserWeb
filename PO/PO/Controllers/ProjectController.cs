@@ -238,6 +238,77 @@ namespace PO.Controllers
 
 
         }
+        [HttpGet]
+        [Route("/Projects/sort/{finished:bool}")]
+        public IActionResult ShowProjectsByStatus(bool finished)
+        {
+            if (!ModelState.IsValid || finished == null) { return BadRequest(); }
+            
+            try { 
+            var projects = _context.Projects.Where(i=> i.IsFinished == finished).ToList();
+
+            if (projects == null)
+            {
+                return new EmptyResult();
+            }
+
+            return new JsonResult(projects.MapProjectReadList());
+            } catch (Exception ex) 
+            {
+                return StatusCode(StatusCodes.Status503ServiceUnavailable, ex.Message);
+            }
+             
+        }
+
+        [HttpGet]
+        [Route("/Projects/Search/{input}")]
+
+        public IActionResult SearchProjectsByUniqueID(string input)
+        {
+            if (!ModelState.IsValid || input == null) { return BadRequest(); }
+
+            try
+            {
+                var projects = _context.Projects.Where(i => i.UniqueID.Contains(input)).ToList();
+
+                if(projects == null)
+                {
+                    return new EmptyResult();
+                }
+
+                return new JsonResult(projects.MapProjectReadList());
+            } 
+            catch (Exception ex)
+            {
+                return StatusCode(StatusCodes.Status503ServiceUnavailable, ex.Message);
+            }
+
+        }
+
+        [HttpGet]
+        [Route("/Projects/SearchByName/{input}")]
+
+        public IActionResult SearchProjectsByName(string input)
+        {
+            if (!ModelState.IsValid || input == null) { return BadRequest(); }
+
+            try
+            {
+                var projects = _context.Projects.Where(i=> i.ProjectName.Contains(input)).ToList(); 
+
+                if(projects == null)
+                {
+                    return new EmptyResult();
+                }
+
+                return new JsonResult(projects.MapProjectReadList());
+
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(StatusCodes.Status503ServiceUnavailable, ex.Message);
+            }
+        }
 
 
     }

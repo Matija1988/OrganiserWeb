@@ -13,6 +13,9 @@ export default function ActivitiesUpdate() {
 
     const [activity, setActivity] = useState({});
 
+    const [project, setProject] = useState([]);
+    const [projectID, setProjectID] = useState(0);
+
     const routeParams = useParams();
     const navigate = useNavigate();
 
@@ -26,9 +29,21 @@ export default function ActivitiesUpdate() {
             .catch((err) => alert(err.message));
     }
 
-    useEffect(() => {
-        fetchActivities();
-    }, []);
+    async function fetchProject() {
+        await ProjectService.getProjects().then
+            ((response) => {
+            setProject(response.data);
+            setProjectID(response.data[0].projectID);
+        });
+    }
+
+    async function load() {
+        await fetchActivities();
+        await fetchProject();
+    }
+
+    useEffect(()=>{load();},[]);
+
 
     async function UpdateActivity(activity) {
 
@@ -47,13 +62,46 @@ export default function ActivitiesUpdate() {
 
         const information = new FormData(e.target);
 
+        if(information.get('datestart') == '' && information.get('timestart')!='') {
+            alert('User must set date AND time values for start date and start time');
+            return;
+        } 
+        let datestarted = '';
+
+        if(information.get('datestart') != '' && information.get('timestart') =='') {
+            datestarted = information.get('datestart') + 'T00:00:00.000Z'; 
+        } else {
+            datestarted = information.get('datestart') + 'T' + information.get('timestart') + '00.000Z';
+        }
+
+        if(information.get('datefinished') == '' && information.get('deadlinetime')!='') {
+            alert('User must set date AND time values for deadline and deadline time');
+            return;
+        } 
+        let dateend = '';
+
+        if(information.get('datefinished') != '' && information.get('deadlinetime') =='') {
+            dateend = information.get('datefinished') + 'T00:00:00.000Z'; 
+        } else {
+            dateend = information.get('datefinished') + 'T' + information.get('deadlinetime') + '00.000Z';
+        }
+        
+        let dateaccept = '';
+
+        if(information.get('dateaccepted') == null || information.get('dateaccepted')=='') {
+            
+            dateaccept = null;
+        } else {
+            dateaccept = information.get('dateaccepted') + 'T00:00:00.000Z';
+        }
+
         UpdateActivity({
             activityname: information.get('activityname'),
             description: information.get('description'),
-            datestart: information.get('datestart'),
-            datefinish: information.get('datefinish'),
+            datestart: datestarted,
+            datefinish: dateend,
             isFinished: information.get('isFinished') == 'on' ? true : false,
-            dateaccepted: information.get('dateaccepted'),
+            dateaccepted: dateaccept,
             project: information.get('project')
         });
 

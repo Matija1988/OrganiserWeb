@@ -50,12 +50,12 @@ export default function ActivitiesCreate() {
             alert('User must set date AND time values for start date and start time');
             return;
         } 
-        let datestart = '';
+        let datestarted = '';
 
         if(information.get('datestart') != '' && information.get('timestart') =='') {
-            datestart = information.get('datestart') + 'T00:00:00.000Z'; 
+            datestarted = information.get('datestart') + 'T00:00:00.000Z'; 
         } else {
-            datestart = information.get('datestart') + 'T' + information.get('timestart') + '00.000Z';
+            datestarted = information.get('datestart') + 'T' + information.get('timestart') + '00.000Z';
         }
 
         if(information.get('datefinished') == '' && information.get('deadlinetime')!='') {
@@ -72,16 +72,17 @@ export default function ActivitiesCreate() {
         
         let dateaccept = '';
 
-        if(information.get('dateaccepted').trim === '') {
+        if(information.get('dateaccepted') == null || information.get('dateaccepted')=='') {
+            
             dateaccept = null;
         } else {
-            dateaccept = information.get('datefinished') + 'T00:00:00.000Z';
+            dateaccept = information.get('dateaccepted') + 'T00:00:00.000Z';
         }
 
         const activity = {
             activityname: information.get('activityname'),
             description: information.get('description'),
-            datestart:  datestart,   
+            datestart:  datestarted,   
             datefinished: dateend,
             isFinished: information.get('isFinished') == 'on' ? true : false,
             dateaccepted: dateaccept,
@@ -179,14 +180,14 @@ export default function ActivitiesCreate() {
 
 
                 <Form.Group  controlId='project'>
-                    <Form.Label>Associated project</Form.Label>
-                    <Form.Select
-                        onChange = {(e) => {setProjectID(e.target.value)}}
-                    >
-                    {project && project.map((e, index) =>(
-                        <option key ={index} value={e.id}>{e.projectName}</option>
-                    ))}
-                    </Form.Select>
+                        <Form.Label>Associated project</Form.Label>
+                        <Form.Select
+                            onChange = {(e) => {setProjectID(e.target.value)}}
+                        >
+                        {project && project.map((e, index) =>(
+                            <option key ={index} value={e.id}>{e.projectName}</option>
+                        ))}
+                        </Form.Select>
                 </Form.Group>
 
                 <Row>

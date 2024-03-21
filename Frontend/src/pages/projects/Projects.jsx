@@ -8,6 +8,7 @@ import { GrValidate } from 'react-icons/gr';
 import { FaEdit, FaTrash } from 'react-icons/fa';
 import moment from 'moment';
 import ProgressBar from "react-bootstrap/ProgressBar";
+import Form from 'react-bootstrap/Form';
 
 import "bootstrap/dist/css/bootstrap.min.css";
 
@@ -18,6 +19,7 @@ import './projectsStyle.css';
 export default function Projects() {
 
     const [projects, setProjects] = useState();
+    const [projectID, setProjectID] = useState(0);
 
     const navigate = useNavigate();
 
@@ -26,6 +28,7 @@ export default function Projects() {
         await ProjectService.getProjects()
             .then((res) => {
                 setProjects(res.data);
+                setProjectID(res.data[0].projectID);
             })
             .catch((e) => {
                 alert(e);
@@ -36,54 +39,54 @@ export default function Projects() {
         readProjects();
     }, []);
 
-   
-   function FormatDateStart(project) {
-    return  project.dateStart == null ? 'Not defined' :
-    moment.utc(project.dateStart).format('DD.MM.YYYY.')
-   }
 
-   function FormatDateEnd(project){ 
-    return  project.dateEnd == null ? 'Not defined' :
-    moment.utc(project.dateEnd).format('DD.MM.YYYY.')
-
-   }
-
-   
-   function progresLabel(project) {
-    let date1 = new Date(project.dateStart);
-    let date2 = new Date(project.dateEnd);
-    let dateNow = Date.now();
-
-    let differenceInTime =  dateNow - date1.getTime();
-
-    let differenceInDays = Math.round(differenceInTime / (1000 * 3600 * 24));
-
-    if(date2 < dateNow) {
-        differenceInDays = 100; 
-    } 
-
-    return differenceInDays;
-   }
-
-   
-
-   function progresLabelMaxValue(project) {
-
-    let date1 = new Date(project.dateStart);
-    let date2 = new Date(project.dateEnd);
-    let dateNow = Date.now();
-
-    let differenceInTime = date2.getTime() - date1.getTime();
-
-    let differenceInDays = Math.round(differenceInTime / (1000 * 3600 * 24));
-
-    if(date2 < dateNow) {
-        differenceInDays = 100; 
+    function FormatDateStart(project) {
+        return project.dateStart == null ? 'Not defined' :
+            moment.utc(project.dateStart).format('DD.MM.YYYY.')
     }
 
-    return differenceInDays;
+    function FormatDateEnd(project) {
+        return project.dateEnd == null ? 'Not defined' :
+            moment.utc(project.dateEnd).format('DD.MM.YYYY.')
 
-   }
+    }
+
+
+    function progresLabel(project) {
+        let date1 = new Date(project.dateStart);
+        let date2 = new Date(project.dateEnd);
+        let dateNow = Date.now();
+
+        let differenceInTime = dateNow - date1.getTime();
+
+        let differenceInDays = Math.round(differenceInTime / (1000 * 3600 * 24));
+
+        if (date2 < dateNow) {
+            differenceInDays = 100;
+        }
+
+        return differenceInDays;
+    }
+
+
+
+    function progresLabelMaxValue(project) {
+
+        let date1 = new Date(project.dateStart);
+        let date2 = new Date(project.dateEnd);
+        let dateNow = Date.now();
+
+        let differenceInTime = date2.getTime() - date1.getTime();
+
+        let differenceInDays = Math.round(differenceInTime / (1000 * 3600 * 24));
+
+        if (date2 < dateNow) {
+            differenceInDays = 100;
+        }
+
+        return differenceInDays;
+
+    }
 
 
     function IsFinishedDisplayColor(project) {
@@ -123,7 +126,13 @@ export default function Projects() {
                     size={25}
                 />ADD
             </Link>
-
+            <Form.Select  className = "form-select"   onChange={(e) => { setProjectID(e.target.value) }} >
+                <option>Choose project to list activities</option>
+                {projects && projects.map((e, index) => (
+                    <option key={index} value={e.id}>{e.projectName}</option>
+                ))}
+            </Form.Select>
+           
             <Table striped bordered hover responsive variant="dark" className="tableStyle">
                 <thead>
                     <tr className="projectTableHead">
@@ -143,16 +152,16 @@ export default function Projects() {
 
                                 <p>
                                     {FormatDateStart(project)}
-                                     /    
+                                    /
                                     {FormatDateEnd(project)}
 
                                 </p>
-                                <ProgressBar 
-                              //  label = {progresLabel(project)} 
-                                variant="danger" 
-                                now={progresLabel(project)} 
-                                max = {progresLabelMaxValue(project)}
-                                title="Measures days from the start date"
+                                <ProgressBar
+                                    //  label = {progresLabel(project)} 
+                                    variant="danger"
+                                    now={progresLabel(project)}
+                                    max={progresLabelMaxValue(project)}
+                                    title="Measures days from the start date"
                                 />
 
                             </td>

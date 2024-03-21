@@ -73,7 +73,7 @@ namespace PO.Models
 
         [Required]
         [ForeignKey("projectID")]
-        public Project? ProjectID { get; set; }
+        public Project? ProjectInActivity { get; set; }
 
         public List<Member>? Members { get; set; }
 

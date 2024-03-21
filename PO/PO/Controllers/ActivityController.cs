@@ -1,9 +1,12 @@
 ﻿using AutoMapper;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.ModelBinding;
+using Microsoft.CodeAnalysis;
 using Microsoft.Data.SqlClient;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.EntityFrameworkCore.Storage.Json;
 using Microsoft.Identity.Client;
+using Newtonsoft.Json;
 using PO.Data;
 using PO.Extensions;
 using PO.Mappers;
@@ -59,7 +62,7 @@ namespace PO.Controllers
 
             try
             {
-                var ActivityFromDB = _context.activities.Include(a => a.ProjectID)
+                var ActivityFromDB = _context.activities.Include(a => a.ProjectInActivity)
                     .Include(a => a.Members).ToList();
 
 
@@ -96,7 +99,7 @@ namespace PO.Controllers
 
             try
             {
-                var p = _context.activities.Include(a => a.ProjectID).Include(a => a.Members)
+                var p = _context.activities.Include(a => a.ProjectInActivity).Include(a => a.Members)
                     .FirstOrDefault(x => x.ID == id);
 
                 if (p == null)
@@ -139,7 +142,7 @@ namespace PO.Controllers
 
             var entity = dto.MapActivityInsertUpdateFromDTO(new Activity());
 
-            entity.ProjectID = project;
+            entity.ProjectInActivity = project;
             entity.Members = new List<Member>();
 
             try
@@ -176,7 +179,7 @@ namespace PO.Controllers
 
             try
             {
-                var entity = _context.activities.Include(i => i.ProjectID).Include(i => i.Members)
+                var entity = _context.activities.Include(i => i.ProjectInActivity).Include(i => i.Members)
                     .FirstOrDefault(x => x.ID == id);
 
                 if (entity == null) { return StatusCode(StatusCodes.Status204NoContent, id); }
@@ -187,7 +190,7 @@ namespace PO.Controllers
 
                 entity = dto.MapActivityInsertUpdateFromDTO(entity);
 
-                entity.ProjectID = project;
+                entity.ProjectInActivity = project;
 
                 _context.activities.Update(entity);
                 _context.SaveChanges();
@@ -381,7 +384,10 @@ namespace PO.Controllers
 
             try
             {
-                var entity = _context.activities.Where(i => i.ProjectID.ID == projectID).ToList();
+                var entity = _context.activities
+                    .Include(i => i.ProjectInActivity)
+                    .Where(i => i.ProjectInActivity.ID == projectID)
+                    .ToList();
 
 
                 if (entity == null)
@@ -397,6 +403,68 @@ namespace PO.Controllers
 
 
         }
+
+        [HttpGet]
+        [Route("/Activities/SearchByName/{input}")]
+        
+        public IActionResult SearchActivityByName(string input)
+        {
+            if (!ModelState.IsValid || input == null)
+            {
+                return BadRequest();
+            }
+
+            try
+            {
+                var activities = _context.activities.Include(i=> i.ProjectInActivity)
+                    .Where(i => i.activityName
+                    .Contains(input)).ToList();
+
+                if(activities == null)
+                {
+                    return new EmptyResult();
+                }
+
+                return new JsonResult(activities.MapActivityReadList());
+
+            } 
+            catch (Exception ex) 
+            {
+                return StatusCode(StatusCodes.Status503ServiceUnavailable, ex.Message);
+            
+            }
+
+        }
+
+        [HttpGet]
+        [Route("/Activities/SearchByStatus/{finished:bool}")]
+
+        public IActionResult SearchByStatus(bool finished)
+        {
+            if (!ModelState.IsValid)
+            {
+                return BadRequest();
+            }
+
+            try
+            {
+                var activities = _context.activities.Include(i=> i.ProjectInActivity)
+                    .Where(i=> i.IsFinished == finished).ToList();  
+
+                if(activities == null)
+                {
+                    return new EmptyResult();
+                }
+
+                return new JsonResult(activities.MapActivityReadList());
+            } 
+            catch (Exception ex) 
+            {
+                return StatusCode(StatusCodes.Status503ServiceUnavailable, ex.Message);
+            }
+
+        }
+
 
     }
 }

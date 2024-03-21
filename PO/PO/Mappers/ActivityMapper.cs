@@ -20,7 +20,7 @@ namespace PO.Mappers
                         entity.DateFinish,
                         entity.IsFinished,
                         entity.DateAccepted,
-                        entity.ProjectID == null ? "" : entity.ProjectID.ProjectName
+                        entity.ProjectInActivity == null ? "" : entity.ProjectInActivity.ProjectName
 
                         ));
                         
@@ -42,7 +42,7 @@ namespace PO.Mappers
                         entity.DateFinish,
                         entity.IsFinished,
                         entity.DateAccepted,
-                        entity.ProjectID == null ? null : entity.ProjectID.ID
+                        entity.ProjectInActivity == null ? null : entity.ProjectInActivity.ID
                         )); 
                 })
                 );
