@@ -1,7 +1,7 @@
 import { useEffect, useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import ProjectService from "../../services/ProjectService";
-import { Container, Button, Table, Badge } from "react-bootstrap";
+import { Container, Button, Table, InputGroup } from "react-bootstrap";
 import { RoutesNames } from "../../constants";
 import { IoIosAdd } from 'react-icons/io';
 import { GrValidate } from 'react-icons/gr';
@@ -9,6 +9,7 @@ import { FaEdit, FaTrash } from 'react-icons/fa';
 import moment from 'moment';
 import ProgressBar from "react-bootstrap/ProgressBar";
 import Form from 'react-bootstrap/Form';
+
 
 import "bootstrap/dist/css/bootstrap.min.css";
 
@@ -21,6 +22,7 @@ export default function Projects() {
     const [projects, setProjects] = useState();
     const [projectID, setProjectID] = useState(0);
 
+    const [search, setSearch] = useState("");
     const navigate = useNavigate();
 
     async function readProjects() {
@@ -28,7 +30,7 @@ export default function Projects() {
         await ProjectService.getProjects()
             .then((res) => {
                 setProjects(res.data);
-                setProjectID(res.data[0].projectID);
+                
             })
             .catch((e) => {
                 alert(e);
@@ -38,6 +40,7 @@ export default function Projects() {
     useEffect(() => {
         readProjects();
     }, []);
+
 
 
     function FormatDateStart(project) {
@@ -101,9 +104,6 @@ export default function Projects() {
         return 'Ongoing';
     }
 
-
-
-
     async function projectDelete(id) {
         const reply = await ProjectService.deleteProject(id);
         if (reply.ok) {
@@ -112,11 +112,6 @@ export default function Projects() {
         }
     }
 
-    const rowEvent = {
-        onClick: (row) => {
-            console.log(e, row);
-        }
-    }
 
     return (
 
@@ -126,14 +121,27 @@ export default function Projects() {
                     size={25}
                 />ADD
             </Link>
-            <Form.Select  className = "form-select"   onChange={(e) => { setProjectID(e.target.value) }} >
+           
+            
+            <Form.Select  className = "form-select"   onChange={(e) => { setProjectID(e.target.value)}} >
                 <option>Choose project to list activities</option>
                 {projects && projects.map((e, index) => (
-                    <option key={index} value={e.id}>{e.projectName}</option>
-                ))}
-            </Form.Select>
-           
-            <Table striped bordered hover responsive variant="dark" className="tableStyle">
+                    <option key={index} value={e.id}>{e.projectName}
+                    </option>
+                ))} 
+                
+            </Form.Select >
+
+            <Form>
+                    <InputGroup>
+                    <Form.Control 
+                    placeholder="Search project by name..."
+                    onChange ={(e) => setSearch(e.target.value)}
+                    className="searchLabel" />
+                    </InputGroup>
+            </Form>
+            
+            <Table striped bordered hover responsive variant="dark" className="tableStyle" >
                 <thead>
                     <tr className="projectTableHead">
                         <th>Project Name</th>
@@ -144,7 +152,9 @@ export default function Projects() {
                     </tr>
                 </thead>
                 <tbody>
-                    {projects && projects.map((project, index) => (
+                    {projects && projects.filter((projects)=>{
+                        return search.toLowerCase() === '' ? projects : projects.projectName.toLowerCase().includes(search);
+                    }).map((project, index) => ( 
                         <tr key={index}>
                             <td>{project.projectName}</td>
                             <td className="alignRight">{project.uniqueID}</td>
@@ -190,7 +200,7 @@ export default function Projects() {
                                 </Button>
                             </td>
                         </tr>
-
+                        
                     ))}
                 </tbody>
 

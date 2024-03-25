@@ -1,8 +1,11 @@
-﻿using Microsoft.AspNetCore.Mvc;
+﻿using AutoMapper.QueryableExtensions;
+using Microsoft.AspNetCore.Http.HttpResults;
+using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using PO.Data;
 using PO.Extensions;
 using PO.Models;
+using System.IO;
 
 namespace PO.Controllers
 {
@@ -50,7 +53,7 @@ namespace PO.Controllers
 
             try
             {
-                var proofOfDeliveryFromDB = _context.ProofOfDeliveries.Include(i => i.ActivityID)
+                var proofOfDeliveryFromDB = _context.ProofOfDeliveries.Include(i => i.Activity)
                     .Include(i => i.MemberID).ToList();
 
                 if(proofOfDeliveryFromDB == null || proofOfDeliveryFromDB.Count == 0)
@@ -84,7 +87,7 @@ namespace PO.Controllers
 
             try
             {
-                var pod = _context.ProofOfDeliveries.Include(i => i.ActivityID)
+                var pod = _context.ProofOfDeliveries.Include(i => i.Activity)
                     .Include (i => i.MemberID).FirstOrDefault(x=> x.ID == id);
 
                 if (pod == null)
@@ -136,7 +139,7 @@ namespace PO.Controllers
             var entity = dto.MapProofInsertUpdateFromDTO(new ProofOfDelivery());
 
             entity.MemberID = member;
-            entity.ActivityID = activity;
+            entity.Activity = activity;
 
             try
             {
@@ -177,7 +180,7 @@ namespace PO.Controllers
 
             try
             {
-                var entity = _context.ProofOfDeliveries.Include(i => i.ActivityID)
+                var entity = _context.ProofOfDeliveries.Include(i => i.Activity)
                     .Include(i => i.MemberID).FirstOrDefault(x => x.ID == id);
 
                 if(entity == null) { return StatusCode(StatusCodes.Status204NoContent, id); }
@@ -192,7 +195,7 @@ namespace PO.Controllers
 
                 entity = dto.MapProofInsertUpdateFromDTO(entity);
 
-                entity.ActivityID = activity;
+                entity.Activity = activity;
                 entity.MemberID = member;
                             
                 _context.ProofOfDeliveries.Update(entity);
@@ -267,8 +270,59 @@ namespace PO.Controllers
                 return StatusCode(StatusCodes.Status503ServiceUnavailable, ex.Message);
             }
 
+        }
+
+        [HttpPatch]
+        
+        public async Task<ActionResult> Patch (int proofID, IFormFile dataFile)
+        {
+            if (dataFile == null) return BadRequest();
+
+            try
+            {
+                var ds = Path.DirectorySeparatorChar;
+                string dir = Path.Combine(Directory.GetCurrentDirectory() 
+                    + ds + "wwwroot" + ds + "datafiles" + ds + "proofs");
+
+                if(!Directory.Exists(dir)) 
+                {
+                    Directory.CreateDirectory(dir);
+                }
+
+                var proof = _context.ProofOfDeliveries.Find(proofID);
+
+                if(proof == null) { return NotFound(); }
+
+                var activityName = _context.ProofOfDeliveries.Include(i => i.Activity)
+                    .FirstOrDefault(i => i.Activity.ID == proofID).Activity.activityName;
+
+                if (activityName == null) return NotFound();
+
+                //var projectName = _context.activities.Include(i => i.ProjectInActivity)
+                //    .FirstOrDefault(i => i.Equals(activityName)).ProjectInActivity.ProjectName;
+
+                var target = Path.Combine(dir  + ds + activityName + ds 
+                    + proof.DocumentName + Path.GetExtension(dataFile.FileName));
+
+                if (proof == null) return NotFound();
+
+                proof.Location = target;
+
+                _context.ProofOfDeliveries.Update(proof);
+                _context.SaveChanges();
 
 
+                if (proof == null) { return new EmptyResult(); }
+
+                Stream fileStream = new FileStream(target, FileMode.Create);
+                await dataFile.CopyToAsync(fileStream);
+                return new JsonResult(new { mesage = "File uploaded" });
+
+            } 
+            catch (Exception ex) 
+            {
+                return StatusCode(StatusCodes.Status503ServiceUnavailable, ex.Message);
+            }
 
         }
 

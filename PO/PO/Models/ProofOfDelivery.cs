@@ -35,6 +35,6 @@ namespace PO.Models
         public Member? MemberID { get; set; }
 
         [ForeignKey("activityID")]
-        public Activity ActivityID { get; set; }
+        public Activity Activity { get; set; }
     }
 }

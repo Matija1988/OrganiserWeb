@@ -373,7 +373,7 @@ namespace PO.Controllers
         /// <returns></returns>
 
         [HttpGet]
-        [Route("Projects/{projectID:int}")]
+        [Route("listprojectactivities/{projectID:int}")]
 
         public IActionResult ConnectActivitiesAndProjects(int projectID)
         {

@@ -1,16 +1,20 @@
 import { useEffect, useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import MembersService from "../../services/MembersService";
-import { Container, Button, Table } from "react-bootstrap";
+import { Container, Button, Table, InputGroup } from "react-bootstrap";
 import { RoutesNames } from "../../constants";
 import { IoIosAdd } from 'react-icons/io';
 import { FaEdit, FaTrash } from 'react-icons/fa';
+import Form from 'react-bootstrap/Form';
+
 import './membersStyle.css';
 
 
 export default function Members() {
 
     const [Members, setMembers] = useState();
+    const [search, setSearch] = useState("");
+
     let navigate = useNavigate();
 
     async function fetchMembers() {
@@ -51,6 +55,15 @@ export default function Members() {
             <Link to={RoutesNames.MEMBERS_CREATE} className="btn btn-success gumb" >
                 <IoIosAdd size={25} /> ADD
             </Link>
+            
+            <Form>
+                    <InputGroup>
+                    <Form.Control 
+                    placeholder="Search member by name or email..."
+                    onChange ={(e) => setSearch(e.target.value)}
+                    className="searchLabel" />
+                    </InputGroup>
+            </Form>
             <Table striped bordered hover responsive variant="dark" className="tableStyle"> 
             <thead>
                 <tr>
@@ -64,7 +77,11 @@ export default function Members() {
                 </tr>
             </thead>
             <tbody>
-                {Members && Members.map((member, index) =>(
+                {Members && Members.filter((Members)=>{
+                        return search === '' ? Members : Members.firstName.includes(search)
+                        || search === '' ? Members : Members.lastName.includes(search)
+                        || search == '' ? Members : Members.email.includes(search);
+                    }).map((member, index) =>(
                     <tr key={index}>
                         <td>{member.firstName}</td>
                         <td>{member.lastName}</td>

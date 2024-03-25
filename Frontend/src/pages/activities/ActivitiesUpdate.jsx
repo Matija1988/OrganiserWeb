@@ -102,7 +102,7 @@ export default function ActivitiesUpdate() {
             datefinish: dateend,
             isFinished: information.get('isFinished') == 'on' ? true : false,
             dateaccepted: dateaccept,
-            project: information.get('project')
+            project: parseInt(projectID)
         });
 
     }
@@ -175,16 +175,16 @@ export default function ActivitiesUpdate() {
                 </Form.Group>
 
                 
-                <Form.Group  controlId="project">
-                    <Form.Label>Associated project</Form.Label>
-                    <Form.Control
-                        type='text'
-                        name='project'
-                        defaultValue={activity.project}
-                        required
-                    />
+                <Form.Group  controlId='project'>
+                        <Form.Label>Associated project</Form.Label>
+                        <Form.Select
+                            onChange = {(e) => {setProjectID(e.target.value)}}
+                        >
+                        {project && project.map((e, index) =>(
+                            <option key ={index} value={e.id}>{e.projectName}</option>
+                        ))}
+                        </Form.Select>
                 </Form.Group>
-
                 <Row>
                     <Col>
                     <Link className="btn btn-danger gumb" to={RoutesNames.ACTIVITIES_READ}>

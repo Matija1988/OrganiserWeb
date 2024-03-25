@@ -90,7 +90,7 @@ export default function ActivitiesCreate() {
        
         };
 
-        console.log(activity);
+       
 
         addActivity(activity);
 

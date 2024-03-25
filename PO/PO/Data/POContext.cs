@@ -44,7 +44,7 @@ namespace PO.Data
         {
             // implementacija veze 1:n
             
-            modelBuilder.Entity<ProofOfDelivery>().HasOne(pod => pod.ActivityID);
+            modelBuilder.Entity<ProofOfDelivery>().HasOne(pod => pod.Activity);
 
 
             modelBuilder.Entity<Activity>().HasOne(a => a.ProjectInActivity);

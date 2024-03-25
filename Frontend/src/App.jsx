@@ -19,10 +19,14 @@ import ActivitiesCreate from './pages/activities/ActivitiesCreate';
 import ActivitiesUpdate from './pages/activities/ActivitiesUpdate';
 
 import Proofs from './pages/proofs/Proofs';
-
-import './style.css';
 import ProofsCreate from './pages/proofs/ProofsCreate';
 import ProofsUpdate from './pages/proofs/ProofsUpdate';
+
+import ListProjectActivities from './pages/sorts/ListProjectActivities';
+
+
+import './style.css';
+
 
 
 
@@ -51,7 +55,9 @@ function App() {
           <Route path ={RoutesNames.PROOFS_READ} element={<Proofs />} />
           <Route path ={RoutesNames.PROOFS_CREATE} element={<ProofsCreate />} />
           <Route path={RoutesNames.PROOFS_UPDATE} element={<ProofsUpdate />} />
-  
+
+           <Route path ={RoutesNames.LIST_PROJECT_ACTIVITIES} element = {<ListProjectActivities />} />
+   
         </>
       </Routes>
     </>

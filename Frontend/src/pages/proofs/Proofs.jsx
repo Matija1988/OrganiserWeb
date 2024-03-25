@@ -1,11 +1,13 @@
 import { useEffect, useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import ProofsService from "../../services/ProofsService";
-import { Container, Button, Table } from "react-bootstrap";
+import { Container, Button, Table, InputGroup } from "react-bootstrap";
 import { RoutesNames } from "../../constants";
 import { IoIosAdd } from 'react-icons/io';
 import { FaEdit, FaTrash } from 'react-icons/fa';
 import moment from "moment";
+import Form from 'react-bootstrap/Form';
+
 
 
 import './proofsStyle.css';
@@ -14,6 +16,9 @@ import './proofsStyle.css';
 export default function Proofs() {
 
     const [Proofs, setProofs] = useState();
+    
+    const [search, setSearch] = useState("");
+    
     let navigate = useNavigate();
 
     async function fetchProofs() {
@@ -52,6 +57,14 @@ export default function Proofs() {
             <Link to={RoutesNames.PROOFS_CREATE} className="btn btn-success gumb" >
                 <IoIosAdd size={25} /> ADD
             </Link>
+            <Form>
+                    <InputGroup>
+                    <Form.Control 
+                    placeholder="Search proofs by document name or member..."
+                    onChange ={(e) => setSearch(e.target.value)}
+                    className="searchLabel" />
+                    </InputGroup>
+            </Form>
             <Table striped bordered hover responsive variant="dark" className="tableStyle"> 
             <thead>
                 <tr>
@@ -64,7 +77,10 @@ export default function Proofs() {
                 </tr>
             </thead>
             <tbody>
-                {Proofs && Proofs.map((proof, index) =>(
+                {Proofs && Proofs.filter((Proofs)=>{
+                        return search.toLowerCase() === '' ? Proofs : Proofs.documentName.toLowerCase().includes(search)
+                        || search.toLowerCase() === '' ? Proofs : Proofs.member.toLowerCase().includes(search);
+                    }).map((proof, index) =>(
                     <tr key={index}>
                         <td>{proof.documentName}</td>
                         <td>{proof.member}</td>

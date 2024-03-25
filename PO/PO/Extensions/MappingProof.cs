@@ -21,9 +21,9 @@ namespace PO.Extensions
                 documentname = p.DocumentName;
                 location = p.Location;
                 activity = null;
-                if(p.ActivityID != null)
+                if(p.Activity != null)
                 {
-                    activity = p.ActivityID.activityName;
+                    activity = p.Activity.activityName;
                 }
                 member = null;
                 if(p.MemberID != null) 
@@ -50,9 +50,9 @@ namespace PO.Extensions
             documentname= entity.DocumentName;
             location = entity.Location;
             activity = null;
-            if (entity.ActivityID != null)
+            if (entity.Activity != null)
             {
-                activity = entity.ActivityID.activityName;
+                activity = entity.Activity.activityName;
             }
             member = null;
             if (entity.MemberID != null)
@@ -75,9 +75,9 @@ namespace PO.Extensions
             documentname = entity.DocumentName;
             location = entity.Location;
 
-            if (entity.ActivityID != null)
+            if (entity.Activity != null)
             {
-                activity = entity.ActivityID.ID;
+                activity = entity.Activity.ID;
             }
             if (entity.MemberID != null)
             {

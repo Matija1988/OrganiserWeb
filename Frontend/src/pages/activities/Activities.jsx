@@ -1,10 +1,11 @@
 import { useEffect, useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import ActivitiesService from "../../services/ActivitiesService";
-import { Container, Button, Table } from "react-bootstrap";
+import { Container, Button, Table, InputGroup } from "react-bootstrap";
 import { RoutesNames } from "../../constants";
 import { IoIosAdd } from 'react-icons/io';
 import { FaEdit, FaTrash } from 'react-icons/fa';
+import Form from 'react-bootstrap/Form';
 
 import moment from 'moment';
 import ProgressBar from "react-bootstrap/ProgressBar";
@@ -17,6 +18,8 @@ import './activitiesStyle.css';
 export default function Activities() {
 
     const [Activities, setActivities] = useState();
+    const [search, setSearch] = useState("");
+
     let navigate = useNavigate();
 
     async function fetchActivities() {
@@ -43,6 +46,7 @@ export default function Activities() {
             alert(reply.message);
         }
     }
+
     
     function FormatDateStart(activity) {
         return  activity.datestart == null ? 'Not defined' :
@@ -110,6 +114,17 @@ export default function Activities() {
             <Link to={RoutesNames.ACTIVITIES_CREATE} className="btn btn-success gumb" >
                 <IoIosAdd size={25} /> ADD
             </Link>
+            
+            <Form>
+                    <InputGroup>
+                    <Form.Control 
+                    placeholder="Search activity by name..."
+                    onChange ={(e) => setSearch(e.target.value)}
+                    className="searchLabel" />
+                    </InputGroup>
+            </Form>
+            
+
             <Table striped bordered hover responsive variant="dark" className="tableStyle"> 
             <thead>
                 <tr>
@@ -124,7 +139,9 @@ export default function Activities() {
                 </tr>
             </thead>
             <tbody>
-                {Activities && Activities.map((activity, index) =>(
+                {Activities && Activities.filter((activity)=>{
+                        return search.toLowerCase() === '' ? activity : activity.activityname.toLowerCase().includes(search);
+                    } ).map((activity, index) =>(
                     <tr key={index}>
                         <td>{activity.activityname}</td>
                         <td>{activity.description}</td>
