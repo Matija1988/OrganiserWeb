@@ -405,7 +405,7 @@ namespace PO.Controllers
         }
 
         [HttpGet]
-        [Route("/Activities/SearchByName/{input}")]
+        [Route("Activities/SearchByName/{input}")]
         
         public IActionResult SearchActivityByName(string input)
         {
@@ -437,7 +437,7 @@ namespace PO.Controllers
         }
 
         [HttpGet]
-        [Route("/Activities/SearchByStatus/{finished:bool}")]
+        [Route("Activities/SearchByStatus/{finished:bool}")]
 
         public IActionResult SearchByStatus(bool finished)
         {

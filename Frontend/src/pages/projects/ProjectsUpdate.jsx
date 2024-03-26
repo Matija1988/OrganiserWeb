@@ -116,6 +116,7 @@ export default function ProjectsUpdate() {
 
                     <Col>
                         <Button
+                        className="editBtn"
                             variant='primary'
                             type='submit'
                         > UPDATE PROJECT</Button>

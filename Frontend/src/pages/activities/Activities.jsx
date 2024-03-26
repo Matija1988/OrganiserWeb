@@ -143,48 +143,48 @@ export default function Activities() {
                         return search.toLowerCase() === '' ? activity : activity.activityname.toLowerCase().includes(search);
                     } ).map((activity, index) =>(
                     <tr key={index}>
-                        <td>{activity.activityname}</td>
-                        <td>{activity.description}</td>
-                        <td>
-                        <p>
+                            <td>{activity.activityname}</td>
+                            <td>{activity.description}</td>
+                            <td>
+                                <p>
                                     {FormatDateStart(activity)}
-                                     /    
+                                    /
                                     {FormatDateEnd(activity)}
 
                                 </p>
-                                <ProgressBar 
-                               // label = {progresLabel(activity)}
-                                
-                                variant="danger" 
-                                now={progresLabel(activity)} 
-                                max = {progresLabelMaxValue(activity)}
-                                title="Measures days from the start date"
-                                />
-</td>
-                        
-                        <td>{ActivityStatusDisplayText(activity)}</td>
-                        <td>{FormatDateAccepted(activity)}</td>
-                        <td>{activity.project}</td>
-                        <td className="alignCenter">
-                            <Button className="editBtn"
-                            variant="primary"
-                            onClick={() =>{navigate(`/activities/${activity.id}`)}}
-                            >
-                                <FaEdit 
-                                size={25}
-                                />
-                            </Button>
+                                <ProgressBar
+                                    // label = {progresLabel(activity)}
 
-                            <Button className="trashBtn"
-                            variant="danger"
-                            onClick={()=> deleteActivities(activity.id)}
-                            >
-                            <FaTrash  
-                            size = {25}
-                            />
-                            </Button>
+                                    variant="danger"
+                                    now={progresLabel(activity)}
+                                    max={progresLabelMaxValue(activity)}
+                                    title="Measures days from the start date"
+                                />
+                            </td>
 
-                        </td>
+                            <td>{ActivityStatusDisplayText(activity)}</td>
+                            <td>{FormatDateAccepted(activity)}</td>
+                            <td>{activity.project}</td>
+                            <td className="alignCenter">
+                                <Button className="editBtn"
+                                    variant="primary"
+                                    onClick={() => { navigate(`/activities/${activity.id}`) }}
+                                >
+                                    <FaEdit
+                                        size={25}
+                                    />
+                                </Button>
+
+                                <Button className="trashBtn"
+                                    variant="danger"
+                                    onClick={() => deleteActivities(activity.id)}
+                                >
+                                    <FaTrash
+                                        size={25}
+                                    />
+                                </Button>
+
+                            </td>
 
                     </tr>
                 ))}

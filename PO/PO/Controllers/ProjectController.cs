@@ -239,7 +239,7 @@ namespace PO.Controllers
 
         }
         [HttpGet]
-        [Route("/Projects/sort/{finished:bool}")]
+        [Route("Projects/sort/{finished:bool}")]
         public IActionResult ShowProjectsByStatus(bool finished)
         {
             if (!ModelState.IsValid || finished == null) { return BadRequest(); }
@@ -261,7 +261,7 @@ namespace PO.Controllers
         }
 
         [HttpGet]
-        [Route("/Projects/Search/{input}")]
+        [Route("Projects/Search/{input}")]
 
         public IActionResult SearchProjectsByUniqueID(string input)
         {
@@ -286,7 +286,7 @@ namespace PO.Controllers
         }
 
         [HttpGet]
-        [Route("/Projects/SearchByName/{input}")]
+        [Route("Projects/SearchByName/{input}")]
 
         public IActionResult SearchProjectsByName(string input)
         {

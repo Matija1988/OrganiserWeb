@@ -76,4 +76,15 @@ async function searchProjectByName(input) {
         });
 }
 
-export default { getProjects, addProject, changeProject, deleteProject, getById, searchProjectByName};
+async function listProjectActivities(id) {
+    return await httpService.get('/Activity/listprojectactivities/' + id)
+    .then((res) => {
+        if (App.DEV) console.table(res.data);
+        return res;
+    }).catch((e) => {
+        console.log(e);
+        return { message: e };
+    });
+}
+
+export default { getProjects, addProject, changeProject, deleteProject, getById, searchProjectByName, listProjectActivities};

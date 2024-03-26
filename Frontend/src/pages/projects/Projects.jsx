@@ -1,15 +1,15 @@
-import { useEffect, useState } from "react";
+import {  useEffect, useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
-import ProjectService from "../../services/ProjectService";
 import { Container, Button, Table, InputGroup } from "react-bootstrap";
-import { RoutesNames } from "../../constants";
 import { IoIosAdd } from 'react-icons/io';
-import { GrValidate } from 'react-icons/gr';
-import { FaEdit, FaTrash } from 'react-icons/fa';
-import moment from 'moment';
+import { FaEdit, FaTrash, FaWrench } from 'react-icons/fa';
 import ProgressBar from "react-bootstrap/ProgressBar";
 import Form from 'react-bootstrap/Form';
 
+import moment from 'moment';
+
+import ProjectService from "../../services/ProjectService";
+import { RoutesNames } from "../../constants";
 
 import "bootstrap/dist/css/bootstrap.min.css";
 
@@ -22,8 +22,15 @@ export default function Projects() {
     const [projects, setProjects] = useState();
     const [projectID, setProjectID] = useState(0);
 
+    
+    const [filter, setFilter] = useState();
+    
     const [search, setSearch] = useState("");
+
+
     const navigate = useNavigate();
+
+
 
     async function readProjects() {
 
@@ -122,20 +129,10 @@ export default function Projects() {
                 />ADD
             </Link>
            
-            
-            <Form.Select  className = "form-select"   onChange={(e) => { setProjectID(e.target.value)}} >
-                <option>Choose project to list activities</option>
-                {projects && projects.map((e, index) => (
-                    <option key={index} value={e.id}>{e.projectName}
-                    </option>
-                ))} 
-                
-            </Form.Select >
-
             <Form>
                     <InputGroup>
                     <Form.Control 
-                    placeholder="Search project by name..."
+                    placeholder="Search project by name or unique id..."
                     onChange ={(e) => setSearch(e.target.value)}
                     className="searchLabel" />
                     </InputGroup>
@@ -153,7 +150,8 @@ export default function Projects() {
                 </thead>
                 <tbody>
                     {projects && projects.filter((projects)=>{
-                        return search.toLowerCase() === '' ? projects : projects.projectName.toLowerCase().includes(search);
+                        return search.toLowerCase() === '' ? projects : projects.projectName.toLowerCase().includes(search)
+                        || search === '' ? projects : projects.uniqueID.includes(search);
                     }).map((project, index) => ( 
                         <tr key={index}>
                             <td>{project.projectName}</td>
@@ -175,26 +173,45 @@ export default function Projects() {
                                 />
 
                             </td>
-                            <td className="alignCenter" color={IsFinishedDisplayColor(project)}>
+                            <td className="alignCenter" 
+                            color={IsFinishedDisplayColor(project)}
+                            
+                            >
                                 {IsFinishedDisplayText(project)}
 
                             </td>
 
                             <td className="alignCenter">
+                                
+                                <Button
+                                className="workBtn"
+                                title = "Work on project"
+                                onClick = {() => {navigate(`/listprojectactivities/${project.id}`)}}
+                                >
+                                    <FaWrench 
+                                    color="green"
+                                    size={15}
+                                    
+                                    >
+                                            
+                                    </FaWrench>
+                                </Button>
                                 <Button className="editBtn"
                                     variant="primary"
+                                    label = "Edit project"
                                     onClick={() => { navigate(`/projects/${project.id}`) }}>
                                     <FaEdit
-                                        size={20}
+                                        size={15}
                                     />
                                 </Button>
 
                                 <Button className="trashBtn"
                                     variant='danger'
+                                    label = "Delete project"
                                     onClick={() => projectDelete(project.id)}
                                 >
                                     <FaTrash
-                                        size={20}
+                                        size={15}
                                     />
 
                                 </Button>

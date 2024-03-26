@@ -22,7 +22,7 @@ import Proofs from './pages/proofs/Proofs';
 import ProofsCreate from './pages/proofs/ProofsCreate';
 import ProofsUpdate from './pages/proofs/ProofsUpdate';
 
-import ListProjectActivities from './pages/sorts/ListProjectActivities';
+import ListProjectActivities from './pages/projects/ListProjectActivities';
 
 
 import './style.css';
