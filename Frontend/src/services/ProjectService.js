@@ -1,16 +1,11 @@
 import { App } from "../constants";
-import { httpService } from "./httpService";
+import { handleSuccess, httpService, processError } from "./httpService";
+
+const name = 'Project';
 
 async function getProjects() {
-
-    return await httpService.get('/Project')
-        .then((res) => {
-            if (App.DEV) console.table(res.data);
-
-            return res;
-        }).catch((e) => {
-            console.log(e);
-        });
+    return await httpService.get('/' + name)
+    .then((res) => { return handleSuccess(res);}).catch((e)=>{return processError(e);});
 
 }
 
@@ -86,5 +81,8 @@ async function listProjectActivities(id) {
         return { message: e };
     });
 }
+
+
+
 
 export default { getProjects, addProject, changeProject, deleteProject, getById, searchProjectByName, listProjectActivities};

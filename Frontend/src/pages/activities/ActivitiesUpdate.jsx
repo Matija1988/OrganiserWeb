@@ -1,8 +1,11 @@
 import { useEffect, useState } from "react";
 import { Button, Col, Container, Form, Row } from "react-bootstrap";
 import { Link,  useNavigate, useParams } from "react-router-dom";
-import ActivitiesService from "../../services/ActivitiesService";
 import { RoutesNames } from "../../constants";
+
+import ActivitiesService from "../../services/ActivitiesService";
+import ProjectService from "../../services/ProjectService";
+import { getAlertMessages } from "../../services/httpService";
 
 import moment from "moment";
 
@@ -20,21 +23,34 @@ export default function ActivitiesUpdate() {
     const navigate = useNavigate();
 
     async function fetchActivities() {
-
-        await ActivitiesService.getById(routeParams.id)
-            .then((response) => {
-                console.log(response);
-                setActivity(response.data);
-            })
-            .catch((err) => alert(err.message));
+            const response = await ActivitiesService.getById(routeParams.id);
+            if(!response.ok) {
+                alert(getAlertMessages(response.data));
+                return;
+            }
+            let activity = response.data;
+            activity.startTime = moment.utc(activity.datestart).format('HH:mm');
+            activity.startingDate = moment.utc(activity.datestart).format('yyyy-MM-DD');
+            activity.deadlineTime = moment.utc(activity.dateend).format('HH:mm');
+            activity.deadlineDate = moment.utc(activity.dateend).format('yyyy-MM-DD');
+            activity.acceptanceTime = moment.utc(activity.dateaccept).format('HH:mm');
+            activity.acceptanceDate = moment.utc(activity.dateaccept).format('yyyy-MM-DD');
+            delete activity.datestart;
+            delete activity.dateend;
+            delete activity.dateaccepted;
+            setActivity(activity);
+            setProjectID(activity.projectID);
+            
     }
 
     async function fetchProject() {
-        await ProjectService.getProjects().then
-            ((response) => {
-            setProject(response.data);
-            setProjectID(response.data[0].projectID);
-        });
+        const response = await ProjectService.getProjects();
+        if(!response.ok){
+            alert(getAlertMessages(response.data));
+            return;
+        }
+        setProject(response.data);
+        setProjectID(response.data[0].id);
     }
 
     async function load() {
@@ -51,6 +67,8 @@ export default function ActivitiesUpdate() {
 
         if (reply.ok) {
             navigate(RoutesNames.ACTIVITIES_READ);
+            return;
+            
         } else {
             alert(reply.message);
         }
@@ -62,46 +80,17 @@ export default function ActivitiesUpdate() {
 
         const information = new FormData(e.target);
 
-        if(information.get('datestart') == '' && information.get('timestart')!='') {
-            alert('User must set date AND time values for start date and start time');
-            return;
-        } 
-        let datestarted = '';
-
-        if(information.get('datestart') != '' && information.get('timestart') =='') {
-            datestarted = information.get('datestart') + 'T00:00:00.000Z'; 
-        } else {
-            datestarted = information.get('datestart') + 'T' + information.get('timestart') + '00.000Z';
-        }
-
-        if(information.get('datefinished') == '' && information.get('deadlinetime')!='') {
-            alert('User must set date AND time values for deadline and deadline time');
-            return;
-        } 
-        let dateend = '';
-
-        if(information.get('datefinished') != '' && information.get('deadlinetime') =='') {
-            dateend = information.get('datefinished') + 'T00:00:00.000Z'; 
-        } else {
-            dateend = information.get('datefinished') + 'T' + information.get('deadlinetime') + '00.000Z';
-        }
-        
-        let dateaccept = '';
-
-        if(information.get('dateaccepted') == null || information.get('dateaccepted')=='') {
-            
-            dateaccept = null;
-        } else {
-            dateaccept = information.get('dateaccepted') + 'T00:00:00.000Z';
-        }
+        const startingDate = moment.utc(information.get('dateStart') + ' ' + information.get('startTime'));
+        const deadlineDate = moment.utc(information.get('datefinished') + ' ' + information.get('deadlineTime'));
+        const acceptanceDate = moment.utc(information.get('dateaccepted') + ' ' + information.get('acceptanceTime'));
 
         UpdateActivity({
             activityname: information.get('activityname'),
             description: information.get('description'),
-            datestart: datestarted,
-            datefinish: dateend,
+            datestart: startingDate,
+            datefinish: deadlineDate,
             isFinished: information.get('isFinished') == 'on' ? true : false,
-            dateaccepted: dateaccept,
+            dateaccepted: acceptanceDate,
             project: parseInt(projectID)
         });
 
@@ -132,27 +121,53 @@ export default function ActivitiesUpdate() {
                         
                     />
                 </Form.Group>
+                <Row>
+                    <Col key='1'>
+                    <Form.Group controlId="datestart">
+                        <Form.Label>Date start</Form.Label>
+                        <Form.Control
+                            type='date'
+                            name='datestart'
+                            defaultValue={activity.startingDate}
+                            required
+                        />
+                    </Form.Group>
+                    </Col>
+                    <Col key='2'>
+                        <Form.Group>
+                            <Form.Label>Start time</Form.Label>
+                            <Form.Control
+                            type="time"
+                            name='startTime'
+                            defaultValue={activity.startTime}
+                            />
+                        </Form.Group>
+                    </Col>
+                </Row>
 
-                <Form.Group  controlId="datestart">
-                    <Form.Label>Date start</Form.Label>
-                    <Form.Control
-                        type='date'
-                        name='dateStart'
-                        defaultValue={activity.datestart}
-                        
-                        required
-                    />
-                </Form.Group>
-
-                <Form.Group  controlId="datefinished">
-                    <Form.Label>Deadline</Form.Label>
-                    <Form.Control
-                        type='date'
-                        name='datefinished'
-                        defaultValue={activity.datefinished}
-                        required
-                    />
-                </Form.Group>
+                <Row>
+                    <Col>
+                    <Form.Group controlId="datefinished">
+                        <Form.Label>Deadline</Form.Label>
+                        <Form.Control
+                            type='date'
+                            name='datefinished'
+                            defaultValue={activity.deadlineDate}
+                            required
+                        />
+                    </Form.Group>
+                    </Col>
+                    <Col>
+                    <Form.Group>
+                            <Form.Label>Deadline time</Form.Label>
+                            <Form.Control
+                            type="time"
+                            name='deadlineTime'
+                            defaultValue={activity.deadlineTime}
+                            />
+                        </Form.Group>
+                    </Col>
+                </Row>
 
                 <Form.Group  controlId="isFinished">
                     <Form.Label>Status</Form.Label>
@@ -164,17 +179,29 @@ export default function ActivitiesUpdate() {
                     />
                 </Form.Group>
 
-                <Form.Group  controlId="dateaccepted">
-                    <Form.Label>Date accepted</Form.Label>
-                    <Form.Control
-                        type='date'
-                        name='dateaccepted'
-                        defaultValue={activity.dateaccepted}
-                        required
-                    />
-                </Form.Group>
-
-                
+                <Row>
+                    <Col>
+                        <Form.Group controlId="dateaccepted">
+                            <Form.Label>Date accepted</Form.Label>
+                            <Form.Control
+                                type='date'
+                                name='dateaccepted'
+                                defaultValue={activity.acceptanceDate}
+                                
+                            />
+                        </Form.Group>
+                    </Col>
+                    <Col>
+                    <Form.Group>
+                            <Form.Label>Acceptance time</Form.Label>
+                            <Form.Control
+                            type="time"
+                            name='acceptanceTime'
+                            defaultValue={activity.acceptanceTime}
+                            />
+                        </Form.Group>
+                    </Col>
+                </Row>           
                 <Form.Group  controlId='project'>
                         <Form.Label>Associated project</Form.Label>
                         <Form.Select

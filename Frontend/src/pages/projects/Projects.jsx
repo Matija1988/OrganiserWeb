@@ -1,6 +1,6 @@
 import {  useEffect, useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
-import { Container, Button, Table, InputGroup } from "react-bootstrap";
+import { Container, Button, Table, InputGroup, Row,Col } from "react-bootstrap";
 import { IoIosAdd } from 'react-icons/io';
 import { FaEdit, FaTrash, FaWrench } from 'react-icons/fa';
 import ProgressBar from "react-bootstrap/ProgressBar";
@@ -20,8 +20,6 @@ import './projectsStyle.css';
 export default function Projects() {
 
     const [projects, setProjects] = useState();
-    const [projectID, setProjectID] = useState(0);
-
     
     const [filter, setFilter] = useState();
     
@@ -33,15 +31,12 @@ export default function Projects() {
 
 
     async function readProjects() {
-
-        await ProjectService.getProjects()
-            .then((res) => {
-                setProjects(res.data);
-                
-            })
-            .catch((e) => {
-                alert(e);
-            });
+        const response = await ProjectService.getProjects();
+        if(!response.ok){
+            alert(getAlertMessages(response.data));
+            return;
+        }
+        setProjects(response.data);
     }
 
     useEffect(() => {
@@ -119,7 +114,6 @@ export default function Projects() {
         }
     }
 
-
     return (
 
         <Container className="mt-4">
@@ -130,12 +124,16 @@ export default function Projects() {
             </Link>
            
             <Form>
+                <Row>
+                    <Col>
                     <InputGroup>
-                    <Form.Control 
-                    placeholder="Search project by name or unique id..."
-                    onChange ={(e) => setSearch(e.target.value)}
-                    className="searchLabel" />
+                        <Form.Control
+                            placeholder="Search project by name or unique id..."
+                            onChange={(e) => setSearch(e.target.value)}
+                            className="searchLabel" />
                     </InputGroup>
+                    </Col>
+                </Row>
             </Form>
             
             <Table striped bordered hover responsive variant="dark" className="tableStyle" >
@@ -184,18 +182,18 @@ export default function Projects() {
                             <td className="alignCenter">
                                 
                                 <Button
-                                className="workBtn"
-                                title = "Work on project"
-                                onClick = {() => {navigate(`/listprojectactivities/${project.id}`)}}
+                                    variant='outline-success'
+                                    className="workBtn"
+                                    title="Work on project"
+                                    onClick={() => { navigate(`/listprojectactivities/${project.id}`) }}
                                 >
-                                    <FaWrench 
-                                    color="green"
-                                    size={15}
-                                    
+                                    <FaWrench
+                                        color="green"
+                                        size={15}
                                     >
-                                            
                                     </FaWrench>
                                 </Button>
+
                                 <Button className="editBtn"
                                     variant="primary"
                                     label = "Edit project"

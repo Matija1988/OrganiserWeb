@@ -18,15 +18,13 @@ export default function Members() {
     let navigate = useNavigate();
 
     async function fetchMembers() {
-
-        await MembersService.getMembers()
-            .then((res) => {
-                setMembers(res.data)
-            })
-            .catch((e) => {
-                alert(e);
-            });
-    }
+        const response = await MembersService.getMembers();
+        if(!response.ok){
+            alert(getAlertMessages(response.data));
+            return;
+        }
+        setMembers(response.data);
+     }
 
     useEffect(() => {
         fetchMembers();
@@ -80,7 +78,7 @@ export default function Members() {
                 {Members && Members.filter((Members)=>{
                         return search === '' ? Members : Members.firstName.includes(search)
                         || search === '' ? Members : Members.lastName.includes(search)
-                        || search == '' ? Members : Members.email.includes(search);
+                        || search === '' ? Members : Members.email.includes(search);
                     }).map((member, index) =>(
                     <tr key={index}>
                         <td>{member.firstName}</td>

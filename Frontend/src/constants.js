@@ -11,6 +11,7 @@ export const RoutesNames = {
     ACTIVITIES_READ : '/activities',
     ACTIVITIES_CREATE : '/activities/create',
     ACTIVITIES_UPDATE: '/activities/:id',
+    ACTIVITIES_MEMBERS_MENU: 'activitiesmembersmenu/:id',
 
     PROOFS_READ: '/proofs',
     PROOFS_CREATE: '/proofs/create',
@@ -18,8 +19,11 @@ export const RoutesNames = {
 
     LIST_PROJECT_ACTIVITIES: '/listprojectactivities/:id'
 
+
+
 };
 
 export const App = {
+    URL: 'https://matijapavkovic-001-site1.itempurl.com',
     DEV : true
 };

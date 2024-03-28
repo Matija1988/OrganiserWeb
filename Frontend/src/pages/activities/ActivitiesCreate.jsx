@@ -1,12 +1,14 @@
 import { Button, Col, Container, Form, Row } from 'react-bootstrap';
 import { Link, useNavigate } from "react-router-dom";
-import ActivitiesService from '../../services/ActivitiesService';
 import { RoutesNames } from '../../constants';
+import { useEffect, useState } from 'react';
+import moment from 'moment';
+
+import ProjectService from '../../services/ProjectService';
+import ActivitiesService from '../../services/ActivitiesService';
+import { getAlertMessages } from '../../services/httpService';
 
 import './activitiesStyle.css';
-import { useEffect, useState } from 'react';
-import ProjectService from '../../services/ProjectService';
-import momemnt from 'moment';
 
 export default function ActivitiesCreate() {
 
@@ -16,11 +18,13 @@ export default function ActivitiesCreate() {
     const [projectID, setProjectID] = useState(0);
 
     async function fetchProject() {
-        await ProjectService.getProjects().then
-            ((response) => {
-            setProject(response.data);
-            setProjectID(response.data[0].projectID);
-        });
+        const response = await ProjectService.getProjects();
+        if(!response.ok){
+            alert(getAlertMessages(response.data));
+            return;
+        }
+        setProject(response.data);
+        setProjectID(response.data[0].id);
     }
 
     async function load() {
@@ -29,15 +33,13 @@ export default function ActivitiesCreate() {
 
     useEffect(()=>{load();},[]);
 
-    async function addActivity(Activity) {
-
-        const reply = await ActivitiesService.createActivity(Activity);
-        if (reply.ok) {
+    async function addActivity(e) {
+        const response = await ActivitiesService.create(e);
+        if(response.ok) {
             navigate(RoutesNames.ACTIVITIES_READ);
-        } else {
-            alert(reply.message.errors);
+            return;
         }
-
+        alert(getAlertMessages(response.data));
     }
 
     function handleSubmit(e) {
@@ -79,7 +81,7 @@ export default function ActivitiesCreate() {
             dateaccept = information.get('dateaccepted') + 'T00:00:00.000Z';
         }
 
-        const activity = {
+        addActivity({
             activityname: information.get('activityname'),
             description: information.get('description'),
             datestart:  datestarted,   
@@ -88,11 +90,7 @@ export default function ActivitiesCreate() {
             dateaccepted: dateaccept,
             project: parseInt(projectID)
        
-        };
-
-       
-
-        addActivity(activity);
+        });
 
     }
 
@@ -125,40 +123,45 @@ export default function ActivitiesCreate() {
                     />
 
                 </Form.Group>
+                <Row>
+                    <Col>
+                        <Form.Group controlId='datestart'>
+                            <Form.Label>Date start</Form.Label>
+                            <Form.Control
+                                type='date'
+                                name='datestart'
+                                placeholder='dateStart'
+                                required
+                            />
+                        </Form.Group>
+                    </Col>
+                    <Col>
+                        <Form.Group controlId='time'>
+                            <Form.Label>Time</Form.Label>
+                            <Form.Control type='time' name='timestart' />
+                        </Form.Group>
+                    </Col>
+                </Row>
 
-                <Form.Group  controlId='datestart'>
-                    <Form.Label>Date start</Form.Label>
-                    <Form.Control
-                        type='date'
-                        name='datestart'
-                        placeholder='dateStart'
-                        
-                        required
-                    />
-
-                </Form.Group>
-                <Form.Group controlId='time'> 
-                <Form.Label>Time</Form.Label>
-                <Form.Control type='time' name='timestart'/>   
-                </Form.Group>
-
-                <Form.Group  controlId='datefinished'>
-                    <Form.Label>Deadline</Form.Label>
-                    <Form.Control
-                        type='date'
-                        name='datefinished'
-                        placeholder='dateFinish'
-                        required
-                    />
-
-                </Form.Group>
-
-                <Form.Group controlId='time'> 
-                <Form.Label>Deadline time</Form.Label>
-                <Form.Control type='time' name='deadlinetime'/>   
-                </Form.Group>
-
-
+                <Row>
+                    <Col>
+                        <Form.Group controlId='datefinished'>
+                            <Form.Label>Deadline</Form.Label>
+                            <Form.Control
+                                type='date'
+                                name='datefinished'
+                                placeholder='dateFinish'
+                                required
+                            />
+                        </Form.Group>
+                    </Col>
+                    <Col>
+                        <Form.Group controlId='time'>
+                            <Form.Label>Deadline time</Form.Label>
+                            <Form.Control type='time' name='deadlinetime' />
+                        </Form.Group>
+                    </Col>
+                </Row>
                 <Form.Group  controlId="isFinished">
                     <Form.Check
                         label="Status"

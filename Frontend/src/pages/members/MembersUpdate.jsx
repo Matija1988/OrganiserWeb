@@ -5,6 +5,7 @@ import MembersService from "../../services/MembersService";
 import { RoutesNames } from "../../constants";
 
 import './membersStyle.css';
+import { getAlertMessages } from "../../services/httpService";
 
 export default function MembersUpdate() {
 
@@ -15,12 +16,12 @@ export default function MembersUpdate() {
 
     async function fetchMember() {
 
-        await MembersService.getById(routeParams.id)
-            .then((response) => {
-                console.log(response);
-                setMember(response.data);
-            })
-            .catch((err) => alert(err.message));
+        const response = await MembersService.getById(routeParams.id);
+            if(!response.ok) {
+                alert(getAlertMessages(response.data));
+                return;
+            }
+            setMember(response.data);
     }
 
     useEffect(() => {
@@ -29,12 +30,13 @@ export default function MembersUpdate() {
 
     async function UpdateMember(member) {
 
-        const reply = await MembersService.updateMember(routeParams.id, member);
+        const response = await MembersService.updateMember(routeParams.id, member);
 
-        if (reply.ok) {
+        if (response.ok) {
             navigate(RoutesNames.MEMBERS_READ);
+            return;
         } else {
-            alert(reply.message);
+            alert(response.message);
         }
     }
 

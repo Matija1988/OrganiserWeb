@@ -12,6 +12,7 @@ import ProgressBar from "react-bootstrap/ProgressBar";
 
 
 import './activitiesStyle.css';
+import { getAlertMessages } from "../../services/httpService";
 
 
 
@@ -23,14 +24,12 @@ export default function Activities() {
     let navigate = useNavigate();
 
     async function fetchActivities() {
-
-        await ActivitiesService.getActivities()
-            .then((res) => {
-                setActivities(res.data)
-            })
-            .catch((e) => {
-                alert(e);
-            });
+        const response = await ActivitiesService.get();
+        if(!response.ok){
+            alert(getAlertMessages(response.data));
+            return;
+        }
+        setActivities(response.data);
     }
 
     useEffect(() => {
@@ -38,13 +37,11 @@ export default function Activities() {
     }, []);
 
     async function deleteActivities(id) {
-        const reply = await ActivitiesService.deleteActivities(id)
-
+        const reply = await ActivitiesService.deleteActivities(id);
+        alert(getAlertMessages(reply.data));
         if (reply.ok) {
             fetchActivities();
-        } else {
-            alert(reply.message);
-        }
+        } 
     }
 
     

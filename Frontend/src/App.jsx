@@ -23,6 +23,7 @@ import ProofsCreate from './pages/proofs/ProofsCreate';
 import ProofsUpdate from './pages/proofs/ProofsUpdate';
 
 import ListProjectActivities from './pages/projects/ListProjectActivities';
+import ActivitiesMembersMenu from './pages/activities/ActivitiesMembersMenu';
 
 
 import './style.css';
@@ -49,14 +50,15 @@ function App() {
           <Route path={RoutesNames.MEMBERS_UPDATE} element={<MembersUpdate />} />
 
           <Route path={RoutesNames.ACTIVITIES_READ} element={<Activities />} />
-           <Route path={RoutesNames.ACTIVITIES_CREATE} element={<ActivitiesCreate />} />
+          <Route path={RoutesNames.ACTIVITIES_CREATE} element={<ActivitiesCreate />} />
           <Route path={RoutesNames.ACTIVITIES_UPDATE} element={<ActivitiesUpdate />} /> 
 
           <Route path ={RoutesNames.PROOFS_READ} element={<Proofs />} />
           <Route path ={RoutesNames.PROOFS_CREATE} element={<ProofsCreate />} />
           <Route path={RoutesNames.PROOFS_UPDATE} element={<ProofsUpdate />} />
 
-           <Route path ={RoutesNames.LIST_PROJECT_ACTIVITIES} element = {<ListProjectActivities />} />
+          <Route path ={RoutesNames.LIST_PROJECT_ACTIVITIES} element = {<ListProjectActivities />} />
+          <Route path ={RoutesNames.ACTIVITIES_MEMBERS_MENU} element ={<ActivitiesMembersMenu />} />
    
         </>
       </Routes>
