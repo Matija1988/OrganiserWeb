@@ -9,55 +9,24 @@ async function getProjects() {
 
 }
 
-async function addProject(project) {
-
-    const reply = await httpService.post('/Project', project)
-        .then(() => {
-            return { ok: true, message: 'Project added' }
-        })
-        .catch((e) => {
-            //console.log(e.response.data.errors);
-            return { ok: false, message: e.res }
-        });
-    return reply;
+async function addProject(entity) {
+    return await httpService.post('/'+ name, entity)
+    .then((res)=>{return handleSuccess(res);}).catch((e)=>{return processError(e);});
 }
 
-async function changeProject(id, project) {
-
-    const reply = await httpService.put('/Project/' + id, project)
-        .then(() => {
-            return { ok: true, message: 'Project changed' }
-        })
-        .catch((e) => {
-            console.log(e.responese.data.errors);
-            return { ok: false, message: 'Task failed successfully' }
-        });
-    return reply;
-
+async function changeProject(id, entity) {
+    return await httpService.put('/'+ name +'/' + id, entity)
+    .then((res)=> {return handleSuccess(res);}).catch((e)=>{return processError(e);});
 }
 
 async function deleteProject(id) {
-
-    return await httpService.delete('/Project/' + id)
-        .then((res) => {
-            return { ok: true, message: res };
-        }).catch((e) => {
-            console.log(e);
-        });
+    return await httpService.delete('/' + name + '/' + id)
+    .then((res) => { return handleSuccess(res);}).catch((e)=>{return processError(e);});
 }
 
 async function getById(id) {
-
-    return await httpService.get('/Project/' + id)
-        .then((res) => {
-            if (App.DEV) console.table(res.data);
-
-            return res;
-
-        }).catch((e) => {
-            console.log(e);
-            return { message: e };
-        });
+    return await httpService.get('/' + name + '/' + id)
+    .then((res)=>{return handleSuccess(res);}).catch((e)=>{return processError(e);});
 }
 
 async function searchProjectByName(input) {

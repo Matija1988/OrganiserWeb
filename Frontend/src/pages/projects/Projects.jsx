@@ -14,6 +14,7 @@ import { RoutesNames } from "../../constants";
 import "bootstrap/dist/css/bootstrap.min.css";
 
 import './projectsStyle.css';
+import { getAlertMessages } from "../../services/httpService";
 
 
 
@@ -107,10 +108,12 @@ export default function Projects() {
     }
 
     async function projectDelete(id) {
-        const reply = await ProjectService.deleteProject(id);
-        if (reply.ok) {
-            console.log(reply.message.data.response);
+        const response = await ProjectService.deleteProject(id);
+        
+        if(response.ok) {
             readProjects();
+        } else {
+            alert(getAlertMessages(response.data));
         }
     }
 

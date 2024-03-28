@@ -17,12 +17,11 @@ export default function ProjectsCreate() {
 
     async function createProject(project) {
 
-        const reply = await ProjectService.addProject(project)
-        if(reply.ok) {
+        const response = await ProjectService.addProject(project);
+        if (response.ok) {
             navigate(RoutesNames.PROJECTS_READ);
         } else {
-            console.log(reply);
-            alert(reply.message);
+            alert(getAlertMessages (response.data));
         }
     }
 

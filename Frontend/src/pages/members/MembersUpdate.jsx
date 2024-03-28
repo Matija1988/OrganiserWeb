@@ -31,13 +31,11 @@ export default function MembersUpdate() {
     async function UpdateMember(member) {
 
         const response = await MembersService.updateMember(routeParams.id, member);
-
         if (response.ok) {
             navigate(RoutesNames.MEMBERS_READ);
             return;
-        } else {
-            alert(response.message);
-        }
+        } 
+        alert(getAlertMessages(response.data));
     }
 
     function handleSubmit(e) {

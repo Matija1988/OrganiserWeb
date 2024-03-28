@@ -4,6 +4,7 @@ import MembersService from '../../services/MembersService';
 import { RoutesNames } from '../../constants';
 
 import './membersStyle.css';
+import { getAlertMessages } from '../../services/httpService';
 
 
 export default function MembersCreate() {
@@ -12,11 +13,11 @@ export default function MembersCreate() {
 
     async function addMember(Member) {
 
-        const reply = await MembersService.createMember(Member);
-        if (reply.ok) {
+        const response = await MembersService.createMember(Member);
+        if (response.ok) {
             navigate(RoutesNames.MEMBERS_READ);
         } else {
-            alert(reply.message.errors);
+            alert(getAlertMessages (response.data));
         }
 
     }

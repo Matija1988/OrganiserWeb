@@ -13,13 +13,12 @@ export default function ProofsCreate() {
 
     async function addProof(Proof) {
 
-        const reply = await ProofsService.createProof(Proof);
-        if (reply.ok) {
+        const response = await ProofsService.createProof(Proof);
+        if (response.ok) {
             navigate(RoutesNames.PROOFS_READ);
         } else {
-            alert(reply.message.errors);
+            alert(getAlertMessages (response.data));
         }
-
     }
 
     function handleSubmit(e) {

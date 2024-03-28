@@ -22,15 +22,12 @@ export default function Proofs() {
     let navigate = useNavigate();
 
     async function fetchProofs() {
-
-        await ProofsService.getProofs()
-            .then((res) => {
-                setProofs(res.data)
-            })
-            .catch((e) => {
-                alert(e);
-            });
-    }
+        const response = await ProofsService.getProofs();
+        if(!response.ok){
+            alert(getAlertMessages(response.data));
+            return;
+        }
+        setProofs(response.data);    }
 
     function FormatDateCreated(proof) {
         return  proof.datecreated == null ? 'Not defined' :
@@ -42,13 +39,14 @@ export default function Proofs() {
     }, []);
 
     async function deleteProofs(id) {
-        const reply = await ProofsService.deleteProof(id)
-
-        if (reply.ok) {
+        const response = await ProofsService.deleteProof(id);
+        
+        if(response.ok) {
             fetchProofs();
         } else {
-            alert(reply.message);
+            alert(getAlertMessages(response.data));
         }
+
     }
 
     return (

@@ -14,13 +14,12 @@ export default function ProofUpdate() {
     const navigate = useNavigate();
 
     async function fetchProof() {
-
-        await ProofsService.getById(routeParams.id)
-            .then((response) => {
-                console.log(response);
-                setProof(response.data);
-            })
-            .catch((err) => alert(err.message));
+        const response = await ProofsService.getById(routeParams.id);
+        if(!response.ok){
+            alert(getAlertMessages(response.data));
+            return;
+        }
+        setProof(response.data);
     }
 
     useEffect(() => {
@@ -28,14 +27,12 @@ export default function ProofUpdate() {
     }, []);
 
     async function changeProof(proof) {
-
-        const reply = await ProofsService.updateProof(routeParams.id, proof);
-
-        if (reply.ok) {
+        const response = await ProofsService.updateProof(routeParams.id, proof);
+        if (response.ok) {
             navigate(RoutesNames.PROOFS_READ);
-        } else {
-            alert(reply.message);
-        }
+            return;
+        } 
+        alert(getAlertMessages(response.data));
     }
 
     function handleSubmit(e) {
