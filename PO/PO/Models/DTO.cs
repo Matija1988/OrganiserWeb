@@ -1,12 +1,22 @@
 ﻿using PO.Models;
+using System.ComponentModel.DataAnnotations;
 
 namespace PO.Models
 {
     public record ProjectDTORead(int Id, string UniqueID, string ProjectName, 
         DateTime DateStart, DateTime DateEnd, bool IsFinished);
 
-    public record ProjectDTOInsertUpdate(string UniqueID, string ProjectName,
-        DateTime DateStart, DateTime DateEnd, bool IsFinished);
+    public record ProjectDTOInsertUpdate(
+        [Required(ErrorMessage = "Mandatory input")]
+        string UniqueID,
+        [Required(ErrorMessage = "Mandatory input")]
+        string ProjectName,
+        [Required(ErrorMessage = "Mandatory input")]
+        DateTime DateStart,
+        [Required(ErrorMessage = "Mandatory input")]
+        DateTime DateEnd,
+        [Required(ErrorMessage = "Mandatory input")]
+        bool IsFinished);
 
     public record MemberDTORead(int Id, string FirstName, string LastName, 
         string Username, string Password, string Email, bool IsTeamLeader);
