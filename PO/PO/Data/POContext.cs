@@ -43,8 +43,9 @@ namespace PO.Data
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
             // implementacija veze 1:n
-            
+
             modelBuilder.Entity<ProofOfDelivery>().HasOne(pod => pod.Activity);
+            modelBuilder.Entity<ProofOfDelivery>().HasOne(pod => pod.Member);
 
 
             modelBuilder.Entity<Activity>().HasOne(a => a.ProjectInActivity);

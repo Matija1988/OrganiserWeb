@@ -35,7 +35,7 @@ namespace PO.Extensions
 
         public static Member MapSmjerInsertUpdateFromDTO(this MemberDTOInsertUpdate dto, Member member)
         {
-           member.FirstName = dto.FirstName;
+            member.FirstName = dto.FirstName;
             member.LastName = dto.LastName;
             member.Username = dto.Username; 
             member.Password = dto.Password;

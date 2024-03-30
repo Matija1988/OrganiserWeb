@@ -10,29 +10,9 @@ namespace PO.Extensions
             var mapper = ProofMapper.ProofInitializeReadToDTO();
             var entityList = new List<ProofDTORead>();
 
-            int id;
-            string activity;
-            string? documentname, location, member;
-            DateTime? datecreated = DateTime.Now;
-
             proofs.ForEach(p =>
             {
-                id = p.ID; 
-                documentname = p.DocumentName;
-                location = p.Location;
-                activity = null;
-                if(p.Activity != null)
-                {
-                    activity = p.Activity.activityName;
-                }
-                member = null;
-                if(p.MemberID != null) 
-                { 
-                member = p.MemberID.FirstName + " " + p.MemberID.LastName;
-                }
-                datecreated = p.DateCreated;
-
-                entityList.Add(new ProofDTORead(id, documentname, member, location, datecreated, activity));
+                entityList.Add(mapper.Map<ProofDTORead>(p));
 
             });
 
@@ -41,50 +21,14 @@ namespace PO.Extensions
 
         public static ProofDTORead MapProofReadToDTO(this ProofOfDelivery entity)
         {
-            int id;
-            string activity;
-            string? documentname, location, member;
-            DateTime? datecreated = DateTime.Now;
-
-            id = entity.ID;
-            documentname= entity.DocumentName;
-            location = entity.Location;
-            activity = null;
-            if (entity.Activity != null)
-            {
-                activity = entity.Activity.activityName;
-            }
-            member = null;
-            if (entity.MemberID != null)
-            {
-                member = entity.MemberID.FirstName + " " + entity.MemberID.LastName;
-            }
-            datecreated = entity.DateCreated;
-
-
-            return new ProofDTORead(id, documentname, member, location, datecreated, activity);
+            var mapper = ProofMapper.ProofInitializeReadToDTO();
+            return mapper.Map<ProofDTORead>(entity);
         }
 
         public static ProofDTOInsertUpdate MapProofInsertUpdateToDTO(this ProofOfDelivery entity)
         {
-            int member = 0;
-            int activity = 0;
-            string? documentname, location;
-            DateTime? datecreated = DateTime.Now;
-
-            documentname = entity.DocumentName;
-            location = entity.Location;
-
-            if (entity.Activity != null)
-            {
-                activity = entity.Activity.ID;
-            }
-            if (entity.MemberID != null)
-            {
-                member = entity.MemberID.ID;
-            }
-            datecreated = entity.DateCreated;
-            return new ProofDTOInsertUpdate(documentname, member, location, datecreated, activity);
+            var mapper = ProofMapper.ProofInsertUpdateToDTO();
+            return mapper.Map<ProofDTOInsertUpdate>(entity);
         }
 
         public static ProofOfDelivery MapProofInsertUpdateFromDTO(this ProofDTOInsertUpdate dto, ProofOfDelivery entity)

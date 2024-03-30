@@ -8,11 +8,20 @@ namespace PO.Mappers
         public static Mapper MembersMapperReadToDTO()
         {
             return new Mapper(
-                new MapperConfiguration( c=>
+                new MapperConfiguration(c =>
                 {
-                    c.CreateMap<Member, MemberDTORead>();
-                })
-                );
+                    c.CreateMap<Member, MemberDTORead>()
+                    .ConstructUsing(entity =>
+                    new MemberDTORead(
+                        entity.ID,
+                        entity.FirstName,
+                        entity.LastName,
+                        entity.Username,
+                        entity.Password,
+                        entity.Email,
+                        entity.IsTeamLeader
+                        ));
+                }));
         }
 
         public static Mapper MembersReadFromDTO()
@@ -33,17 +42,6 @@ namespace PO.Mappers
                 }));
         }
 
-        public static Mapper MemberInsertUpdateFromDTO()
-        {
-            return new Mapper(
-                new MapperConfiguration(c =>
-                {
-                    c.CreateMap<MemberDTOInsertUpdate, Member>();
-                }
-                ));
-        }
-
-
-
+        
     }
 }

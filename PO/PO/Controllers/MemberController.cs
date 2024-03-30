@@ -22,6 +22,18 @@ namespace PO.Controllers
             DbSet = _context.members;
         }
 
+        protected override List<MemberDTORead> ReadAll()
+        {
+            var entityList = _context.members.ToList();
+
+            if(entityList == null || entityList.Count == 0)
+            {
+                throw new Exception("No data in database!");
+            }
+
+            return entityList.MapMemberReadList(); 
+        }
+
         protected override void ControlDelete(Member entity)
         {
             var entityFromDB = _context.members.Include(x => x.IActivities).FirstOrDefault(x => x.ID == entity.ID);
@@ -45,4 +57,3 @@ namespace PO.Controllers
         }
     }
 }
-s

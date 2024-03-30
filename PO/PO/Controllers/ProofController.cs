@@ -6,6 +6,7 @@ using PO.Data;
 using PO.Extensions;
 using PO.Models;
 using System.IO;
+using System.Text;
 
 namespace PO.Controllers
 {
@@ -18,311 +19,98 @@ namespace PO.Controllers
     /// </summary>
     [ApiController]
     [Route("api/v1/[controller]")]
-    public class ProofController : ControllerBase 
+    public class ProofController : POController<ProofOfDelivery, ProofDTORead, ProofDTOInsertUpdate>
     {
-        /// <summary>
-        /// Kontekst za rad s bazom 
-        /// Context for DB
-        /// </summary>
-        private readonly POContext _context;
+        public ProofController(POContext context) : base(context) => DbSet = _context.ProofOfDeliveries;
 
-        /// <summary>
-        /// Konstruktor klase koja prima PO kontekst pomocu ubrizgavanja ovisnosti
-        /// Constructor that receives PO context via dependency injection
-        /// </summary>
-        /// <param name="context"></param>
-
-        public ProofController(POContext context)
+        protected override ProofOfDelivery UpdateEntity(ProofDTOInsertUpdate entityDTO, ProofOfDelivery entityFromDB)
         {
-            _context = context;
-        }
-
-        /// <summary>
-        /// Dohvaca sve dokaznice iz baze / fetches all proofs from DB
-        /// </summary>
-        /// <returns></returns>
-        /// <response> code="200">Sve ok, ako nema podataka content-lenght:0</response>
-        /// <response> code="400">Zahtjev nije valjan</response>
-        /// <response> code="503">Baza na koju se spajam nije dostupna</response>
-
-        [HttpGet]
-
-        public IActionResult Get()
-        {
-            if(!ModelState.IsValid) { return BadRequest(ModelState); }
-
-            try
-            {
-                var proofOfDeliveryFromDB = _context.ProofOfDeliveries.Include(i => i.Activity)
-                    .Include(i => i.MemberID).ToList();
-
-                if(proofOfDeliveryFromDB == null || proofOfDeliveryFromDB.Count == 0)
-                {
-                    return new EmptyResult();
-                }
-                return new JsonResult(proofOfDeliveryFromDB.MapProofReadList());
-            } 
-            catch (Exception ex) 
-            { 
-            return StatusCode(StatusCodes.Status503ServiceUnavailable, ex.Message);
-            }
-
-        }
-
-        /// <summary>
-        /// Dohvaca dokaznicu sa odgovarajucom vrijednosti ID
-        /// Fetches proof of delivery with correspoding ID from the DB
-        /// </summary>
-        /// <returns></returns>
-        /// <response> code="200">Sve ok, ako nema podataka content-lenght:0</response>
-        /// <response> code="400">Zahtjev nije valjan</response>
-        /// <response> code="503">Baza na koju se spajam nije dostupna</response>
-
-        [HttpGet]
-        [Route("{id:int}")]
-
-        public IActionResult Get(int id)
-        {
-            if (!ModelState.IsValid) { return BadRequest(ModelState); }
-
-            try
-            {
-                var pod = _context.ProofOfDeliveries.Include(i => i.Activity)
-                    .Include (i => i.MemberID).FirstOrDefault(x=> x.ID == id);
-
-                if (pod == null)
-                {
-                    return new EmptyResult();
-                }
-                return new JsonResult(pod.MapProofInsertUpdateToDTO());
-            }
-            catch (Exception ex)
-            {
-                return StatusCode(StatusCodes.Status503ServiceUnavailable,
-                    ex.Message);
-            }
-
-        }
-
-        /// <summary>
-        /// Dodaje novu dokaznicu u bazu
-        /// Adds new proof into DB
-        /// </summary>
-        /// <param name="proofOfDelivery"></param>
-        /// <returns></returns>
-        /// <response> code="200">Sve ok, ako nema podataka content-lenght:0</response>
-        /// <response> code="400">Zahtjev nije valjan</response>
-        /// <response> code="503">Baza na koju se spajam nije dostupna</response>
-
-
-        [HttpPost]
-
-        public IActionResult Post(ProofDTOInsertUpdate dto) 
-        { 
-        
-            if(!ModelState.IsValid || dto == null) { return BadRequest(); }
-
-            var member = _context.members.Find(dto.member);
-
+            var member = _context.members.Find(entityDTO.member);
             if (member == null)
             {
-                return BadRequest();
+                throw new Exception("No entity with id " + entityDTO.member + " in database");
             }
 
-            var activity = _context.activities.Find(dto.activity);
+            var activity = _context.activities.Find(entityDTO.activity);
 
             if(activity == null)
             {
-                return BadRequest();
+                throw new Exception("No entity with id " + entityDTO.activity + " in database");
             }
 
-            var entity = dto.MapProofInsertUpdateFromDTO(new ProofOfDelivery());
+            entityFromDB = entityDTO.MapProofInsertUpdateFromDTO(entityFromDB);
 
-            entity.MemberID = member;
-            entity.Activity = activity;
+            entityFromDB.Member = member;
+            entityFromDB.Activity = activity;
 
-            try
-            {
-                _context.ProofOfDeliveries.Add(entity);
-                _context.SaveChanges();
-
-                return StatusCode(StatusCodes.Status200OK, entity.MapProofReadToDTO());
-            }
-            
-            catch (Exception ex)
-            {
-                return StatusCode(StatusCodes.Status503ServiceUnavailable, ex.Message);
-            }
-               
+            return entityFromDB;
         }
 
-        /// <summary>
-        /// Izmjeni vec postojecu dokaznicu
-        /// Update existing proof
-        /// </summary>
-        /// <param name="id"></param>
-        /// <param name="proofOfDelivery"></param>
-        /// <returns></returns>
-        /// <response> code="200">Sve ok, ako nema podataka content-lenght:0</response>
-        /// <response> code="400">Zahtjev nije valjan</response>
-        /// <response> code="503">Baza na koju se spajam nije dostupna</response>
-
-
-        [HttpPut]
-        [Route("{id:int}")]
-
-        public IActionResult Put(int id, ProofDTOInsertUpdate dto)
+        protected override ProofOfDelivery FindEntity(int id)
         {
-            if (id <= 0 || !ModelState.IsValid || dto == null)
+            var entity = _context.ProofOfDeliveries.Include(p => p.Member).Include(p => p.Activity)
+                .FirstOrDefault(i => i.ID == id);
+
+            if(entity == null)
             {
-                return BadRequest();
+                throw new Exception("No entity with id " + id + " in database!");
             }
 
-            try
+            return entity;
+        }
+
+        protected override List<ProofDTORead> ReadAll()
+        {
+            var entityList = _context.ProofOfDeliveries
+                .Include(p => p.Activity)
+                .Include(p => p.Member)
+                .ToList();
+
+            if(entityList == null || entityList.Count == 0) 
             {
-                var entity = _context.ProofOfDeliveries.Include(i => i.Activity)
-                    .Include(i => i.MemberID).FirstOrDefault(x => x.ID == id);
+                throw new Exception("No data in database!");
+            }
+            return entityList.MapProofReadList();
+        }
 
-                if(entity == null) { return StatusCode(StatusCodes.Status204NoContent, id); }
+        protected override ProofDTORead MapRead(ProofOfDelivery entity)
+        {
+            return entity.MapProofReadToDTO();
+        }
+        protected override ProofOfDelivery CreateEntity(ProofDTOInsertUpdate entityDTO)
+        {
+            var member = _context.members.Find(entityDTO.member);
 
-                var activity = _context.activities.Find(dto.activity);
-
-                if(activity == null) { return BadRequest(); }
-
-                var member = _context.members.Find(dto.member);
-
-                if(member == null) { return BadRequest(); }
-
-                entity = dto.MapProofInsertUpdateFromDTO(entity);
-
-                entity.Activity = activity;
-                entity.MemberID = member;
-                            
-                _context.ProofOfDeliveries.Update(entity);
-                _context.SaveChanges();
-
-                return StatusCode(StatusCodes.Status200OK, entity.MapProofReadToDTO());
-
-            } catch (Exception ex)
+            if (member == null)
             {
-                return StatusCode(StatusCodes.Status503ServiceUnavailable, ex.Message);
+                throw new Exception("Member with id " + member.ID + " not found");
             }
 
+
+            var act = _context.activities.Find(entityDTO.activity);
+
+            if(act == null) 
+            {
+                throw new Exception("Activity with id " + act.ID + " not found!");
+            }
+
+            var entity = entityDTO.MapProofInsertUpdateFromDTO(new ProofOfDelivery());
+            entity.Member = member;
+            entity.Activity = act;
+
+            return entity;
 
         }
 
-        /// <summary>
-        /// Brise postojecu dokaznicu iz base
-        /// Deletes existing proof from DB
-        /// </summary>
-        /// <param name="id"></param>
-        /// <returns></returns>
-        /// <response> code="200">Sve ok, ako nema podataka content-lenght:0</response>
-        /// <response> code="400">Zahtjev nije valjan</response>
-        /// <response> code="503">Baza na koju se spajam nije dostupna</response>
-
-
-        [HttpDelete]
-        [Route("{id:int}")]
-        [Produces("application/json")]
-
-        public IActionResult Delete(int id)
+        protected override void ControlDelete(ProofOfDelivery entity)
         {
-            if (!ModelState.IsValid || id <= 0) { return BadRequest(); }
+            var entityFromDB = _context.ProofOfDeliveries.Find(entity.ID);
 
-            try
-            {
-                var proofOfDeliveryFromDB = _context.ProofOfDeliveries.Find(id);
-
-                if(proofOfDeliveryFromDB == null) { return StatusCode(StatusCodes.Status204NoContent, id); }
-
-                _context.ProofOfDeliveries.Remove(proofOfDeliveryFromDB);
-                _context.SaveChanges();
-
-                return new JsonResult(new { message = "Deleted"});
-            }
-             catch(Exception ex) 
-            {
-                return StatusCode(StatusCodes.Status503ServiceUnavailable, ex.Message);
-            
+            if (entityFromDB == null) 
+            { 
+                throw new Exception("No data with " + entity.ID + " found. Please check your input!"); 
             }
 
-        }
-
-        [HttpGet]
-        [Route("Members/{idProof:int}")]
-
-        public IActionResult GetMembers(int idProof)
-        {
-            if (!ModelState.IsValid || idProof <= 0)
-            {
-                return BadRequest();
-            }
-
-            try
-            {
-                var pod = _context.ProofOfDeliveries.Include(i => i.MemberID).FirstOrDefault(x => x.ID == idProof);
-                if(pod == null) { return BadRequest(); }
-                return new JsonResult(pod.MemberID!.MapMemberReadToDTO());
-            } 
-            catch(Exception ex)
-            {
-                return StatusCode(StatusCodes.Status503ServiceUnavailable, ex.Message);
-            }
-
-        }
-
-        [HttpPatch]
-        
-        public async Task<ActionResult> Patch (int proofID, IFormFile dataFile)
-        {
-            if (dataFile == null) return BadRequest();
-
-            try
-            {
-                var ds = Path.DirectorySeparatorChar;
-                string dir = Path.Combine(Directory.GetCurrentDirectory() 
-                    + ds + "wwwroot" + ds + "datafiles" + ds + "proofs");
-
-                if(!Directory.Exists(dir)) 
-                {
-                    Directory.CreateDirectory(dir);
-                }
-
-                var proof = _context.ProofOfDeliveries.Find(proofID);
-
-                if(proof == null) { return NotFound(); }
-
-                var activityName = _context.ProofOfDeliveries.Include(i => i.Activity)
-                    .FirstOrDefault(i => i.Activity.ID == proofID).Activity.activityName;
-
-                if (activityName == null) return NotFound();
-
-                //var projectName = _context.activities.Include(i => i.ProjectInActivity)
-                //    .FirstOrDefault(i => i.Equals(activityName)).ProjectInActivity.ProjectName;
-
-                var target = Path.Combine(dir  + ds + activityName + ds 
-                    + proof.DocumentName + Path.GetExtension(dataFile.FileName));
-
-                if (proof == null) return NotFound();
-
-                proof.Location = target;
-
-                _context.ProofOfDeliveries.Update(proof);
-                _context.SaveChanges();
-
-
-                if (proof == null) { return new EmptyResult(); }
-
-                Stream fileStream = new FileStream(target, FileMode.Create);
-                await dataFile.CopyToAsync(fileStream);
-                return new JsonResult(new { mesage = "File uploaded" });
-
-            } 
-            catch (Exception ex) 
-            {
-                return StatusCode(StatusCodes.Status503ServiceUnavailable, ex.Message);
-            }
 
         }
 
