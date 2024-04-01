@@ -29,7 +29,7 @@ async function updateActivity(id, entity) {
 }
 
 async function getActivityMembers(id) {
-    return await httpService.get('/' + name + '/Members' + id)
+    return await httpService.get('/' + name + '/Members/' + id)
     .then((res)=>{ return handleSuccess(res);}).catch((e)=> {return processError(e);});
 }
 

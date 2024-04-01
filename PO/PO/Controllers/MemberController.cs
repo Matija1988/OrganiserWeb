@@ -22,6 +22,40 @@ namespace PO.Controllers
             DbSet = _context.members;
         }
 
+        [HttpGet]
+        [Route("Members/SearchByName/{input}")]
+
+        public IActionResult SearchMembersByName(string input)
+        {
+            if (!ModelState.IsValid || input == null)
+            {
+                return BadRequest();
+            }
+
+            input = input.ToLower();
+
+            try
+            {
+                var member = _context.members.Where(m=> m.FirstName.ToLower().Contains(input) 
+                || m.LastName.ToLower().Contains(input)).ToList();
+
+                if (member == null)
+                {
+                    return new EmptyResult();
+                }
+
+                return new JsonResult(member.MapMemberReadList());
+
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(StatusCodes.Status503ServiceUnavailable, ex.Message);
+
+            }
+
+        }
+
+
         protected override List<MemberDTORead> ReadAll()
         {
             var entityList = _context.members.ToList();
