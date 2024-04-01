@@ -82,12 +82,12 @@ export default function ActivitiesCreate() {
         }
 
         addActivity({
-            activityname: information.get('activityname'),
-            description: information.get('description'),
-            datestart:  datestarted,   
-            datefinished: dateend,
+            activityName: information.get('activityName'),
+            activityDescription: information.get('description'),
+            dateStart:  datestarted,   
+            dateFinished: dateend,
             isFinished: information.get('isFinished') == 'on' ? true : false,
-            dateaccepted: dateaccept,
+            dateAccepted: dateaccept,
             project: parseInt(projectID)
        
         });
@@ -101,11 +101,11 @@ export default function ActivitiesCreate() {
         <Container>
             <Form onSubmit={handleSubmit} className='FormActivity'>
 
-                <Form.Group  controlId='activityname'>
+                <Form.Group  controlId='activityName'>
                     <Form.Label>Activity</Form.Label>
                     <Form.Control
                         type='text'
-                        name='activityname'
+                        name='activityName'
                         placeholder='Activity'
                         maxLength={100}
                         required

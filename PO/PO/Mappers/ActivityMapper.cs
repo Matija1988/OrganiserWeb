@@ -27,9 +27,9 @@ namespace PO.Mappers
                         entity.DateFinish,
                         entity.IsFinished == null ? null : entity.IsFinished,
                         entity.DateAccepted == null ? null : entity.DateAccepted,
-                        entity.Project.ProjectName
+                        entity.AssociatedProject == null ? "" : entity.AssociatedProject.ProjectName
 
-                        )) ;
+                        ));
                         
                 })
                 );
@@ -48,12 +48,12 @@ namespace PO.Mappers
                     .ConstructUsing(entity =>
                     new ActivityDTOInsertUpdate(
                         entity.ActivityName,
-                        entity.Description == null ? "" : entity.Description,
+                        entity.Description == null ? "No input at this time" : entity.Description,
                         entity.DateStart,
                         entity.DateFinish,
                         entity.IsFinished == null ? null : entity.IsFinished,
                         entity.DateAccepted == null ? null : entity.DateAccepted,
-                        entity.Project.ID
+                        entity.AssociatedProject == null ? null : entity.AssociatedProject.ID
                         )); 
                 })
                 );

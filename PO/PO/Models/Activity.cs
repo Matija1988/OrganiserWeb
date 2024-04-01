@@ -71,10 +71,14 @@ namespace PO.Models
         /// Project the activity is associeted with
         /// </summary>
 
-        [Required]
+        
         [ForeignKey("projectID")]
-        public Project Project { get; set; }
+        public Project? AssociatedProject { get; set; }
 
+        /// <summary>
+        /// Clanovi koji izvrsavaju aktivnost
+        /// Members working on activity
+        /// </summary>
         public List<Member>? Members { get; set; }
 
     }

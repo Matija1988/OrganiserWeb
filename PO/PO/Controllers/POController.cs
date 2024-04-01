@@ -60,8 +60,12 @@ namespace PO.Controllers
             }
         }
 
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="entityDTO"></param>
+        /// <returns></returns>
         [HttpPost]
-
         public IActionResult Post(TDI entityDTO)
         {
             if (!ModelState.IsValid || entityDTO == null) { return BadRequest(ModelState); }

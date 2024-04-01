@@ -33,8 +33,8 @@ namespace PO.Controllers
 
         protected override void ControlDelete(Project entity)
         {
-            var entityList = _context.activities.Include(x => x.Project)
-                .Where(x => x.Project.ID == entity.ID).ToList();
+            var entityList = _context.activities.Include(x => x.AssociatedProject)
+                .Where(x => x.AssociatedProject.ID == entity.ID).ToList();
 
             if(entityList.Count != null && entityList.Count() > 0) 
             { 

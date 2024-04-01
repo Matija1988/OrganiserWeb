@@ -176,8 +176,8 @@ namespace PO.Controllers
             try
             {
                 var entity = _context.activities
-                    .Include(i => i.Project)
-                    .Where(i => i.Project.ID == projectID)
+                    .Include(i => i.AssociatedProject)
+                    .Where(i => i.AssociatedProject.ID == projectID)
                     .ToList();
 
 
@@ -207,7 +207,7 @@ namespace PO.Controllers
 
             try
             {
-                var activities = _context.activities.Include(i=> i.Project)
+                var activities = _context.activities.Include(i=> i.AssociatedProject)
                     .Where(i => i.ActivityName
                     .Contains(input)).ToList();
 
@@ -239,7 +239,7 @@ namespace PO.Controllers
 
             try
             {
-                var activities = _context.activities.Include(i=> i.Project)
+                var activities = _context.activities.Include(i=> i.AssociatedProject)
                     .Where(i=> i.IsFinished == finished).ToList();  
 
                 if(activities == null)
@@ -283,7 +283,7 @@ namespace PO.Controllers
 
             var entity = entityDTO.MapActivityInsertUpdateFromDTO(new Activity());
             entity.Members = new List<Member>();
-            entity.Project = pro;
+            entity.AssociatedProject = pro;
 
             return entity;
 
@@ -292,7 +292,7 @@ namespace PO.Controllers
         protected override List<ActivityDTORead> ReadAll()
         {
             var list = _context.activities
-                .Include(a => a.Project)
+                .Include(a => a.AssociatedProject)
                 .ToList();
 
             if (list == null || list.Count == 0)
@@ -312,7 +312,7 @@ namespace PO.Controllers
         protected override Activity FindEntity(int id)
         {
 
-            var entity = _context.activities.Include(e => e.Project).FirstOrDefault(x => x.ID == id);
+            var entity = _context.activities.Include(e => e.AssociatedProject).FirstOrDefault(x => x.ID == id);
 
             if(entity == null)
             {
@@ -334,12 +334,12 @@ namespace PO.Controllers
 
             if(projectFromDB == null)
             {
-                throw new Exception("No entitiy with id " + entityFromDB.Project.ID + " in database!");
+                throw new Exception("No entitiy with id " + entityFromDB.AssociatedProject.ID + " in database!");
             }
 
             entityFromDB = entityDTO.MapActivityInsertUpdateFromDTO(entityFromDB);
 
-            entityFromDB.Project = projectFromDB;
+            entityFromDB.AssociatedProject = projectFromDB;
             
             return entityFromDB;    
 

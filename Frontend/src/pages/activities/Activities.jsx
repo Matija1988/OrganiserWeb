@@ -46,24 +46,24 @@ export default function Activities() {
 
     
     function FormatDateStart(activity) {
-        return  activity.datestart == null ? 'Not defined' :
-        moment.utc(activity.datestart).format('DD.MM.YYYY.')
+        return  activity.dateStart == null ? 'Not defined' :
+        moment.utc(activity.dateStart).format('DD.MM.YYYY.')
        }
     
        function FormatDateEnd(activity){ 
-        return  activity.datefinished == null ? 'Not defined' :
-        moment.utc(activity.datefinished).format('DD.MM.YYYY.')
+        return  activity.dateFinished == null ? 'Not defined' :
+        moment.utc(activity.dateFinished).format('DD.MM.YYYY.')
        }
     
        
        function FormatDateAccepted(activity){ 
-        return  activity.dateaccepted == null ? 'Not defined' :
-        moment.utc(activity.dateaccepted).format('DD.MM.YYYY.')
+        return  activity.dateAccepted == null ? 'Not defined' :
+        moment.utc(activity.dateAccepted).format('DD.MM.YYYY.')
        }
        
        function progresLabel(activity) {
-        let date1 = new Date(activity.datestart);
-        let date2 = new Date(activity.datefinished);
+        let date1 = new Date(activity.dateStart);
+        let date2 = new Date(activity.dateFinished);
         let dateNow = Date.now();
     
         let differenceInTime =  dateNow - date1.getTime();
@@ -79,8 +79,8 @@ export default function Activities() {
     
        function progresLabelMaxValue(activity) {
     
-        let date1 = new Date(activity.datestart);
-        let date2 = new Date(activity.datefinished);
+        let date1 = new Date(activity.dateStart);
+        let date2 = new Date(activity.dateFinished);
         let dateNow = Date.now();
     
         let differenceInTime = date2.getTime() - date1.getTime();
@@ -137,11 +137,11 @@ export default function Activities() {
             </thead>
             <tbody>
                 {Activities && Activities.filter((activity)=>{
-                        return search.toLowerCase() === '' ? activity : activity.activityname.toLowerCase().includes(search);
+                        return search.toLowerCase() === '' ? activity : activity.activityName.toLowerCase().includes(search);
                     } ).map((activity, index) =>(
                     <tr key={index}>
-                            <td>{activity.activityname}</td>
-                            <td>{activity.description}</td>
+                            <td>{activity.activityName}</td>
+                            <td>{activity.activityDescription}</td>
                             <td>
                                 <p>
                                     {FormatDateStart(activity)}
@@ -161,7 +161,7 @@ export default function Activities() {
 
                             <td>{ActivityStatusDisplayText(activity)}</td>
                             <td>{FormatDateAccepted(activity)}</td>
-                            <td>{activity.project}</td>
+                            <td>{activity.projectName}</td>
                             <td className="alignCenter">
                                 <Button className="editBtn"
                                     variant="primary"

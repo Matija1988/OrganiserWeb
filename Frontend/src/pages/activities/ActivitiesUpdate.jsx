@@ -29,15 +29,15 @@ export default function ActivitiesUpdate() {
                 return;
             }
             let activity = response.data;
-            activity.startTime = moment.utc(activity.datestart).format('HH:mm');
-            activity.startingDate = moment.utc(activity.datestart).format('yyyy-MM-DD');
-            activity.deadlineTime = moment.utc(activity.dateend).format('HH:mm');
-            activity.deadlineDate = moment.utc(activity.dateend).format('yyyy-MM-DD');
-            activity.acceptanceTime = moment.utc(activity.dateaccept).format('HH:mm');
-            activity.acceptanceDate = moment.utc(activity.dateaccept).format('yyyy-MM-DD');
-            delete activity.datestart;
-            delete activity.dateend;
-            delete activity.dateaccepted;
+            activity.startTime = moment.utc(activity.dateStart).format('HH:mm');
+            activity.startingDate = moment.utc(activity.dateStart).format('yyyy-MM-DD');
+            activity.deadlineTime = moment.utc(activity.dateFinished).format('HH:mm');
+            activity.deadlineDate = moment.utc(activity.dateFinished).format('yyyy-MM-DD');
+            activity.acceptanceTime = moment.utc(activity.dateAccepted).format('HH:mm');
+            activity.acceptanceDate = moment.utc(activity.dateAccepted).format('yyyy-MM-DD');
+            delete activity.dateStart;
+            delete activity.dateFinished;
+            delete activity.dateAccepted;
             setActivity(activity);
             setProjectID(activity.projectID);
             
@@ -85,13 +85,13 @@ export default function ActivitiesUpdate() {
         const acceptanceDate = moment.utc(information.get('dateaccepted') + ' ' + information.get('acceptanceTime'));
 
         UpdateActivity({
-            activityname: information.get('activityname'),
-            description: information.get('description'),
-            datestart: startingDate,
-            datefinish: deadlineDate,
+            activityName: information.get('activityName'),
+            activityDescription: information.get('description'),
+            dateStart: startingDate,
+            dateFinish: deadlineDate,
             isFinished: information.get('isFinished') == 'on' ? true : false,
-            dateaccepted: acceptanceDate,
-            project: parseInt(projectID)
+            dateAccepted: acceptanceDate,
+            Project: parseInt(projectID)
         });
 
     }
@@ -100,12 +100,12 @@ export default function ActivitiesUpdate() {
         <Container>
             <Form onSubmit={handleSubmit} className='FormActivity'>
 
-                <Form.Group controlId="activityname">
+                <Form.Group controlId="activityName">
                     <Form.Label>Activity</Form.Label>
                     <Form.Control
                         type='text'
-                        name='activityname'
-                        defaultValue={activity.activityname}
+                        name='activityName'
+                        defaultValue={activity.activityName}
                         maxLength={100}
                         required
                     />
@@ -116,18 +116,18 @@ export default function ActivitiesUpdate() {
                     <Form.Control
                         type='text'
                         name='description'
-                        defaultValue={activity.description}
+                        defaultValue={activity.activityDescription}
                         maxLength={500}
                         
                     />
                 </Form.Group>
                 <Row>
                     <Col key='1'>
-                    <Form.Group controlId="datestart">
+                    <Form.Group controlId="dateStart">
                         <Form.Label>Date start</Form.Label>
                         <Form.Control
                             type='date'
-                            name='datestart'
+                            name='dateStart'
                             defaultValue={activity.startingDate}
                             required
                         />

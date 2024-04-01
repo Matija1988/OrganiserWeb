@@ -36,7 +36,7 @@ namespace PO.Extensions
         public static Activity MapActivityInsertUpdateFromDTO(this ActivityDTOInsertUpdate dto, Activity a)
         {
             a.ActivityName = dto.ActivityName;
-            a.Description = dto.Description;
+            a.Description = dto.ActivityDescription;
             a.IsFinished = dto.IsFinished;
             a.DateStart = dto.DateStart;
             a.DateFinish = dto.DateFinished;
