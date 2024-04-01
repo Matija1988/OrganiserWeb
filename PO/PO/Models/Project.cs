@@ -27,7 +27,7 @@ namespace PO.Models
         /// Datum kada je projekt sluzbeno poceo - provjeriti ugovor
         /// The date the project officially begun - check contract
         /// </summary>
-        public DateTime? DateStart { get; set; }
+        public DateTime DateStart { get; set; }
 
         /// <summary>
         /// Datum kada projekt sluzbeno zavrsava - provjeriti ugovor 
@@ -37,7 +37,7 @@ namespace PO.Models
         /// valid information
         /// If appliable check contract annex and enter new date 
         /// </summary>
-        public DateTime? DateEnd { get; set; }
+        public DateTime DateEnd { get; set; }
 
         /// <summary>
         /// Oznacava je li projekt zavrsen ili ne true = zavrsen, false = u tijeku

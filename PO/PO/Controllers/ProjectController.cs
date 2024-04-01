@@ -33,8 +33,8 @@ namespace PO.Controllers
 
         protected override void ControlDelete(Project entity)
         {
-            var entityList = _context.activities.Include(x => x.ProjectInActivity)
-                .Where(x => x.ProjectInActivity.ID == entity.ID).ToList();
+            var entityList = _context.activities.Include(x => x.Project)
+                .Where(x => x.Project.ID == entity.ID).ToList();
 
             if(entityList.Count != null && entityList.Count() > 0) 
             { 
@@ -42,7 +42,7 @@ namespace PO.Controllers
                 sb.Append("Project cannot be deleted as it is connected to activities: ");
                 foreach (var activity in entityList)
                 {
-                    sb.Append(activity.activityName).Append(",");
+                    sb.Append(activity.ActivityName).Append(",");
                 }
 
                 throw new Exception(sb.ToString().Substring(0, sb.ToString().Length - 2));

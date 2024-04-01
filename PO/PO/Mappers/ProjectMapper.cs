@@ -13,21 +13,20 @@ namespace PO.Mappers
                 new MapperConfiguration(
                 c =>
                 {
-                    c.CreateMap<Project, ProjectDTORead>();
+                    c.CreateMap<Project, ProjectDTORead>()
+                    .ConstructUsing(entity => 
+                    new ProjectDTORead(
+                        entity.ID,
+                        entity.UniqueID,
+                        entity.ProjectName,
+                        entity.DateStart,
+                        entity.DateEnd,
+                        entity.IsFinished == null ? null : entity.IsFinished
+                        ));
                 })
                 );
         }
 
-        public static Mapper ProjectReadFromDTO()
-        {
-            return new Mapper(
-                new MapperConfiguration(
-             c =>
-             {
-                 c.CreateMap<ProjectDTORead, Project>();
-             })
-             );
-        }
 
         public static Mapper ProjectInsertUpdateToDTO()
         {
@@ -35,20 +34,20 @@ namespace PO.Mappers
                new MapperConfiguration(
                    c =>
                    {
-                       c.CreateMap<Project, ProjectDTOInsertUpdate>();
+                       c.CreateMap<Project, ProjectDTOInsertUpdate>()
+                       .ConstructUsing(entity =>
+                       new ProjectDTOInsertUpdate(
+                           entity.UniqueID,
+                           entity.ProjectName,
+                           entity.DateStart,
+                           entity.DateEnd,
+                           entity.IsFinished == null ? null : entity.IsFinished
+                           
+                           ));
                    }
                    ));
         }
 
-        public static Mapper ProjectInsertUpdateFromDTO()
-        {
-            return new Mapper(
-                new MapperConfiguration(c =>
-                {
-                    c.CreateMap<ProjectDTOInsertUpdate, Project>();
-                }
-                ));
-        }
 
     }
 }

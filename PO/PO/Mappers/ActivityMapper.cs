@@ -3,8 +3,15 @@ using PO.Models;
 
 namespace PO.Mappers
 {
+    /// <summary>
+    /// 
+    /// </summary>
     public class ActivityMapper
     {
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <returns></returns>
         public static Mapper InitReadToDTO()
         {
             return new Mapper(
@@ -14,20 +21,24 @@ namespace PO.Mappers
                     .ConstructUsing(entity =>
                     new ActivityDTORead(
                         entity.ID,
-                        entity.activityName,
-                        entity.Description,
+                        entity.ActivityName,
+                        entity.Description == null ? "" : entity.Description,
                         entity.DateStart,
                         entity.DateFinish,
-                        entity.IsFinished,
-                        entity.DateAccepted,
-                        entity.ProjectInActivity == null ? "" : entity.ProjectInActivity.ProjectName
+                        entity.IsFinished == null ? null : entity.IsFinished,
+                        entity.DateAccepted == null ? null : entity.DateAccepted,
+                        entity.Project.ProjectName
 
-                        ));
+                        )) ;
                         
                 })
                 );
         }
 
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <returns></returns>
         public static Mapper InitInsertUpdateToDTO()
         {
             return new Mapper(
@@ -36,13 +47,13 @@ namespace PO.Mappers
                     c.CreateMap<Activity, ActivityDTOInsertUpdate>()
                     .ConstructUsing(entity =>
                     new ActivityDTOInsertUpdate(
-                        entity.activityName,
-                        entity.Description,
+                        entity.ActivityName,
+                        entity.Description == null ? "" : entity.Description,
                         entity.DateStart,
                         entity.DateFinish,
-                        entity.IsFinished,
-                        entity.DateAccepted,
-                        entity.ProjectInActivity == null ? null : entity.ProjectInActivity.ID
+                        entity.IsFinished == null ? null : entity.IsFinished,
+                        entity.DateAccepted == null ? null : entity.DateAccepted,
+                        entity.Project.ID
                         )); 
                 })
                 );

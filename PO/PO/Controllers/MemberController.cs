@@ -49,7 +49,7 @@ namespace PO.Controllers
                 sb.Append("Cannot delete member: Member is placed in activities: ");
                 foreach(var e in  entityFromDB.IActivities)
                 {
-                    sb.Append(e.activityName).Append(", ");
+                    sb.Append(e.ActivityName).Append(", ");
                 }
                 throw new Exception(sb.ToString().Substring(0, sb.ToString().Length - 2));
             }

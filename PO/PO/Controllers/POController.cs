@@ -1,5 +1,6 @@
 ﻿using AutoMapper;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.Build.Exceptions;
 using Microsoft.EntityFrameworkCore;
 using PO.Data;
 using PO.Mappers;
@@ -150,6 +151,10 @@ namespace PO.Controllers
             return entityFromDB;
         }
 
+        protected virtual TDR ReadOne(int id)
+        {
+            return _mapper.MapReadToDTO(DbSet.Find(id));
+        }
         protected virtual List<TDR> ReadAll()
         {
             var list = DbSet.ToList();

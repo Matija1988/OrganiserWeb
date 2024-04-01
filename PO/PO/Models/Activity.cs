@@ -21,7 +21,7 @@ namespace PO.Models
         /// </summary>
 
         [Required]
-        public string activityName { get; set; }
+        public string ActivityName { get; set; }
 
         /// <summary>
         /// Opis aktivnosti
@@ -73,19 +73,9 @@ namespace PO.Models
 
         [Required]
         [ForeignKey("projectID")]
-        public Project? ProjectInActivity { get; set; }
+        public Project Project { get; set; }
 
         public List<Member>? Members { get; set; }
-
-      
-
-
-        
-
-         
-
-
-
 
     }
 }

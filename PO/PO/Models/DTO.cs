@@ -4,7 +4,7 @@ using System.ComponentModel.DataAnnotations;
 namespace PO.Models
 {
     public record ProjectDTORead(int Id, string UniqueID, string ProjectName, 
-        DateTime DateStart, DateTime DateEnd, bool IsFinished);
+        DateTime DateStart, DateTime DateEnd, bool? IsFinished);
 
     public record ProjectDTOInsertUpdate(
         [Required(ErrorMessage = "Mandatory input")]
@@ -16,7 +16,7 @@ namespace PO.Models
         [Required(ErrorMessage = "Mandatory input")]
         DateTime DateEnd,
         [Required(ErrorMessage = "Mandatory input")]
-        bool IsFinished);
+        bool? IsFinished);
 
     public record MemberDTORead(int Id, string FirstName, string LastName, 
         string Username, string Password, string Email, bool IsTeamLeader);
@@ -39,12 +39,32 @@ namespace PO.Models
     public record ProofDTOInsertUpdate(string? documentName, int? member, string? location,
         DateTime? datecreated, int activity);
 
-    public record ActivityDTORead(int id,  string activityname, string? description, DateTime datestart, DateTime datefinished,
-        bool? isFinished, DateTime? dateaccepted, string project);
+    /// <summary>
+    /// 
+    /// </summary>
+    /// <param name="ID"></param>
+    /// <param name="ActivityName"></param>
+    /// <param name="Description"></param>
+    /// <param name="DateStart"></param>
+    /// <param name="DateFinished"></param>
+    /// <param name="IsFinished"></param>
+    /// <param name="DateAccepted"></param>
+    /// <param name="ProjectName"></param>
+    public record ActivityDTORead(int ID,  string ActivityName, string? Description, DateTime DateStart, DateTime DateFinished,
+        bool? IsFinished, DateTime? DateAccepted, string ProjectName);
 
-
-    public record ActivityDTOInsertUpdate( string activityname, string? description, DateTime datestart, DateTime datefinished,
-        bool? isFinished, DateTime? dateaccepted, int? project);
+    /// <summary>
+    /// 
+    /// </summary>
+    /// <param name="ActivityName"></param>
+    /// <param name="Description"></param>
+    /// <param name="DateStart"></param>
+    /// <param name="DateFinished"></param>
+    /// <param name="IsFinished"></param>
+    /// <param name="DateAccepted"></param>
+    /// <param name="Project"></param>
+    public record ActivityDTOInsertUpdate( string ActivityName, string? Description, DateTime DateStart, DateTime DateFinished,
+        bool? IsFinished, DateTime? DateAccepted, int Project);
 
 
 

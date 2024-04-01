@@ -20,19 +20,12 @@ namespace PO.Mappers
                         entity.Member == null ? "" : (entity.Member.FirstName + " " + entity.Member.LastName).Trim(),
                         entity.Location,
                         entity.DateCreated,
-                        entity.Activity == null ? "" : entity.Activity.activityName
+                        entity.Activity == null ? "" : entity.Activity.ActivityName
                         )
                     );
                 })
                 );
         }
-
-        private static string LocationPath (ProofOfDelivery entity)
-        {
-            return null; 
-        }
-
-     
 
         public static Mapper ProofInsertUpdateToDTO()
         {
