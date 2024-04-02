@@ -48,7 +48,7 @@ namespace PO.Data
             modelBuilder.Entity<ProofOfDelivery>().HasOne(pod => pod.Member);
 
 
-            modelBuilder.Entity<Activity>().HasOne(a => a.AssociatedProject);
+            modelBuilder.Entity<Activity>().HasOne(a => a.Project);
 
 
             modelBuilder.Entity<Activity>().HasMany(m => m.Members)

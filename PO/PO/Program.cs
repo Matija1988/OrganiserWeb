@@ -2,6 +2,7 @@ using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using PO.Data;
 using System.Reflection;
+using PO.Extensions;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -11,13 +12,7 @@ builder.Services.AddControllers();
 // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
-
-builder.Services.AddCors(options =>
-{
-    options.AddPolicy("CorsPolicy",
-        builder =>
-    builder.AllowAnyOrigin().AllowAnyMethod().AllowAnyHeader());
-});
+builder.Services.AddPOCORS();
 
 builder.Services.AddDbContext<POContext>(po =>
 po.UseSqlServer(builder.Configuration.GetConnectionString(name: "POContext")));

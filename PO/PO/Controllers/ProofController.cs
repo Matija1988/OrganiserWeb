@@ -1,12 +1,8 @@
-﻿using AutoMapper.QueryableExtensions;
-using Microsoft.AspNetCore.Http.HttpResults;
-using Microsoft.AspNetCore.Mvc;
+﻿using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using PO.Data;
-using PO.Extensions;
+using PO.Mappers;
 using PO.Models;
-using System.IO;
-using System.Text;
 
 namespace PO.Controllers
 {
@@ -21,24 +17,19 @@ namespace PO.Controllers
     [Route("api/v1/[controller]")]
     public class ProofController : POController<ProofOfDelivery, ProofDTORead, ProofDTOInsertUpdate>
     {
-        public ProofController(POContext context) : base(context) => DbSet = _context.ProofOfDeliveries;
+        public ProofController(POContext context) : base(context)
+        {
+            DbSet = _context.ProofOfDeliveries;
+            _mapper = new ProofMapper();
+        }
 
         protected override ProofOfDelivery UpdateEntity(ProofDTOInsertUpdate entityDTO, ProofOfDelivery entityFromDB)
         {
-            var member = _context.members.Find(entityDTO.memberID);
-            if (member == null)
-            {
-                throw new Exception("No entity with id " + entityDTO.memberID + " in database");
-            }
-
-            var activity = _context.activities.Find(entityDTO.activityID);
-
-            if(activity == null)
-            {
-                throw new Exception("No entity with id " + entityDTO.activityID + " in database");
-            }
-
-            entityFromDB = entityDTO.MapProofInsertUpdateFromDTO(entityFromDB);
+            var member = _context.members.Find(entityDTO.memberID)
+                ?? throw new Exception("No entity with id " + entityDTO.memberID + " in database");
+            var activity = _context.activities.Find(entityDTO.activityID) 
+                ?? throw new Exception("No entity with id " + entityDTO.activityID + " in database");
+            entityFromDB = _mapper.MapInsertUpdatedFromDTO(entityDTO);
 
             entityFromDB.Member = member;
             entityFromDB.Activity = activity;
@@ -70,13 +61,9 @@ namespace PO.Controllers
             {
                 throw new Exception("No data in database!");
             }
-            return entityList.MapProofReadList();
+            return _mapper.MapReadList(entityList);
         }
 
-        protected override ProofDTORead MapRead(ProofOfDelivery entity)
-        {
-            return entity.MapProofReadToDTO();
-        }
         protected override ProofOfDelivery CreateEntity(ProofDTOInsertUpdate entityDTO)
         {
             var member = _context.members.Find(entityDTO.memberID);
@@ -94,7 +81,7 @@ namespace PO.Controllers
                 throw new Exception("Activity with id " + act.ID + " not found!");
             }
 
-            var entity = entityDTO.MapProofInsertUpdateFromDTO(new ProofOfDelivery());
+            var entity = _mapper.MapInsertUpdatedFromDTO(entityDTO);
             entity.Member = member;
             entity.Activity = act;
 

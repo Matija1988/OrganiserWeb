@@ -33,11 +33,11 @@ namespace PO.Models
         string Username, string Password, string Email, bool IsTeamLeader);
 
 
-    public record ProofDTORead(int id, string documentName, string? memberName, string? location, 
-        DateTime? datecreated, string activityName);
+    public record ProofDTORead(int id, string? documentName, string? memberName, string? location, 
+        DateTime? datecreated, string? activityName);
 
-    public record ProofDTOInsertUpdate(string documentName, int? memberID, string? location,
-        DateTime? datecreated, int activityID);
+    public record ProofDTOInsertUpdate(string? documentName, int? memberID, string? location,
+        DateTime? datecreated, int? activityID);
 
     /// <summary>
     /// 
@@ -50,8 +50,8 @@ namespace PO.Models
     /// <param name="IsFinished"></param>
     /// <param name="DateAccepted"></param>
     /// <param name="ProjectName"></param>
-    public record ActivityDTORead(int ID,  string ActivityName, string? ActivityDescription, DateTime DateStart, DateTime DateFinished,
-        bool? IsFinished, DateTime? DateAccepted, string? ProjectName);
+    public record ActivityDTORead(int ID,  string ActivityName, string? ActivityDescription, DateTime DateStart, 
+        DateTime DateFinished,bool? IsFinished, DateTime? DateAccepted, string? ProjectName);
 
     /// <summary>
     /// 
@@ -63,8 +63,8 @@ namespace PO.Models
     /// <param name="IsFinished"></param>
     /// <param name="DateAccepted"></param>
     /// <param name="Project"></param>
-    public record ActivityDTOInsertUpdate( string ActivityName, string? ActivityDescription, DateTime DateStart, DateTime DateFinished,
-        bool? IsFinished, DateTime? DateAccepted, int? Project);
+    public record ActivityDTOInsertUpdate( string ActivityName, string? ActivityDescription, DateTime DateStart, 
+        DateTime DateFinished, bool? IsFinished, DateTime? DateAccepted, int? ProjectID);
 
 
 

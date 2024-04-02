@@ -2,6 +2,7 @@
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Build.Exceptions;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.EntityFrameworkCore.Query.SqlExpressions;
 using PO.Data;
 using PO.Mappers;
 using PO.Models;
@@ -12,7 +13,7 @@ namespace PO.Controllers
     {
         protected DbSet<T> DbSet;
 
-        private Mapping<T, TDR, TDI> _mapper;
+        protected Mapping<T, TDR, TDI> _mapper;
         protected abstract void ControlDelete(T entity);
 
         protected readonly POContext _context;
@@ -51,7 +52,7 @@ namespace PO.Controllers
             try
             {
                 var entity = FindEntity(id);
-                return new JsonResult(MapRead(entity));
+                return new JsonResult(_mapper.MapInsertUpdateToDTO(entity));
             } catch (Exception ex)
             {
                 return BadRequest(ex.Message);
@@ -75,7 +76,7 @@ namespace PO.Controllers
                 _context.Add(entity);
                 _context.SaveChanges();
 
-                return StatusCode(StatusCodes.Status201Created, MapRead(entity));
+                return StatusCode(StatusCodes.Status201Created, _mapper.MapReadToDTO(entity));
             } catch (Exception ex)
             {
                 return BadRequest(ex.Message);
@@ -101,7 +102,7 @@ namespace PO.Controllers
                 _context.Update(entity);
                 _context.SaveChanges();
 
-                return StatusCode(StatusCodes.Status200OK, MapRead(entity));
+                return StatusCode(StatusCodes.Status200OK, _mapper.MapReadToDTO(entity));
 
             } catch(Exception ex)
             {
@@ -132,11 +133,11 @@ namespace PO.Controllers
         
         protected virtual T UpdateEntity(TDI entityDTO, T entityFromDB)
         {
-            return _mapper.MapInsertUpdateFromDTO(entityDTO);
+            return _mapper.MapInsertUpdatedFromDTO(entityDTO);
         }
         protected virtual T CreateEntity(TDI entityDTO)
         {
-            return _mapper.MapInsertUpdateFromDTO(entityDTO);
+            return _mapper.MapInsertUpdatedFromDTO(entityDTO);
         }
 
         protected virtual TDR MapRead(T entity)

@@ -1,4 +1,7 @@
 ﻿using Microsoft.CodeAnalysis.CSharp.Syntax;
+using Microsoft.Identity.Client;
+using System.Reflection;
+using PO.Models;
 
 namespace PO.Extensions
 {
@@ -23,6 +26,21 @@ namespace PO.Extensions
                         Name = "Education lisence"
                     }
                 };
+                sgo.SwaggerDoc("v1", o);
+
+                var xmlFile = $"{Assembly.GetExecutingAssembly().GetName().Name}.xml";
+                var xmlPath = Path.Combine(AppContext.BaseDirectory, xmlFile);
+                sgo.IncludeXmlComments(xmlPath, includeControllerXmlComments: true);
+            });
+
+        }
+        public static void AddPOCORS(this IServiceCollection Services)
+        {
+            Services.AddCors(options =>
+            {
+                options.AddPolicy("CorsPolicy",
+                    builder =>
+                    builder.AllowAnyOrigin().AllowAnyMethod().AllowAnyHeader());
             });
         }
     }

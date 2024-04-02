@@ -15,11 +15,11 @@ namespace PO.Mappers
                         .ConstructUsing(entity =>
                         new ProofDTORead(
                             entity.ID,
-                            entity.DocumentName,
+                            entity.DocumentName == null ? "" : entity.DocumentName,
                             entity.Member == null ? "" : (entity.Member.FirstName + " " + entity.Member.LastName).Trim(),
                             entity.Location == null ? "" : entity.Location,
                             entity.DateCreated == null ? null : entity.DateCreated,
-                            entity.Activity == null ? "" : entity.Activity.ActivityName
+                            entity.Activity == null ? null : entity.Activity.ActivityName
                             )
                         );
                     })

@@ -2,9 +2,9 @@
 using Microsoft.Data.SqlClient;
 using PO.Data;
 using PO.Models;
-using PO.Extensions;
 using Microsoft.EntityFrameworkCore;
 using System.Text;
+using PO.Mappers;
 
 namespace PO.Controllers
 {
@@ -44,7 +44,7 @@ namespace PO.Controllers
                     return new EmptyResult();
                 }
 
-                return new JsonResult(member.MapMemberReadList());
+                return new JsonResult(_mapper.MapReadList(member));
 
             }
             catch (Exception ex)
@@ -65,7 +65,7 @@ namespace PO.Controllers
                 throw new Exception("No data in database!");
             }
 
-            return entityList.MapMemberReadList(); 
+            return _mapper.MapReadList(entityList); 
         }
 
         protected override void ControlDelete(Member entity)

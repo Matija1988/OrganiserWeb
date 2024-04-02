@@ -9,7 +9,7 @@ namespace PO.Models
         /// Naziv dokumenta 
         /// Document name
         /// </summary>
-        public string DocumentName { get; set; }
+        public string? DocumentName { get; set; }
 
         /// <summary>
         /// Lokacija dokumenta 
@@ -35,6 +35,6 @@ namespace PO.Models
         public Member? Member { get; set; }
 
         [ForeignKey("activityID")]
-        public Activity Activity { get; set; }
+        public Activity? Activity { get; set; }
     }
 }

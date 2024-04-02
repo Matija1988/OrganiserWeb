@@ -30,7 +30,7 @@ namespace PO.Mappers
                             entity.DateFinish,
                             entity.IsFinished == null ? null : entity.IsFinished,
                             entity.DateAccepted == null ? null : entity.DateAccepted,
-                            entity.AssociatedProject == null ? "" : entity.AssociatedProject.ProjectName
+                            entity.Project == null ? "" : entity.Project.ProjectName
                             ));
                     })
                     );
@@ -58,7 +58,7 @@ namespace PO.Mappers
                             entity.DateFinish,
                             entity.IsFinished == null ? null : entity.IsFinished,
                             entity.DateAccepted == null ? null : entity.DateAccepted,
-                            entity.AssociatedProject == null ? null : entity.AssociatedProject.ID
+                            entity.Project == null ? null : entity.Project.ID
                             ));
                     })
                     );
