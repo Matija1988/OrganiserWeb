@@ -1,11 +1,13 @@
-import { useEffect, useState } from "react";
-import { Col, Container, FormGroup, FormLabel, Row, Table } from "react-bootstrap";
+import { useEffect, useRef, useState } from "react";
+import { Button, Col, Container, FormGroup, FormLabel, Row, Table } from "react-bootstrap";
 import { useNavigate, useParams } from "react-router-dom";
 import ActivitiesService from "../../services/ActivitiesService";
 
 import './activitiesStyle.css';
 import { AsyncTypeahead } from "react-bootstrap-typeahead";
 import MembersService from "../../services/MembersService";
+import { ALIGN_VALUES } from "react-bootstrap-typeahead/types/constants";
+import { getAlertMessages } from "../../services/httpService";
 
 
 
@@ -20,6 +22,8 @@ export default function ActivitiesMembersMenu() {
 
     const routeParams = useParams();
 
+    const typeaheadRef = useRef(null);
+
     async function fetchActivityMember() {
 
         await ActivitiesService.getActivityMembers(routeParams.id)
@@ -28,6 +32,38 @@ export default function ActivitiesMembersMenu() {
             }).catch((e) => {
                 alert.e
             });
+    }
+
+    async function SearchMemberByName(input) {
+        const response = MembersService.searchMemberByName(input);
+        if(!response.ok){
+           alert(getAlertMessages(response.data));
+           return;
+        } 
+        setSearchedMember(response.data);
+        setSearchedName(input);
+    }
+
+    async function AssignMemberToActivity(e) {
+        const response = await ActivitiesService.AssignMemberToActivity(routeParams.id, e[0].id);
+        if(response.ok) {
+            await fetchActivityMember();
+            return;
+        }
+        alert(getAlertMessages(response.data));
+    }
+
+    async function addMemberManually(member) {
+        const response = await MembersService.createMember(member);
+        if(response.ok) {
+            const response2 = await ActivitiesService.AssignMemberToActivity(routeParams.id, response.data.id);
+            if(response2?.ok) {
+                typeaheadRef.current.clear();
+                await fetchActivityMember();
+                return;
+            } alert(getAlertMessages(response2.data));
+            return;
+        } alert(getAlertMessages(response.data));
     }
 
     useEffect(() => {
@@ -83,14 +119,32 @@ export default function ActivitiesMembersMenu() {
                     id="condition"
                     emptyLabel = "No result"
                     searchText = "Searching ..."
-                     
-                    
+                    labelKey={(member) => `${member.firstName} ${member.lastName}`}
+                    minLength={3}
+                    options={SearchedMember}
+                    onSearch={SearchMemberByName}
+                    placeholder="Part of the member first or last name"
+                    renderMenuItemChildren={(member)=>(
+                        <>
+                        <span>
+                            {member.firstName} {member.lastName}
+                        </span>
+                        </>
+                    )}
+                    onChange={AssignMemberToActivity}
+                    ref={typeaheadRef}
                     > 
                         
                     </AsyncTypeahead>
                 </FormGroup>
                 </Col>
+                <Col>
+                <Button onClick={addMemberManually}>
+                    ADD
+                </Button>
+                </Col>
             </Row>
+           
         </Container>
     );
 

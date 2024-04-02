@@ -25,17 +25,17 @@ namespace PO.Controllers
 
         protected override ProofOfDelivery UpdateEntity(ProofDTOInsertUpdate entityDTO, ProofOfDelivery entityFromDB)
         {
-            var member = _context.members.Find(entityDTO.member);
+            var member = _context.members.Find(entityDTO.memberID);
             if (member == null)
             {
-                throw new Exception("No entity with id " + entityDTO.member + " in database");
+                throw new Exception("No entity with id " + entityDTO.memberID + " in database");
             }
 
-            var activity = _context.activities.Find(entityDTO.activity);
+            var activity = _context.activities.Find(entityDTO.activityID);
 
             if(activity == null)
             {
-                throw new Exception("No entity with id " + entityDTO.activity + " in database");
+                throw new Exception("No entity with id " + entityDTO.activityID + " in database");
             }
 
             entityFromDB = entityDTO.MapProofInsertUpdateFromDTO(entityFromDB);
@@ -79,7 +79,7 @@ namespace PO.Controllers
         }
         protected override ProofOfDelivery CreateEntity(ProofDTOInsertUpdate entityDTO)
         {
-            var member = _context.members.Find(entityDTO.member);
+            var member = _context.members.Find(entityDTO.memberID);
 
             if (member == null)
             {
@@ -87,7 +87,7 @@ namespace PO.Controllers
             }
 
 
-            var act = _context.activities.Find(entityDTO.activity);
+            var act = _context.activities.Find(entityDTO.activityID);
 
             if(act == null) 
             {

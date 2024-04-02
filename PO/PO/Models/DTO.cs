@@ -33,11 +33,11 @@ namespace PO.Models
         string Username, string Password, string Email, bool IsTeamLeader);
 
 
-    public record ProofDTORead(int id, string? documentName, string? memberName, string? location, 
+    public record ProofDTORead(int id, string documentName, string? memberName, string? location, 
         DateTime? datecreated, string activityName);
 
-    public record ProofDTOInsertUpdate(string? documentName, int? member, string? location,
-        DateTime? datecreated, int activity);
+    public record ProofDTOInsertUpdate(string documentName, int? memberID, string? location,
+        DateTime? datecreated, int activityID);
 
     /// <summary>
     /// 

@@ -77,16 +77,16 @@ export default function Proofs() {
             <tbody>
                 {Proofs && Proofs.filter((Proofs)=>{
                         return search.toLowerCase() === '' ? Proofs : Proofs.documentName.toLowerCase().includes(search)
-                        || search.toLowerCase() === '' ? Proofs : Proofs.member.toLowerCase().includes(search);
+                        || search.toLowerCase() === '' ? Proofs : Proofs.memberName.toLowerCase().includes(search);
                     }).map((proof, index) =>(
                     <tr key={index}>
                         <td>{proof.documentName}</td>
-                        <td>{proof.member}</td>
+                        <td>{proof.memberName}</td>
                         <td>{proof.location}</td>
                         <td>
                             {FormatDateCreated(proof)}
                         </td>
-                        <td>{proof.activity}</td>
+                        <td>{proof.activityName}</td>
                         <td className="alignCenter">
                             <Button className="editBtn"
                             variant="primary"

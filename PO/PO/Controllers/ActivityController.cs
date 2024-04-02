@@ -121,6 +121,14 @@ namespace PO.Controllers
 
         }
 
+        /// <summary>
+        /// Makni clana iz aktivnosti
+        /// Remove a member from activity
+        /// </summary>
+        /// <param name="id"></param>
+        /// <param name="memberID"></param>
+        /// <returns></returns>
+
         [HttpDelete]
         [Route("{id:int}/delete/{memberID:int}")]
 
@@ -195,9 +203,15 @@ namespace PO.Controllers
 
         }
 
+        /// <summary>
+        /// Pretrazuje aktivnosti usporedujuci input string
+        /// Searches activities via input string
+        /// </summary>
+        /// <param name="input"></param>
+        /// <returns></returns>
+
         [HttpGet]
         [Route("Activities/SearchByName/{input}")]
-        
         public IActionResult SearchActivityByName(string input)
         {
             if (!ModelState.IsValid || input == null)
@@ -227,9 +241,15 @@ namespace PO.Controllers
 
         }
 
+        /// <summary>
+        /// Pretrazuje aktivnosti po statusu - True = zavrsen, False = u provedbi
+        /// Searches activities by status - True = finished, False = ongoing
+        /// </summary>
+        /// <param name="finished"></param>
+        /// <returns></returns>
+
         [HttpGet]
         [Route("Activities/SearchByStatus/{finished:bool}")]
-
         public IActionResult SearchByStatus(bool finished)
         {
             if (!ModelState.IsValid)
@@ -256,6 +276,12 @@ namespace PO.Controllers
 
         }
 
+        /// <summary>
+        /// Premoscivanje i prilagodavanje delete metode
+        /// Override and adaptation of delete method
+        /// </summary>
+        /// <param name="entity"></param>
+        /// <exception cref="Exception"></exception>
         protected override void ControlDelete(Activity entity)
         {
             if(entity != null && entity.Members != null && entity.Members.Count() > 0)
@@ -272,6 +298,13 @@ namespace PO.Controllers
             }
         }
 
+        /// <summary>
+        /// Premoscivanje i prilagodavanje POST metode
+        /// Override and adaptation of POST method
+        /// </summary>
+        /// <param name="entityDTO"></param>
+        /// <returns></returns>
+        /// <exception cref="Exception"></exception>
         protected override Activity CreateEntity(ActivityDTOInsertUpdate entityDTO)
         {
             var pro = _context.Projects.Find(entityDTO.Project);
@@ -289,6 +322,12 @@ namespace PO.Controllers
 
         }
 
+        /// <summary>
+        /// Premoscivanje i prilagodavanje GET metode
+        /// Override and adaptation of GET method
+        /// </summary>
+        /// <returns></returns>
+        /// <exception cref="Exception"></exception>
         protected override List<ActivityDTORead> ReadAll()
         {
             var list = _context.activities
@@ -321,6 +360,12 @@ namespace PO.Controllers
 
             return entity;
         }
+
+        protected virtual ActivityDTOInsertUpdate MapInsertUpdate(Activity entity)
+        {
+            return entity.MapActivityInsertUpdateToDTO();
+        }
+
         /// <summary>
         /// 
         /// </summary>

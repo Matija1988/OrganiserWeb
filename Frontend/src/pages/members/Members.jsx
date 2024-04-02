@@ -65,8 +65,7 @@ export default function Members() {
             <Table striped bordered hover responsive variant="dark" className="tableStyle"> 
             <thead>
                 <tr>
-                    <th>First Name</th>
-                    <th>Last Name</th>
+                    <th>Member</th>
                     <th>Username</th>
                     <th>Password</th>
                     <th>Position</th>
@@ -81,8 +80,7 @@ export default function Members() {
                         || search === '' ? Members : Members.email.includes(search);
                     }).map((member, index) =>(
                     <tr key={index}>
-                        <td>{member.firstName}</td>
-                        <td>{member.lastName}</td>
+                        <td>{member.firstName + " " + member.lastName}</td>
                         <td>{member.username}</td>
                         <td>{member.password}</td>
                         <td>{Text = MemberStatusDisplayText(member)}</td>

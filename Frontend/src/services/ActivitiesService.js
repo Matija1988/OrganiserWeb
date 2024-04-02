@@ -33,6 +33,11 @@ async function getActivityMembers(id) {
     .then((res)=>{ return handleSuccess(res);}).catch((e)=> {return processError(e);});
 }
 
+async function assignMemberToActivity(id, memberId) {
+    return await httpService.post('/'+name+'/'+id+'/add/'+memberId)
+    .then((res)=> {return handleSuccess(res);}).catch((e)=>{return processError(e)});
+}
+
 export default {
     get,
     deleteActivities,

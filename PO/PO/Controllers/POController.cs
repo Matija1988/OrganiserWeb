@@ -13,7 +13,6 @@ namespace PO.Controllers
         protected DbSet<T> DbSet;
 
         private Mapping<T, TDR, TDI> _mapper;
-
         protected abstract void ControlDelete(T entity);
 
         protected readonly POContext _context;
@@ -45,7 +44,6 @@ namespace PO.Controllers
 
         [HttpGet]
         [Route("{id:int}")]
-
         public IActionResult GetById(int id)
         {
             if (!ModelState.IsValid || id <= 0) { return BadRequest(ModelState); }
@@ -59,6 +57,7 @@ namespace PO.Controllers
                 return BadRequest(ex.Message);
             }
         }
+        
 
         /// <summary>
         /// 
@@ -145,6 +144,15 @@ namespace PO.Controllers
             return _mapper.MapReadToDTO(entity);
         }
 
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="entity"></param>
+        /// <returns></returns>
+        protected virtual TDI MapInsertUpdate(T entity)
+        {
+            return _mapper.MapInsertUpdateToDTO(entity);
+        }
         protected virtual T FindEntity(int id)
         {
             var entityFromDB = DbSet.Find(id);

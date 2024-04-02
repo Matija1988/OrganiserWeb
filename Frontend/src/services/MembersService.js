@@ -26,12 +26,18 @@ async function getById(id)  {
 async function updateMember(id, entity) {
     return await httpService.put('/'+ name +'/' + id, entity)
     .then((res)=> {return handleSuccess(res);}).catch((e)=>{return processError(e);});
- }
+}
+
+async function searchMemberByName(input) {
+    return await httpService.get('/' + name + '/SearchByName/'+ input)
+    .then((res)=>{return handleSuccess(res);}).catch((e)=>{return processError(e)});
+}
 
 export default {
     getMembers,
     deleteMember,
     createMember,
     getById,
-    updateMember
+    updateMember,
+    searchMemberByName
 }
