@@ -51,7 +51,7 @@ namespace PO.Models
     /// <param name="DateAccepted"></param>
     /// <param name="ProjectName"></param>
     public record ActivityDTORead(int ID,  string ActivityName, string? ActivityDescription, DateTime DateStart, 
-        DateTime DateFinished,bool? IsFinished, DateTime? DateAccepted, string ProjectName);
+        DateTime DateFinish,bool? IsFinished, DateTime? DateAccepted, string ProjectName);
 
     /// <summary>
     /// 
@@ -64,7 +64,7 @@ namespace PO.Models
     /// <param name="DateAccepted"></param>
     /// <param name="Project"></param>
     public record ActivityDTOInsertUpdate(string ActivityName, string? Description, DateTime DateStart,
-        DateTime DateFinished, bool? IsFinished, DateTime? DateAccepted, int ProjectID);
+        DateTime DateFinish, bool? IsFinished, DateTime? DateAccepted, int ProjectID);
 
 
 

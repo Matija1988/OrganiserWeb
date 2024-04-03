@@ -392,7 +392,7 @@ namespace PO.Controllers
             entityFromDB.DateAccepted = entityDTO.DateAccepted;
             entityFromDB.Description = entityDTO.Description;
             entityFromDB.DateStart = entityDTO.DateStart;
-            entityFromDB.DateFinish = entityDTO.DateFinished;
+            entityFromDB.DateFinish = entityDTO.DateFinish;
             entityFromDB.IsFinished = entityDTO.IsFinished;
 
             entityFromDB.Project = projectFromDB;
