@@ -28,10 +28,23 @@ async function updateProof(id, entity) {
     .then((res)=> {return handleSuccess(res);}).catch((e)=>{return processError(e);});
 }
 
+async function getPagination(page, condition) {
+    return await httpService.get('/'+name+'/'+'/paginate/'+ page + '?condition=' + condition)
+    .then((res)=>{return handleSuccess(res);}).catch((e)=>{return processError(e);});
+}
+
+async function uploadFile(id, file, config) {   
+    return await httpService.patch('/' + name + '/' + id, file, config)
+    .then((res)=>{return handleSuccess(res);}).catch((e)=>{return processError(e);});
+
+}
+
 export default {
     getProofs,
     deleteProof,
     createProof,
     getById,
-    updateProof
+    updateProof,
+    getPagination,
+    uploadFile
 }
