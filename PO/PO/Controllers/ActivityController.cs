@@ -1,5 +1,6 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.EntityFrameworkCore.Storage.Json;
 using PO.Data;
 using PO.Mappers;
 using PO.Models;
@@ -268,6 +269,31 @@ namespace PO.Controllers
             catch (Exception ex) 
             {
                 return StatusCode(StatusCodes.Status503ServiceUnavailable, ex.Message);
+            }
+
+        }
+
+        [HttpGet]
+        [Route("getPagination/{page}")]
+        public IActionResult GetPagination(int page, string condition ="")
+        {
+            var byPage = 8;
+            condition = condition.ToLower();
+
+            try
+            {
+                var activities = _context.activities
+                    .Where(a => EF.Functions.Like(a.ActivityName.ToLower(), "%"+ condition +"%"))
+                    .Skip((byPage + page) - byPage)
+                    .Take(byPage)
+                    .OrderBy(a => a.ActivityName)
+                    .ToList();
+
+                return new JsonResult(_mapper.MapReadList(activities));
+            }
+            catch (Exception ex)
+            {
+                return BadRequest(ex.Message);
             }
 
         }

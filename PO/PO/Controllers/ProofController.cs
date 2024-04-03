@@ -3,6 +3,7 @@ using Microsoft.EntityFrameworkCore;
 using PO.Data;
 using PO.Mappers;
 using PO.Models;
+using System.Data.OleDb;
 
 namespace PO.Controllers
 {
@@ -99,6 +100,64 @@ namespace PO.Controllers
             }
 
 
+        }
+
+        [HttpPatch]
+        [Route("{proofID:int}")] 
+
+        public async Task<ActionResult> Patch (int proofID, IFormFile file)
+        {
+            if (file == null) return BadRequest("No file set for upload");
+
+            var entityFromDb = _context.ProofOfDeliveries.Find(proofID);
+
+            if (entityFromDb == null) return BadRequest("No entity with id " + proofID + " in database.");
+
+            try
+            {
+                var ds = Path.DirectorySeparatorChar;
+                string dir = Path.Combine(Directory.GetCurrentDirectory()
+                    + ds + "wwwroot" + ds + "file" + ds + "proof");
+                if(!System.IO.Directory.Exists(dir))
+                {
+                    System.IO.Directory.CreateDirectory(dir);
+                }
+
+                var filePath = Path.Combine(dir +ds+proofID+"_"+System.IO.Path.GetExtension(file.FileName));
+                Stream fileStram = new FileStream(filePath, FileMode.Create);
+                await file.CopyToAsync(fileStram);
+                return Ok("File uploaded");
+
+            } catch (Exception ex) 
+            {
+                return BadRequest(ex.Message);
+            }
+
+        }
+
+        [HttpGet]
+        [Route("getPagination/{page}")]
+        public IActionResult GetPagination(int page, string condition ="")
+        {
+            var byPage = 8;
+            condition = condition.ToLower();
+
+            try
+            {
+                var proof = _context.ProofOfDeliveries.Where(
+                    p => EF.Functions.Like(p.DocumentName.ToLower(), "%" + condition + "%")
+                    || EF.Functions.Like(p.Activity.ActivityName.ToLower(), "%" + condition + "%"))
+                    .Skip((byPage * page) - byPage)
+                    .Take(byPage)
+                    .OrderBy(p => p.DocumentName)
+                    .ToList();
+
+                return new JsonResult(_mapper.MapReadList(proof));
+            }
+            catch (Exception ex)
+            {
+                return BadRequest(ex.Message);  
+            }
         }
 
 
