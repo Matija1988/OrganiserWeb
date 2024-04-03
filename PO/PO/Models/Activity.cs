@@ -69,7 +69,7 @@ namespace PO.Models
 
         
         [ForeignKey("projectID")]
-        public Project? Project { get; set; }
+        public Project Project { get; set; }
 
         /// <summary>
         /// Clanovi koji izvrsavaju aktivnost

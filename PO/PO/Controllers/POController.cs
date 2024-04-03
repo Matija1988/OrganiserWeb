@@ -6,6 +6,7 @@ using Microsoft.EntityFrameworkCore.Query.SqlExpressions;
 using PO.Data;
 using PO.Mappers;
 using PO.Models;
+using System.Net;
 
 namespace PO.Controllers
 {
@@ -77,9 +78,10 @@ namespace PO.Controllers
                 _context.SaveChanges();
 
                 return StatusCode(StatusCodes.Status201Created, _mapper.MapReadToDTO(entity));
-            } catch (Exception ex)
+            }
+            catch (Exception ex)
             {
-                return BadRequest(ex.Message);
+                return BadRequest(ex.InnerException);
             }
         }
 
@@ -135,9 +137,9 @@ namespace PO.Controllers
         {
             return _mapper.MapInsertUpdatedFromDTO(entityDTO);
         }
-        protected virtual T CreateEntity(TDI entityDTO)
+        protected virtual T CreateEntity(TDI dto)
         {
-            return _mapper.MapInsertUpdatedFromDTO(entityDTO);
+            return _mapper.MapInsertUpdatedFromDTO(dto);
         }
 
         protected virtual TDR MapRead(T entity)

@@ -1,7 +1,7 @@
-﻿using Microsoft.CodeAnalysis.CSharp.Syntax;
-using Microsoft.Identity.Client;
+﻿
 using System.Reflection;
-using PO.Models;
+
+
 
 namespace PO.Extensions
 {
@@ -34,6 +34,7 @@ namespace PO.Extensions
             });
 
         }
+
         public static void AddPOCORS(this IServiceCollection Services)
         {
             Services.AddCors(options =>

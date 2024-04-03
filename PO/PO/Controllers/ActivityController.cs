@@ -301,16 +301,17 @@ namespace PO.Controllers
         /// <param name="entityDTO"></param>
         /// <returns></returns>
         /// <exception cref="Exception"></exception>
-        protected override Activity CreateEntity(ActivityDTOInsertUpdate entityDTO)
+        protected override  Activity CreateEntity(ActivityDTOInsertUpdate entityDTO)
         {
              
-            var pro = _context.Projects.Find(entityDTO.ProjectID)
+            var project = _context.Projects.Find(entityDTO.ProjectID)
                 ?? throw new Exception("There is no project with " + entityDTO.ProjectID + " in database!");
 
             var entity = _mapper.MapInsertUpdatedFromDTO(entityDTO);
-            entity.Members = new List<Member>();
-            entity.Project = pro;
 
+            entity.Members = new List<Member>();
+            entity.Project = project;
+    
             return entity;
             
 
@@ -363,7 +364,7 @@ namespace PO.Controllers
             //entityFromDB = _mapper.MapInsertUpdatedFromDTO(entityDTO);
             entityFromDB.ActivityName = entityDTO.ActivityName; 
             entityFromDB.DateAccepted = entityDTO.DateAccepted;
-            entityFromDB.Description = entityDTO.ActivityDescription;
+            entityFromDB.Description = entityDTO.Description;
             entityFromDB.DateStart = entityDTO.DateStart;
             entityFromDB.DateFinish = entityDTO.DateFinished;
             entityFromDB.IsFinished = entityDTO.IsFinished;

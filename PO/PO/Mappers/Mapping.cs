@@ -29,7 +29,6 @@ namespace PO.Mappers
                 MapperMapInsertUpdatedFromDTO = new Mapper(
                     new MapperConfiguration(c =>
                     {
-                        c.AllowNullDestinationValues = true;
                         c.CreateMap<DTI, T>();
                     }));
             
@@ -68,3 +67,4 @@ namespace PO.Mappers
         }
     }
 }
+

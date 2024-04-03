@@ -1,6 +1,7 @@
 ﻿using AutoMapper;
-using Microsoft.Identity.Client;
 using PO.Models;
+using PO.Data;
+using Microsoft.EntityFrameworkCore;
 
 namespace PO.Mappers
 {
@@ -35,12 +36,14 @@ namespace PO.Mappers
                     })
                     );
 
-                MapperMapInsertUpdatedFromDTO = new Mapper(
+                 MapperMapInsertUpdatedFromDTO = new Mapper(
                     new MapperConfiguration(c =>
                     {
-                        c.CreateMap<ActivityDTOInsertUpdate, Activity>();
+                    c.CreateMap<ActivityDTOInsertUpdate, Activity>();
+     
                     })
                     );
+
                 /// <summary>
                 /// 
                 /// </summary>
@@ -58,7 +61,7 @@ namespace PO.Mappers
                             entity.DateFinish,
                             entity.IsFinished == null ? null : entity.IsFinished,
                             entity.DateAccepted == null ? null : entity.DateAccepted,
-                            entity.Project == null ? null : entity.Project.ID
+                            entity.Project.ID
                             ));
                     })
                     );
