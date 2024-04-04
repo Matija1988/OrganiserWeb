@@ -1,33 +1,7 @@
 import { App } from "../constants";
-import { handleSuccess, httpService, processError } from "./httpService";
+import { handleSuccess, httpService, processError,read, getByID, create, update, remove } from "./httpService";
 
 const name = 'Project';
-
-async function getProjects() {
-    return await httpService.get('/' + name)
-    .then((res) => { return handleSuccess(res);}).catch((e)=>{return processError(e);});
-
-}
-
-async function addProject(entity) {
-    return await httpService.post('/'+ name, entity)
-    .then((res)=>{return handleSuccess(res);}).catch((e)=>{return processError(e);});
-}
-
-async function changeProject(id, entity) {
-    return await httpService.put('/'+ name +'/' + id, entity)
-    .then((res)=> {return handleSuccess(res);}).catch((e)=>{return processError(e);});
-}
-
-async function deleteProject(id) {
-    return await httpService.delete('/' + name + '/' + id)
-    .then((res) => { return handleSuccess(res);}).catch((e)=>{return processError(e);});
-}
-
-async function getById(id) {
-    return await httpService.get('/' + name + '/' + id)
-    .then((res)=>{return handleSuccess(res);}).catch((e)=>{return processError(e);});
-}
 
 async function searchProjectByName(input) {
     return await httpService.get('/Projects/SearchByName/' + input)
@@ -54,4 +28,4 @@ async function listProjectActivities(id) {
 
 
 
-export default { getProjects, addProject, changeProject, deleteProject, getById, searchProjectByName, listProjectActivities};
+export default { read, getByID, create, update, remove, searchProjectByName, listProjectActivities};

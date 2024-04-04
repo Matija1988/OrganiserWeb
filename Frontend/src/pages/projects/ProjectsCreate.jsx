@@ -25,12 +25,12 @@ export default function ProjectsCreate() {
 
     async function createProject(project) {
         showLoading();
-        const response = await ProjectService.addProject(project);
+        const response = await ProjectService.create('Project', project);
         if (response.ok) {
             navigate(RoutesNames.PROJECTS_READ);
-        } else {
-            alert(getAlertMessages (response.data));
-        }
+            return;
+        } 
+        showError(response.data);
         hideLoading();
     }
 
@@ -72,21 +72,8 @@ export default function ProjectsCreate() {
                     />
                 </Form.Group>
                 <InputCheckbox atribute="isFinished" value={false}/>
- 
-                <Row className="actions">
-                    <Col>
-                    <Link className='btn btn-danger'
-                    to={RoutesNames.PROJECTS_READ}> CANCEL</Link>
-                    </Col>
-                    <Col>
-                    <Button   variant='primary'
-                    type="submit"
-                    className="addBtn"
-                    > ADD PROJECT</Button>
-                    </Col>
-                </Row>
-
-            </Form>
+                <Actions cancel={RoutesNames.PROJECTS_READ} action="Add project"/>
+               </Form>
         </Container>
     );
 

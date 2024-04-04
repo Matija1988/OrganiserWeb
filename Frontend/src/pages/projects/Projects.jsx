@@ -11,11 +11,12 @@ import ProjectService from "../../services/ProjectService";
 import { RoutesNames } from "../../constants";
 import useError from "../../hooks/useError";
 import useLoading from "../../hooks/useLoading";
+import { getAlertMessages, httpService } from "../../services/httpService";
 
 import "bootstrap/dist/css/bootstrap.min.css";
 
 import './projectsStyle.css';
-import { getAlertMessages } from "../../services/httpService";
+
 
 
 
@@ -34,9 +35,9 @@ export default function Projects() {
 
     async function readProjects() {
         showLoading();
-        const response = await ProjectService.getProjects();
+        const response = await ProjectService.read('Project');
         if(!response.ok){
-            alert(getAlertMessages(response.data));
+            showError(response.data);
             return;
         }
         setProjects(response.data);
@@ -111,13 +112,13 @@ export default function Projects() {
     }
 
     async function projectDelete(id) {
-        const response = await ProjectService.deleteProject(id);
-        
+        showLoading();      
+        const response = await ProjectService.remove('Project',id);  
+        showError(response.data);
         if(response.ok) {
             readProjects();
-        } else {
-            alert(getAlertMessages(response.data));
-        }
+        }     
+        hideLoading();
     }
 
     return (

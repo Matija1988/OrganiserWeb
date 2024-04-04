@@ -3,12 +3,12 @@ import { Link, useParams, useNavigate } from 'react-router-dom';
 import { Container, Form, Row, Col, Button } from "react-bootstrap";
 import ProjectService from "../../services/ProjectService";
 import { RoutesNames } from "../../constants";
-import { MdOutlineSettingsApplications } from "react-icons/md";
 import moment from 'moment';
 
 
 import './projectsStyle.css';
 import { getAlertMessages } from "../../services/httpService";
+import InputText from "../../components/InputText";
 
 export default function ProjectsUpdate() {
 
@@ -18,7 +18,7 @@ export default function ProjectsUpdate() {
 
     async function fetchProject() {
 
-        const response = await ProjectService.getById(routeParams.id);
+        const response = await ProjectService.getByID(routeParams.id);
         if(!response.ok) {
             alert(getAlertMessages(response.data));
             return;
@@ -70,16 +70,7 @@ export default function ProjectsUpdate() {
     return (
         <Container>
             <Form onSubmit={handleSubmit} className= "FormProjectCreate">
-
-                <Form.Group controlId="projectName">
-                    <Form.Label>Project Name</Form.Label>
-                    <Form.Control
-                        type='text'
-                        name='projectName'
-                        defaultValue={project.projectName}
-                    />
-                </Form.Group>
-
+                <InputText atribute= 'projectName' value={project.projectName}/>
 
                 <Form.Group controlId="uniqueID">
                     <Form.Label>Unique ID</Form.Label>
