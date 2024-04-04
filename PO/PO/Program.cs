@@ -1,8 +1,14 @@
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
-using PO.Data;
+using Microsoft.AspNetCore.Authentication.JwtBearer;
+using Microsoft.IdentityModel.Tokens;
 
+using PO.Data;
 using PO.Extensions;
+using System.Text;
+
+
+
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -18,6 +24,25 @@ builder.Services.AddPOCORS();
 builder.Services.AddDbContext<POContext>(po =>
 po.UseSqlServer(builder.Configuration.GetConnectionString(name: "POContext")));
 
+builder.Services.AddAuthentication(x =>
+{
+    x.DefaultAuthenticateScheme = JwtBearerDefaults.AuthenticationScheme;
+    x.DefaultChallengeScheme = JwtBearerDefaults.AuthenticationScheme;
+    x.DefaultScheme = JwtBearerDefaults.AuthenticationScheme;
+}).AddJwtBearer(x =>
+{
+    x.TokenValidationParameters = new TokenValidationParameters
+    {
+        IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes
+        ("FaceInTheMirrorAllSkinAndBoneBloodshutEyesAnd a heart of stone")),
+        ValidateIssuer = false,
+        ValidateAudience = false,
+        ValidateLifetime = true,
+        ValidateIssuerSigningKey = false,
+    };
+});
+
+builder.Services.AddAuthorization();
 
 var app = builder.Build();
 
@@ -34,6 +59,7 @@ app.UseSwaggerUI(opcije =>
 
 app.UseHttpsRedirection();
 
+app.UseAuthentication();
 app.UseAuthorization();
 
 app.MapControllers();

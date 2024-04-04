@@ -1,15 +1,15 @@
 ﻿using AutoMapper;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.Build.Exceptions;
 using Microsoft.EntityFrameworkCore;
-using Microsoft.EntityFrameworkCore.Query.SqlExpressions;
+
 using PO.Data;
 using PO.Mappers;
 using PO.Models;
-using System.Net;
 
 namespace PO.Controllers
 {
+    [Authorize]
     public abstract class POController<T, TDR, TDI> : ControllerBase where T : Entity
     {
         protected DbSet<T> DbSet;

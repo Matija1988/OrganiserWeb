@@ -51,8 +51,8 @@ export default function Activities() {
        }
     
        function FormatDateEnd(activity){ 
-        return  activity.dateFinished == null ? 'Not defined' :
-        moment.utc(activity.dateFinished).format('DD.MM.YYYY.')
+        return  activity.dateFinish == null ? 'Not defined' :
+        moment.utc(activity.dateFinish).format('DD.MM.YYYY.')
        }
     
        
@@ -80,7 +80,7 @@ export default function Activities() {
        function progresLabelMaxValue(activity) {
     
         let date1 = new Date(activity.dateStart);
-        let date2 = new Date(activity.dateFinished);
+        let date2 = new Date(activity.dateFinish);
         let dateNow = Date.now();
     
         let differenceInTime = date2.getTime() - date1.getTime();

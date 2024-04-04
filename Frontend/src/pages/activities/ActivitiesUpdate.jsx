@@ -81,17 +81,17 @@ export default function ActivitiesUpdate() {
         const information = new FormData(e.target);
 
         const startingDate = moment.utc(information.get('dateStart') + ' ' + information.get('startTime'));
-        const deadlineDate = moment.utc(information.get('datefinished') + ' ' + information.get('deadlineTime'));
+        const deadlineDate = moment.utc(information.get('datefinish') + ' ' + information.get('deadlineTime'));
         const acceptanceDate = moment.utc(information.get('dateaccepted') + ' ' + information.get('acceptanceTime'));
 
         UpdateActivity({
             activityName: information.get('activityName'),
-            activityDescription: information.get('description'),
+            description: information.get('description'),
             dateStart: startingDate,
             dateFinish: deadlineDate,
             isFinished: information.get('isFinished') == 'on' ? true : false,
             dateAccepted: acceptanceDate,
-            Project: parseInt(projectID)
+            ProjectID: parseInt(projectID)
         });
 
     }
@@ -116,7 +116,7 @@ export default function ActivitiesUpdate() {
                     <Form.Control
                         type='text'
                         name='description'
-                        defaultValue={activity.activityDescription}
+                        defaultValue={activity.description}
                         maxLength={500}
                         
                     />
@@ -147,11 +147,11 @@ export default function ActivitiesUpdate() {
 
                 <Row>
                     <Col>
-                    <Form.Group controlId="datefinished">
+                    <Form.Group controlId="datefinish">
                         <Form.Label>Deadline</Form.Label>
                         <Form.Control
                             type='date'
-                            name='datefinished'
+                            name='datefinish'
                             defaultValue={activity.deadlineDate}
                             required
                         />

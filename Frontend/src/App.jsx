@@ -1,5 +1,4 @@
 import { Route, Routes } from 'react-router-dom';
-import './App.css'
 
 import { RoutesNames } from './constants';
 import NavBar from './components/NavBar';
@@ -25,6 +24,9 @@ import ProofsUpdate from './pages/proofs/ProofsUpdate';
 import ListProjectActivities from './pages/projects/ListProjectActivities';
 import ActivitiesMembersMenu from './pages/activities/ActivitiesMembersMenu';
 
+import ErrorModal  from './components/ErrorModal';
+import useError from './hooks/useError';
+import LoadingSpinner from './components/LoadingSpinner';
 
 import './style.css';
 

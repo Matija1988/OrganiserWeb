@@ -126,6 +126,12 @@ namespace PO.Controllers
                 var filePath = Path.Combine(dir +ds+proofID+"_"+System.IO.Path.GetExtension(file.FileName));
                 Stream fileStram = new FileStream(filePath, FileMode.Create);
                 await file.CopyToAsync(fileStram);
+
+                entityFromDb.Location = filePath;
+
+                _context.ProofOfDeliveries.Update(entityFromDb);
+                _context.SaveChanges();
+
                 return Ok("File uploaded");
 
             } catch (Exception ex) 

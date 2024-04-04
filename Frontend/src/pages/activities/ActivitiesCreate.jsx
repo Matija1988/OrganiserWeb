@@ -15,7 +15,7 @@ export default function ActivitiesCreate() {
     const navigate = useNavigate();
 
     const [project, setProject] = useState([]);
-    const [projectID, setProjectID] = useState(0);
+    const [projectIDinput, setProjectIDinput] = useState(0);
 
     async function fetchProject() {
         const response = await ProjectService.getProjects();
@@ -24,7 +24,7 @@ export default function ActivitiesCreate() {
             return;
         }
         setProject(response.data);
-        setProjectID(response.data[0].id);
+        setProjectIDinput(response.data[0].id);
     }
 
     async function load() {
@@ -57,19 +57,19 @@ export default function ActivitiesCreate() {
         if(information.get('datestart') != '' && information.get('timestart') =='') {
             datestarted = information.get('datestart') + 'T00:00:00.000Z'; 
         } else {
-            datestarted = information.get('datestart') + 'T' + information.get('timestart') + '00.000Z';
+            datestarted = information.get('datestart') + 'T' + information.get('timestart') + ':00.000Z';
         }
 
-        if(information.get('datefinished') == '' && information.get('deadlinetime')!='') {
+        if(information.get('datefinish') == '' && information.get('deadlinetime')!='') {
             alert('User must set date AND time values for deadline and deadline time');
             return;
         } 
         let dateend = '';
 
-        if(information.get('datefinished') != '' && information.get('deadlinetime') =='') {
-            dateend = information.get('datefinished') + 'T00:00:00.000Z'; 
+        if(information.get('datefinish') != '' && information.get('deadlinetime') =='') {
+            dateend = information.get('datefinish') + 'T00:00:00.000Z'; 
         } else {
-            dateend = information.get('datefinished') + 'T' + information.get('deadlinetime') + '00.000Z';
+            dateend = information.get('datefinish') + 'T' + information.get('deadlinetime') + ':00.000Z';
         }
         
         let dateaccept = '';
@@ -83,12 +83,12 @@ export default function ActivitiesCreate() {
 
         addActivity({
             activityName: information.get('activityName'),
-            activityDescription: information.get('description'),
+            description: information.get('description'),
             dateStart:  datestarted,   
-            dateFinished: dateend,
+            dateFinish: dateend,
             isFinished: information.get('isFinished') == 'on' ? true : false,
             dateAccepted: dateaccept,
-            project: parseInt(projectID)
+            projectID: parseInt(projectIDinput)
        
         });
 
@@ -145,11 +145,11 @@ export default function ActivitiesCreate() {
 
                 <Row>
                     <Col>
-                        <Form.Group controlId='datefinished'>
+                        <Form.Group controlId='datefinish'>
                             <Form.Label>Deadline</Form.Label>
                             <Form.Control
                                 type='date'
-                                name='datefinished'
+                                name='datefinish'
                                 placeholder='dateFinish'
                                 required
                             />
@@ -185,7 +185,7 @@ export default function ActivitiesCreate() {
                 <Form.Group  controlId='project'>
                         <Form.Label>Associated project</Form.Label>
                         <Form.Select
-                            onChange = {(e) => {setProjectID(e.target.value)}}
+                            onChange = {(e) => {setProjectIDinput(e.target.value)}}
                         >
                         {project && project.map((e, index) =>(
                             <option key ={index} value={e.id}>{e.projectName}</option>

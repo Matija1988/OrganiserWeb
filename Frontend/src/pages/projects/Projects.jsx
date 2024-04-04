@@ -5,11 +5,12 @@ import { IoIosAdd } from 'react-icons/io';
 import { FaEdit, FaTrash, FaWrench } from 'react-icons/fa';
 import ProgressBar from "react-bootstrap/ProgressBar";
 import Form from 'react-bootstrap/Form';
-
 import moment from 'moment';
 
 import ProjectService from "../../services/ProjectService";
 import { RoutesNames } from "../../constants";
+import useError from "../../hooks/useError";
+import useLoading from "../../hooks/useLoading";
 
 import "bootstrap/dist/css/bootstrap.min.css";
 
@@ -25,19 +26,21 @@ export default function Projects() {
     const [filter, setFilter] = useState();
     
     const [search, setSearch] = useState("");
+    const { showError } = useError();
+    const { showLoading, hideLoading} = useLoading();
 
 
     const navigate = useNavigate();
 
-
-
     async function readProjects() {
+        showLoading();
         const response = await ProjectService.getProjects();
         if(!response.ok){
             alert(getAlertMessages(response.data));
             return;
         }
         setProjects(response.data);
+        hideLoading();
     }
 
     useEffect(() => {
@@ -175,11 +178,9 @@ export default function Projects() {
 
                             </td>
                             <td className="alignCenter" 
-                            color={IsFinishedDisplayColor(project)}
-                            
+                             color= {IsFinishedDisplayColor(project)}                            
                             >
                                 {IsFinishedDisplayText(project)}
-
                             </td>
 
                             <td className="alignCenter">
