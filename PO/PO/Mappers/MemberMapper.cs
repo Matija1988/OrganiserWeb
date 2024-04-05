@@ -22,6 +22,18 @@ namespace PO.Mappers
                             entity.IsTeamLeader
                             ));
                     }));
+
+            MapperReadMemberAuthDTO = new Mapper(
+                new MapperConfiguration(c =>
+                {
+                    c.CreateMap<Member, MemberDTOAuth>()
+                    .ConstructUsing(entity =>
+                    new MemberDTOAuth(
+                        entity.Email,
+                        entity.Password
+                        ));
+                }
+                ));
             
         }
     }

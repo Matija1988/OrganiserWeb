@@ -7,7 +7,7 @@ namespace PO.Mappers
         protected Mapper MapperReadToDTO;
         protected Mapper MapperMapInsertUpdatedFromDTO;
         protected Mapper MapperMapInsertUpdateToDTO;
-
+        protected Mapper MapperReadMemberAuthDTO;
 
         public Mapping()
 
@@ -37,8 +37,15 @@ namespace PO.Mappers
                     {
                         c.CreateMap<T, DTI>();
                     }));
-             
-            
+
+            MapperReadMemberAuthDTO = new Mapper(
+                new MapperConfiguration(c =>
+                {
+                    c.CreateMap<T, DTR>();
+                }));
+
+
+
         }
 
         public List<DTR> MapReadList(List<T> list)

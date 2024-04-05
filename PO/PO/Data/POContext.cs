@@ -40,8 +40,6 @@ namespace PO.Data
         /// </summary>
         public DbSet<ProofOfDelivery> ProofOfDeliveries { get; set; }
 
-        public DbSet<User> Users { get; set; }
-
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
             // implementacija veze 1:n

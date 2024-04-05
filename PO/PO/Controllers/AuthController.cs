@@ -6,41 +6,38 @@ using System.IdentityModel.Tokens.Jwt;
 using System.Text;
 using Microsoft.AspNetCore.Mvc.ModelBinding;
 
-
-
-
 namespace PO.Controllers
 {
     [ApiController]
     [Route("api/v1/[controller]")]
-    public class AuthControllesr : ControllerBase
+    public class AuthController : ControllerBase
     {
         private readonly POContext _context;
 
-        public AuthControllesr(POContext context)
+        public AuthController(POContext context)
         {
             _context = context;
         }
 
         [HttpPost("token")]
-        public IActionResult GenerateToken(UserDTO user)
+        public IActionResult GenerateToken(MemberDTOAuth user)
         {
             if(!ModelState.IsValid) { return BadRequest(ModelState); }
 
-            var userBase = _context.Users.Where(p => p.Email!.Equals(user.email)).FirstOrDefault();
+            var userBase = _context.members.Where(p => p.Email!.Equals(user.Email)).FirstOrDefault();
 
             if(userBase == null) 
             {
                 return StatusCode(StatusCodes.Status403Forbidden, "You are not authorized to preform this action!");
             }
 
-            if(!BCrypt.Net.BCrypt.Verify(user.password, userBase.Password)) 
+            if(!BCrypt.Net.BCrypt.Verify(user.Password, userBase.Password)) 
             {
                 return StatusCode(StatusCodes.Status403Forbidden, "You are not authorized to preform this action!");
             }
 
             var tokenHandler = new JwtSecurityTokenHandler();
-            var key = Encoding.UTF8.GetBytes("FaceInTheMirrorAllSkinAndBoneBloodshutEyesAnd a heart of stone");
+            var key = Encoding.UTF8.GetBytes("FaceInTheMirrorAllSkinAndBoneBloodshotEyesAnd a heart of stone");
 
             var tokenDescriptor = new SecurityTokenDescriptor
             {

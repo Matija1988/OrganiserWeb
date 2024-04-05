@@ -1,26 +1,32 @@
 import { useEffect, useState } from "react";
-import { Link, useParams, useNavigate } from 'react-router-dom';
+import { Link, useParams, useNavigate, Route } from 'react-router-dom';
 import { Container, Form, Row, Col, Button } from "react-bootstrap";
-import ProjectService from "../../services/ProjectService";
 import { RoutesNames } from "../../constants";
 import moment from 'moment';
 
-
+import ProjectService from "../../services/ProjectService";
 import './projectsStyle.css';
 import { getAlertMessages } from "../../services/httpService";
 import InputText from "../../components/InputText";
+import useError from "../../hooks/useError";
+import useLoading from "../../hooks/useLoading";
+import DateAndTime from "../../components/DateAndTime";
+
 
 export default function ProjectsUpdate() {
 
     const navigate = useNavigate();
     const routeParams = useParams();
     const [project, setProject] = useState({});
+    const {showError} = useError();
+    const {showLoading, hideLoading} = useLoading();
 
     async function fetchProject() {
-
-        const response = await ProjectService.getByID(routeParams.id);
+        showLoading();
+        const response = await ProjectService.getByID('Project',routeParams.id);
         if(!response.ok) {
-            alert(getAlertMessages(response.data));
+            showError(response.data);
+            navigate(RoutesNames.PROJECTS_READ);
             return;
         }
         project.timeStart = moment.utc(project.dateStart).format('HH:mm');
@@ -30,6 +36,7 @@ export default function ProjectsUpdate() {
         delete project.dateStart;
         delete project.dateEnd;
         setProject(response.data);
+        hideLoading();
     }
 
     useEffect(() => {
@@ -37,13 +44,15 @@ export default function ProjectsUpdate() {
     }, []);
 
     async function updateProject(project) {
-
-        const response = await ProjectService.changeProject(routeParams.id, project);
+        showLoading();
+        const response = await ProjectService.update('Project', routeParams.id, project);
         if (response.ok) {
             navigate(RoutesNames.PROJECTS_READ);
+            hideLoading();
             return;
         } 
-        alert(getAlertMessages(response.data));
+        showError(response.data);
+        hideLoading();
     }
 
 
@@ -52,7 +61,6 @@ export default function ProjectsUpdate() {
         e.preventDefault();
         const information = new FormData(e.target);
 
-        
         const startingDate = moment.utc(information.get('date') + ' ' + information.get('timeStart'));
         const deadlineDate = moment.utc(information.get('dateEnd') + ' ' + information.get('deadlineTime'));
 
@@ -71,15 +79,8 @@ export default function ProjectsUpdate() {
         <Container>
             <Form onSubmit={handleSubmit} className= "FormProjectCreate">
                 <InputText atribute= 'projectName' value={project.projectName}/>
-
-                <Form.Group controlId="uniqueID">
-                    <Form.Label>Unique ID</Form.Label>
-                    <Form.Control
-                        type='text'
-                        name='uniqueID'
-                        defaultValue={project.uniqueID}
-                    />
-                </Form.Group>
+                <InputText atribute="uniqueID" value={project.uniqueID} />
+                
                 <Row>
                     <Col>
                     <Form.Group controlId="dateStart">

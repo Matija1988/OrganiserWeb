@@ -98,11 +98,11 @@ namespace PO.Models
     /// </summary>
     /// <param name="email"></param>
     /// <param name="password"></param>
-    public record UserDTO(
+    public record MemberDTOAuth(
         [Required(ErrorMessage ="Mandatory input")]
-        string? email,
+        string? Email,
         [Required(ErrorMessage = "Mandatory input")]
-        string? password
+        string? Password
         );
 
 }
