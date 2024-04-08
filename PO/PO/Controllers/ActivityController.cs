@@ -1,14 +1,7 @@
-﻿using AutoMapper;
-using Microsoft.AspNetCore.Mvc;
-using Microsoft.AspNetCore.Mvc.ModelBinding;
-using Microsoft.CodeAnalysis;
-using Microsoft.Data.SqlClient;
+﻿using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Storage.Json;
-using Microsoft.Identity.Client;
-using Newtonsoft.Json;
 using PO.Data;
-using PO.Extensions;
 using PO.Mappers;
 using PO.Models;
 using System.Text;
@@ -34,6 +27,8 @@ namespace PO.Controllers
 
         public ActivityController(POContext context) : base(context)
         {
+            DbSet = _context.activities;
+            _mapper = new ActivityMapper();
         }
  
 
@@ -62,7 +57,9 @@ namespace PO.Controllers
                 {
                     return new EmptyResult();
                 }
-                return new JsonResult(entity.Members!.MapMemberReadList());
+                Mapping<Member, MemberDTORead, MemberDTOInsertUpdate> mapping 
+                    = new Mapping<Member, MemberDTORead, MemberDTOInsertUpdate>(); 
+                return new JsonResult(mapping.MapReadList(entity.Members));
             }
             catch (Exception e)
             {
@@ -121,6 +118,14 @@ namespace PO.Controllers
 
         }
 
+        /// <summary>
+        /// Makni clana iz aktivnosti
+        /// Remove a member from activity
+        /// </summary>
+        /// <param name="id"></param>
+        /// <param name="memberID"></param>
+        /// <returns></returns>
+
         [HttpDelete]
         [Route("{id:int}/delete/{memberID:int}")]
 
@@ -176,8 +181,8 @@ namespace PO.Controllers
             try
             {
                 var entity = _context.activities
-                    .Include(i => i.AssociatedProject)
-                    .Where(i => i.AssociatedProject.ID == projectID)
+                    .Include(i => i.Project)
+                    .Where(i => i.Project.ID == projectID)
                     .ToList();
 
 
@@ -185,7 +190,7 @@ namespace PO.Controllers
                 {
                     return new EmptyResult();
                 }
-                return new JsonResult(entity.MapActivityReadList());
+                return new JsonResult(_mapper.MapReadList(entity));
             }
             catch (Exception ex)
             {
@@ -195,9 +200,15 @@ namespace PO.Controllers
 
         }
 
+        /// <summary>
+        /// Pretrazuje aktivnosti usporedujuci input string
+        /// Searches activities via input string
+        /// </summary>
+        /// <param name="input"></param>
+        /// <returns></returns>
+
         [HttpGet]
         [Route("Activities/SearchByName/{input}")]
-        
         public IActionResult SearchActivityByName(string input)
         {
             if (!ModelState.IsValid || input == null)
@@ -207,7 +218,7 @@ namespace PO.Controllers
 
             try
             {
-                var activities = _context.activities.Include(i=> i.AssociatedProject)
+                var activities = _context.activities.Include(i=> i.Project)
                     .Where(i => i.ActivityName
                     .Contains(input)).ToList();
 
@@ -216,7 +227,7 @@ namespace PO.Controllers
                     return new EmptyResult();
                 }
 
-                return new JsonResult(activities.MapActivityReadList());
+                return new JsonResult(_mapper.MapReadList(activities));
 
             } 
             catch (Exception ex) 
@@ -227,9 +238,15 @@ namespace PO.Controllers
 
         }
 
+        /// <summary>
+        /// Pretrazuje aktivnosti po statusu - True = zavrsen, False = u provedbi
+        /// Searches activities by status - True = finished, False = ongoing
+        /// </summary>
+        /// <param name="finished"></param>
+        /// <returns></returns>
+
         [HttpGet]
         [Route("Activities/SearchByStatus/{finished:bool}")]
-
         public IActionResult SearchByStatus(bool finished)
         {
             if (!ModelState.IsValid)
@@ -239,7 +256,7 @@ namespace PO.Controllers
 
             try
             {
-                var activities = _context.activities.Include(i=> i.AssociatedProject)
+                var activities = _context.activities.Include(i=> i.Project)
                     .Where(i=> i.IsFinished == finished).ToList();  
 
                 if(activities == null)
@@ -247,7 +264,7 @@ namespace PO.Controllers
                     return new EmptyResult();
                 }
 
-                return new JsonResult(activities.MapActivityReadList());
+                return new JsonResult(_mapper.MapReadList(activities));
             } 
             catch (Exception ex) 
             {
@@ -256,6 +273,37 @@ namespace PO.Controllers
 
         }
 
+        [HttpGet]
+        [Route("getPagination/{page}")]
+        public IActionResult GetPagination(int page, string condition ="")
+        {
+            var byPage = 8;
+            condition = condition.ToLower();
+
+            try
+            {
+                var activities = _context.activities
+                    .Where(a => EF.Functions.Like(a.ActivityName.ToLower(), "%"+ condition +"%"))
+                    .Skip((byPage + page) - byPage)
+                    .Take(byPage)
+                    .OrderBy(a => a.ActivityName)
+                    .ToList();
+
+                return new JsonResult(_mapper.MapReadList(activities));
+            }
+            catch (Exception ex)
+            {
+                return BadRequest(ex.Message);
+            }
+
+        }
+
+        /// <summary>
+        /// Premoscivanje i prilagodavanje delete metode
+        /// Override and adaptation of delete method
+        /// </summary>
+        /// <param name="entity"></param>
+        /// <exception cref="Exception"></exception>
         protected override void ControlDelete(Activity entity)
         {
             if(entity != null && entity.Members != null && entity.Members.Count() > 0)
@@ -272,27 +320,39 @@ namespace PO.Controllers
             }
         }
 
-        protected override Activity CreateEntity(ActivityDTOInsertUpdate entityDTO)
+        /// <summary>
+        /// Premoscivanje i prilagodavanje POST metode
+        /// Override and adaptation of POST method
+        /// </summary>
+        /// <param name="entityDTO"></param>
+        /// <returns></returns>
+        /// <exception cref="Exception"></exception>
+        protected override  Activity CreateEntity(ActivityDTOInsertUpdate entityDTO)
         {
-            var pro = _context.Projects.Find(entityDTO.Project);
+             
+            var project = _context.Projects.Find(entityDTO.ProjectID)
+                ?? throw new Exception("There is no project with " + entityDTO.ProjectID + " in database!");
 
-            if (pro == null)
-            {
-                throw new Exception("There is no project with " + entityDTO.Project + " in database!");
-            }
+            var entity = _mapper.MapInsertUpdatedFromDTO(entityDTO);
 
-            var entity = entityDTO.MapActivityInsertUpdateFromDTO(new Activity());
             entity.Members = new List<Member>();
-            entity.AssociatedProject = pro;
-
+            entity.Project = project;
+    
             return entity;
+            
 
         }
 
+        /// <summary>
+        /// Premoscivanje i prilagodavanje GET metode
+        /// Override and adaptation of GET method
+        /// </summary>
+        /// <returns></returns>
+        /// <exception cref="Exception"></exception>
         protected override List<ActivityDTORead> ReadAll()
         {
             var list = _context.activities
-                .Include(a => a.AssociatedProject)
+                .Include(a => a.Project)
                 .ToList();
 
             if (list == null || list.Count == 0)
@@ -300,7 +360,7 @@ namespace PO.Controllers
                 throw new Exception("No data in database!");
             }
 
-            return list.MapActivityReadList();
+            return _mapper.MapReadList(list);
 
         }
         /// <summary>
@@ -311,16 +371,11 @@ namespace PO.Controllers
         /// <exception cref="Exception"></exception>
         protected override Activity FindEntity(int id)
         {
-
-            var entity = _context.activities.Include(e => e.AssociatedProject).FirstOrDefault(x => x.ID == id);
-
-            if(entity == null)
-            {
-                throw new Exception("No entity with id " + id + " in database!");
-            }
-
-            return entity;
+            return _context.activities.Include(i => i.Project)
+                .FirstOrDefault(x => x.ID == id) ?? throw new Exception("No activity with id " + id + " in database!");
         }
+
+
         /// <summary>
         /// 
         /// </summary>
@@ -330,16 +385,17 @@ namespace PO.Controllers
         /// <exception cref="Exception"></exception>
         protected override Activity UpdateEntity(ActivityDTOInsertUpdate entityDTO, Activity entityFromDB)
         {
-            var projectFromDB = _context.Projects.Find(entityDTO.Project);
+            var projectFromDB = _context.Projects.Find(entityDTO.ProjectID) 
+                ?? throw new Exception("No entitiy with id " + entityFromDB.Project.ID + " in database!");
+            //entityFromDB = _mapper.MapInsertUpdatedFromDTO(entityDTO);
+            entityFromDB.ActivityName = entityDTO.ActivityName; 
+            entityFromDB.DateAccepted = entityDTO.DateAccepted;
+            entityFromDB.Description = entityDTO.Description;
+            entityFromDB.DateStart = entityDTO.DateStart;
+            entityFromDB.DateFinish = entityDTO.DateFinish;
+            entityFromDB.IsFinished = entityDTO.IsFinished;
 
-            if(projectFromDB == null)
-            {
-                throw new Exception("No entitiy with id " + entityFromDB.AssociatedProject.ID + " in database!");
-            }
-
-            entityFromDB = entityDTO.MapActivityInsertUpdateFromDTO(entityFromDB);
-
-            entityFromDB.AssociatedProject = projectFromDB;
+            entityFromDB.Project = projectFromDB;
             
             return entityFromDB;    
 

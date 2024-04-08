@@ -1,12 +1,9 @@
-﻿using AutoMapper.QueryableExtensions;
-using Microsoft.AspNetCore.Http.HttpResults;
-using Microsoft.AspNetCore.Mvc;
+﻿using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using PO.Data;
-using PO.Extensions;
+using PO.Mappers;
 using PO.Models;
-using System.IO;
-using System.Text;
+using System.Data.OleDb;
 
 namespace PO.Controllers
 {
@@ -21,24 +18,19 @@ namespace PO.Controllers
     [Route("api/v1/[controller]")]
     public class ProofController : POController<ProofOfDelivery, ProofDTORead, ProofDTOInsertUpdate>
     {
-        public ProofController(POContext context) : base(context) => DbSet = _context.ProofOfDeliveries;
+        public ProofController(POContext context) : base(context)
+        {
+            DbSet = _context.ProofOfDeliveries;
+            _mapper = new ProofMapper();
+        }
 
         protected override ProofOfDelivery UpdateEntity(ProofDTOInsertUpdate entityDTO, ProofOfDelivery entityFromDB)
         {
-            var member = _context.members.Find(entityDTO.member);
-            if (member == null)
-            {
-                throw new Exception("No entity with id " + entityDTO.member + " in database");
-            }
-
-            var activity = _context.activities.Find(entityDTO.activity);
-
-            if(activity == null)
-            {
-                throw new Exception("No entity with id " + entityDTO.activity + " in database");
-            }
-
-            entityFromDB = entityDTO.MapProofInsertUpdateFromDTO(entityFromDB);
+            var member = _context.members.Find(entityDTO.memberID)
+                ?? throw new Exception("No entity with id " + entityDTO.memberID + " in database");
+            var activity = _context.activities.Find(entityDTO.activityID) 
+                ?? throw new Exception("No entity with id " + entityDTO.activityID + " in database");
+            entityFromDB = _mapper.MapInsertUpdatedFromDTO(entityDTO);
 
             entityFromDB.Member = member;
             entityFromDB.Activity = activity;
@@ -70,16 +62,12 @@ namespace PO.Controllers
             {
                 throw new Exception("No data in database!");
             }
-            return entityList.MapProofReadList();
+            return _mapper.MapReadList(entityList);
         }
 
-        protected override ProofDTORead MapRead(ProofOfDelivery entity)
-        {
-            return entity.MapProofReadToDTO();
-        }
         protected override ProofOfDelivery CreateEntity(ProofDTOInsertUpdate entityDTO)
         {
-            var member = _context.members.Find(entityDTO.member);
+            var member = _context.members.Find(entityDTO.memberID);
 
             if (member == null)
             {
@@ -87,14 +75,14 @@ namespace PO.Controllers
             }
 
 
-            var act = _context.activities.Find(entityDTO.activity);
+            var act = _context.activities.Find(entityDTO.activityID);
 
             if(act == null) 
             {
                 throw new Exception("Activity with id " + act.ID + " not found!");
             }
 
-            var entity = entityDTO.MapProofInsertUpdateFromDTO(new ProofOfDelivery());
+            var entity = _mapper.MapInsertUpdatedFromDTO(entityDTO);
             entity.Member = member;
             entity.Activity = act;
 
@@ -112,6 +100,70 @@ namespace PO.Controllers
             }
 
 
+        }
+
+        [HttpPatch]
+        [Route("{proofID:int}")] 
+
+        public async Task<ActionResult> Patch (int proofID, IFormFile file)
+        {
+            if (file == null) return BadRequest("No file set for upload");
+
+            var entityFromDb = _context.ProofOfDeliveries.Find(proofID);
+
+            if (entityFromDb == null) return BadRequest("No entity with id " + proofID + " in database.");
+
+            try
+            {
+                var ds = Path.DirectorySeparatorChar;
+                string dir = Path.Combine(Directory.GetCurrentDirectory()
+                    + ds + "wwwroot" + ds + "file" + ds + "proof");
+                if(!System.IO.Directory.Exists(dir))
+                {
+                    System.IO.Directory.CreateDirectory(dir);
+                }
+
+                var filePath = Path.Combine(dir +ds+proofID+"_"+System.IO.Path.GetExtension(file.FileName));
+                Stream fileStram = new FileStream(filePath, FileMode.Create);
+                await file.CopyToAsync(fileStram);
+
+                entityFromDb.Location = filePath;
+
+                _context.ProofOfDeliveries.Update(entityFromDb);
+                _context.SaveChanges();
+
+                return Ok("File uploaded");
+
+            } catch (Exception ex) 
+            {
+                return BadRequest(ex.Message);
+            }
+
+        }
+
+        [HttpGet]
+        [Route("getPagination/{page}")]
+        public IActionResult GetPagination(int page, string condition ="")
+        {
+            var byPage = 8;
+            condition = condition.ToLower();
+
+            try
+            {
+                var proof = _context.ProofOfDeliveries.Where(
+                    p => EF.Functions.Like(p.DocumentName.ToLower(), "%" + condition + "%")
+                    || EF.Functions.Like(p.Activity.ActivityName.ToLower(), "%" + condition + "%"))
+                    .Skip((byPage * page) - byPage)
+                    .Take(byPage)
+                    .OrderBy(p => p.DocumentName)
+                    .ToList();
+
+                return new JsonResult(_mapper.MapReadList(proof));
+            }
+            catch (Exception ex)
+            {
+                return BadRequest(ex.Message);  
+            }
         }
 
 

@@ -8,6 +8,9 @@ import { FaEdit, FaTrash } from 'react-icons/fa';
 import Form from 'react-bootstrap/Form';
 
 import './membersStyle.css';
+import NavBar from "../../components/NavBar";
+import useError from "../../hooks/useError";
+import useLoading from "../../hooks/useLoading";
 
 
 export default function Members() {
@@ -15,10 +18,13 @@ export default function Members() {
     const [Members, setMembers] = useState();
     const [search, setSearch] = useState("");
 
+    const {showError} = useError();
+    const {showLoading, hideLoading} = useLoading();
+
     let navigate = useNavigate();
 
     async function fetchMembers() {
-        const response = await MembersService.getMembers();
+        const response = await MembersService.read('Member');
         if(!response.ok){
             alert(getAlertMessages(response.data));
             return;
@@ -31,12 +37,12 @@ export default function Members() {
     }, []);
 
     async function deleteMember(id) {
-        const reply = await MembersService.deleteMember(id)
+        const reply = await MembersService.remove('Member', id)
 
         if (reply.ok) {
             fetchMembers();
         } else {
-            alert(reply.message);
+            showError(reply.data);
         }
     }
 
@@ -48,7 +54,8 @@ export default function Members() {
     }
 
     return (
-
+        <>
+        <NavBar />
         <Container>
             <Link to={RoutesNames.MEMBERS_CREATE} className="btn btn-success gumb" >
                 <IoIosAdd size={25} /> ADD
@@ -65,8 +72,7 @@ export default function Members() {
             <Table striped bordered hover responsive variant="dark" className="tableStyle"> 
             <thead>
                 <tr>
-                    <th>First Name</th>
-                    <th>Last Name</th>
+                    <th>Member</th>
                     <th>Username</th>
                     <th>Password</th>
                     <th>Position</th>
@@ -81,8 +87,7 @@ export default function Members() {
                         || search === '' ? Members : Members.email.includes(search);
                     }).map((member, index) =>(
                     <tr key={index}>
-                        <td>{member.firstName}</td>
-                        <td>{member.lastName}</td>
+                        <td>{member.firstName + " " + member.lastName}</td>
                         <td>{member.username}</td>
                         <td>{member.password}</td>
                         <td>{Text = MemberStatusDisplayText(member)}</td>
@@ -114,7 +119,7 @@ export default function Members() {
             </Table>
 
         </Container>
-
+        </>
     );
 
 }

@@ -3,45 +3,38 @@ using PO.Models;
 
 namespace PO.Mappers
 {
-    public class MemberMapper
+    public class MemberMapper : Mapping<Member, MemberDTORead, MemberDTOInsertUpdate>
     {
-        public static Mapper MembersMapperReadToDTO()
+        public MemberMapper()
         {
-            return new Mapper(
+               MapperReadToDTO = new Mapper(
+                    new MapperConfiguration(c =>
+                    {
+                        c.CreateMap<Member, MemberDTORead>()
+                        .ConstructUsing(entity =>
+                        new MemberDTORead(
+                            entity.ID,
+                            entity.FirstName,
+                            entity.LastName,
+                            entity.Username,
+                            entity.Password,
+                            entity.Email,
+                            entity.IsTeamLeader
+                            ));
+                    }));
+
+            MapperReadMemberAuthDTO = new Mapper(
                 new MapperConfiguration(c =>
                 {
-                    c.CreateMap<Member, MemberDTORead>()
+                    c.CreateMap<Member, MemberDTOAuth>()
                     .ConstructUsing(entity =>
-                    new MemberDTORead(
-                        entity.ID,
-                        entity.FirstName,
-                        entity.LastName,
-                        entity.Username,
-                        entity.Password,
+                    new MemberDTOAuth(
                         entity.Email,
-                        entity.IsTeamLeader
+                        entity.Password
                         ));
-                }));
+                }
+                ));
+            
         }
-
-        public static Mapper MembersReadFromDTO()
-        {
-            return new Mapper(
-                new MapperConfiguration(c =>
-                {
-                    c.CreateMap<MemberDTORead, Member>();
-                }));
-        }
-
-        public static Mapper MemberInsertUpdateToDTO()
-        {
-            return new Mapper(
-                new MapperConfiguration(c =>
-                {
-                    c.CreateMap<Member, MemberDTOInsertUpdate>();
-                }));
-        }
-
-        
     }
 }

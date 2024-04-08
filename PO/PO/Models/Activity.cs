@@ -20,7 +20,6 @@ namespace PO.Models
         /// 1.1. Creation of project and tehnical documentation
         /// </summary>
 
-        [Required]
         public string ActivityName { get; set; }
 
         /// <summary>
@@ -34,15 +33,12 @@ namespace PO.Models
         /// Planirani pocetak provedbe aktivnosti
         /// Planned activity execution start date
         /// </summary>
-
-        [Required]
         public DateTime DateStart { get; set; }
 
         /// <summary>
         /// Planirani kraj provedbe aktivnosti
         /// Planned activity execition end date
         /// </summary>
-        [Required]
         public DateTime DateFinish { get; set; }
 
         /// <summary>
@@ -73,7 +69,7 @@ namespace PO.Models
 
         
         [ForeignKey("projectID")]
-        public Project? AssociatedProject { get; set; }
+        public Project Project { get; set; }
 
         /// <summary>
         /// Clanovi koji izvrsavaju aktivnost

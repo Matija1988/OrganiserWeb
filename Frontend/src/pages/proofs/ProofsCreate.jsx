@@ -1,24 +1,82 @@
-import { Button, Col, Container, Form, Row } from 'react-bootstrap';
-import { Link, useNavigate } from "react-router-dom";
-import ProofsService from '../../services/ProofsService';
+import { Button, Col, Container, Form, FormLabel, FormSelect, Modal, Row } from 'react-bootstrap';
+import { Link, useNavigate} from "react-router-dom";
+import { useEffect, useState } from 'react';
+
 import { RoutesNames } from '../../constants';
 
+import ProofsService from '../../services/ProofsService';
+import MembersService from '../../services/MembersService';
+import ActivitesService from '../../services/ActivitiesService';
+import { getAlertMessages } from '../../services/httpService';
 
 import './proofsStyle.css';
+import NavBar from '../../components/NavBar';
+import useError from '../../hooks/useError';
+import useLoading from '../../hooks/useLoading';
+import InputText from '../../components/InputText';
+import Actions from '../../components/Actions';
+import { FaUpload } from 'react-icons/fa';
 
 
 export default function ProofsCreate() {
 
     const navigate = useNavigate();
 
-    async function addProof(Proof) {
+    const [member, setMember] = useState([]);
+    const [memberIDa, setMemberID] = useState(0); 
 
-        const response = await ProofsService.createProof(Proof);
-        if (response.ok) {
-            navigate(RoutesNames.PROOFS_READ);
-        } else {
-            alert(getAlertMessages (response.data));
+    const [activity, setActivity] = useState([]);
+    const [activityIDa, setActivityID] = useState(0);
+
+    const {showError} = useError();
+    const {showLoading, hideLoading} = useLoading();
+
+    async function fetchMembers() {
+        showLoading();
+        const res = await MembersService.read('Member');
+        if(!res.ok) {
+            hideLoading();
+            showError(res.data);
+            return;
+        } 
+        setMember(res.data);
+        setMemberID(res.data[0].id);
+        hideLoading();
+    }
+
+    async function fetchAcitivties() {
+        showLoading();
+        const response = await ActivitesService.read('Activity');
+        if(!response.ok) {
+            hideLoading();
+            showError(response.data);
+            return; 
         }
+        setActivity(response.data);
+        setActivityID(response.data[0].id);
+        hideLoading();
+    }
+
+    async function load() {
+        await fetchMembers();
+        await fetchAcitivties();
+    }
+
+    useEffect(()=>{
+        load();
+    },[]);
+
+
+    async function addProof(Proof) {
+        showLoading();
+        const response = await ProofsService.create('Proof', Proof);
+        if (response.ok) {
+            hideLoading();
+            navigate(RoutesNames.PROOFS_READ);
+            return;
+        }
+        showError(response.data);
+        hideLoading();
     }
 
     function handleSubmit(e) {
@@ -26,94 +84,89 @@ export default function ProofsCreate() {
 
         const information = new FormData(e.target);
 
-        const proof = {
-            documentName: information.get('documentName'),
-            memberID: information.get('memberID'),
-            Location: information.get('Location'),
-            dateCreated: information.get('dateCreated'),
-            activityID: information.get('activityID')
-        };
+        if(information.get('dateCreated')=='' && information.get('timeCreated') != ''){
+            alert('Must set date along with time!');
+            return;
+        }
+        let dateOfCreation = null;
+        if(information.get('dateCreated') != '' && information.get('timeCreated')=='') {
+            dateOfCreation = information.get('dateCreated') + 'T00:00:00.000Z';
+        } else {
+            dateOfCreation = information.get('dateCreated') + 'T' + information.get('timeCreated') + ':00.000Z';
+        }
 
-        addProof(proof);
+        addProof({
+            documentName: information.get('Document name'),
+            datecreated: dateOfCreation,
+            memberID: parseInt(memberIDa),
+            
+            activityID: parseInt(activityIDa)
+        });
 
     }
 
     return (
+        <>
+        <NavBar />
         <Container>
             <Form onSubmit={handleSubmit} className='FormActivity'>
-
-                <Form.Group  controlId='documentName'>
-                    <Form.Label>Document Name</Form.Label>
-                    <Form.Control
-                        type='text'
-                        name='documentName'
-                        placeholder='Document Name'
-                        maxLength={100}
-                        required
-                    />
-                </Form.Group>
-
-                <Form.Group  controlId='memberID'>
-                    <Form.Label>Member</Form.Label>
-                    <Form.Control
-                        type='text'
-                        name='memberID'
-                        placeholder='Member'
-                        
-                    />
-
-                </Form.Group>
-
-                <Form.Group  controlId='Location'>
-                    <Form.Label>Location</Form.Label>
-                    <Form.Control
-                        type='text'
-                        name='Location'
-                        placeholder='Location'
-                        maxLength={200}
-                        
-                    />
-
-                </Form.Group>
-
-                <Form.Group  controlId='dateCreated'>
+            <InputText atribute='Document name' value=''/>
+                
+                <Row>
+                    <Col>
+                        <Form.Group controlId='memberID'>
+                            <Form.Label>Member</Form.Label>
+                            <Form.Select
+                            onChange={(e) => {setMemberID(e.target.value)}}
+                            >
+                                {member && member.map((m, index)=>(
+                                    <option key={index} value={m.id}>
+                                            {m.firstName} {m.lastName}
+                                    </option>
+                                ))}
+                            </Form.Select>
+                        </Form.Group>
+                    </Col>
+                    <Col>
+                    <Form.Group  controlId='dateCreated'>
                     <Form.Label>Date created</Form.Label>
                     <Form.Control
                         type='date'
                         name='dateCreated'
-                        placeholder='Date created'
-                        
+                        placeholder='Date created'         
                     />
-
                 </Form.Group>
-
-                <Form.Group  controlId='activityID'>
-                    <Form.Label>Activity</Form.Label>
-                    <Form.Control
-                        type='text'
-                        name='activityID'
-                        placeholder='Associated activity'
-                        
-                    />
-
-                </Form.Group>
-
-                <Row>
-                    <Col>
-                        <Link className='btn btn-danger gumb' to={RoutesNames.PROOFS_READ}>
-                            CANCEL
-                        </Link>
                     </Col>
-
                     <Col>
-                        <Button variant='primary' className='gumb' type='submit'>
-                            ADD PROOF
-                        </Button>
+                    <Form.Label>Time of creation</Form.Label>
+                    <Form.Control 
+                    type = 'time'
+                    name = 'timeCreated'
+                    placeholder='Time created'
+                    />
                     </Col>
                 </Row>
-            </Form>
-        </Container>
+                    
 
+                    <Form.Group controlId='activityID'>
+                        <Form.Label>Activity</Form.Label>
+                        <FormSelect
+                            onChange={(e) => { setActivityID(e.target.value) }}
+                        >
+                            {activity && activity.map((e, index) => (
+                                <option key={index} value={e.id}>
+                                    {e.activityName}
+                                </option>
+                            ))}
+
+                        </FormSelect>
+                    </Form.Group>
+                    <Actions cancel={RoutesNames.PROOFS_READ} action='ADD PROOF' />
+
+                </Form>
+            </Container>
+            
+        </>
     );
 
 }

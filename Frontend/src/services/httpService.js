@@ -7,10 +7,57 @@ export const httpService = axios.create({
     headers: { 'Content-Type': 'application/json' }
 });
 
+httpService.interceptors.request.use((config)=> {
+    config.headers.Authorization = 'Bearer ' + localStorage.getItem('Bearer');
+    return config; 
+});
+
+httpService.interceptors.response.use(
+    (response) =>response, 
+    (error) => {
+        if(error.response.status === 401) {
+            localStorage.setItem('Bearer', '');
+            window.location.href = '/';
+        } 
+        return Promise.reject(error);
+    }
+);
+
+export async function read(name) {
+    return await httpService.get('/' + name)
+        .then((res) => { return handleSuccess(res); }).catch((e) => { return processError(res); })
+}
+
+export async function getByID(name, id) {
+    return await httpService.get('/' + name + '/' + id)
+        .then((res) => { return handleSuccess(res); }).catch((e) => { return processError(res); })
+}
+
+export async function create(name, entity) {
+    return await httpService.post('/' + name, entity)
+        .then((res) => { return handleSuccess(res); }).catch((e) => { return processError(res); })
+}
+
+export async function update(name, id, entity) {
+    return await httpService.put('/' + name + '/' + id, entity)
+        .then((res) => { return handleSuccess(res); }).catch((e) => { return processError(res); })
+}
+
+export async function remove(name, id) {
+    return await httpService.delete('/' + name + '/' + id)
+        .then((res) => { return handleSuccess(res); }).catch((e) => { return processError(e); })
+}
+
 export function handleSuccess(res) {
     if (App.DEV) console.table(res.data);
     return { ok: true, data: res.data };
 }
+
+export function handeSuccesfulDelete(res) {
+    if (App.DEV) console.table(res.data);
+    return { ok: true, data: [generateMessage('Message', res.data)] };
+}
+
 
 export function processError(e) {
 

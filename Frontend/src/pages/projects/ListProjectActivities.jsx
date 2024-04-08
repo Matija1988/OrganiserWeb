@@ -13,6 +13,7 @@ import { RoutesNames } from "../../constants";
 
 import "bootstrap/dist/css/bootstrap.min.css";
 import './projectsStyle.css';
+import NavBar from "../../components/NavBar";
 
 
 export default function ListProjectActivities() {
@@ -50,24 +51,24 @@ export default function ListProjectActivities() {
     }
 
     function FormatDateStart(activity) {
-        return activity.datestart == null ? 'Not defined' :
-            moment.utc(activity.datestart).format('DD.MM.YYYY.')
+        return activity.dateStart == null ? 'Not defined' :
+            moment.utc(activity.dateStart).format('DD.MM.YYYY.')
     }
 
     function FormatDateEnd(activity) {
-        return activity.datefinished == null ? 'Not defined' :
-            moment.utc(activity.datefinished).format('DD.MM.YYYY.')
+        return activity.dateFinish == null ? 'Not defined' :
+            moment.utc(activity.dateFinished).format('DD.MM.YYYY.')
     }
 
 
     function FormatDateAccepted(activity) {
-        return activity.dateaccepted == null ? 'Not defined' :
-            moment.utc(activity.dateaccepted).format('DD.MM.YYYY.')
+        return activity.dateAccepted == null ? 'Not defined' :
+            moment.utc(activity.dateAccepted).format('DD.MM.YYYY.')
     }
 
     function progresLabel(activity) {
-        let date1 = new Date(activity.datestart);
-        let date2 = new Date(activity.datefinished);
+        let date1 = new Date(activity.dateStart);
+        let date2 = new Date(activity.dateFinish);
         let dateNow = Date.now();
 
         let differenceInTime = dateNow - date1.getTime();
@@ -83,8 +84,8 @@ export default function ListProjectActivities() {
 
     function progresLabelMaxValue(activity) {
 
-        let date1 = new Date(activity.datestart);
-        let date2 = new Date(activity.datefinished);
+        let date1 = new Date(activity.dateStart);
+        let date2 = new Date(activity.dateFinish);
         let dateNow = Date.now();
 
         let differenceInTime = date2.getTime() - date1.getTime();
@@ -106,7 +107,8 @@ export default function ListProjectActivities() {
     }
 
     return (
-
+        <>
+        <NavBar />
         <Container>
             <Form>
                 <Row>
@@ -136,11 +138,11 @@ export default function ListProjectActivities() {
                 <tbody>
                     {Activities && Activities.filter((Activities) => {
                         return search.toLowerCase() === '' ?
-                            Activities : Activities.activityname.toLowerCase().includes(search);
+                            Activities : Activities.activityName.toLowerCase().includes(search);
                     }).map((activity, index) => (
                         <tr key={index}>
-                            <td>{activity.activityname}</td>
-                            <td>{activity.description}</td>
+                            <td>{activity.activityName}</td>
+                            <td>{activity.activityDescription}</td>
                             <td>
                                 <p>
                                     {FormatDateStart(activity)}
@@ -201,5 +203,6 @@ export default function ListProjectActivities() {
 
             </Table>
         </Container>
+        </>
     );
 }

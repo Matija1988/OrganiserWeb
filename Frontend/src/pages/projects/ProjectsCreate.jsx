@@ -1,28 +1,40 @@
 import { Container, Form, Row, Col, Button } from "react-bootstrap";
-import { RoutesNames } from "../../constants";
 import { Link, useNavigate } from "react-router-dom";
-import DateTimePicker from "react-datetime-picker";
+import { useState } from "react";
 
-
+import { RoutesNames } from "../../constants";
 import ProjectService from '../../services/ProjectService';
+
+import useError from "../../hooks/useError";
+import useLoading from "../../hooks/useLoading";
+
+import InputText from "../../components/InputText";
+import InputCheckbox from "../../components/InputCheckbox";
+import Actions from "../../components/Actions";
+
 import "bootstrap/dist/css/bootstrap.min.css";
 import './projectsStyle.css';
-import { useState } from "react";
+import DateAndTime from "../../components/DateAndTime";
+import NavBar from "../../components/NavBar";
+import DateOnly from "../../components/DateOnly";
 
 
 export default function ProjectsCreate() {
 
     const navigate = useNavigate();
-   
+
+    const { showError } = useError();
+    const { showLoading, hideLoading } = useLoading();
 
     async function createProject(project) {
-
-        const response = await ProjectService.addProject(project);
+        showLoading();
+        const response = await ProjectService.create('Project', project);
         if (response.ok) {
             navigate(RoutesNames.PROJECTS_READ);
-        } else {
-            alert(getAlertMessages (response.data));
+            return;
         }
+        showError(response.data);
+        hideLoading();
     }
 
     function handleSubmit(e) {
@@ -31,73 +43,44 @@ export default function ProjectsCreate() {
 
         const information = new FormData(e.target);
 
-        const project = {
-            projectName: information.get('projectName'),
-            uniqueID: information.get('uniqueID'),
+        createProject({
+            projectName: information.get('Project Name'),
+            uniqueID: information.get('Unique ID'),
             dateStart: information.get('dateStart'),
             dateEnd: information.get('dateEnd'),
             isFinished: information.get('isFinished') == 'on' ? true : false
-        };
-
-        createProject(project);           
+        });
 
     }
 
     return (
-        <Container>
-            <Form onSubmit={handleSubmit} className="FormProjectCreate">
-                <Form.Group controlId ='projectName'>
-                    <Form.Label>Project Name</Form.Label>
-                    <Form.Control 
-                    type = 'text'
-                    name = 'projectName'
-                    
-                    />
-                </Form.Group>
-                <Form.Group controlId="uniqueID">
-                    <Form.Label>Unique ID</Form.Label>
-                    <Form.Control 
-                    type = 'text'
-                    name = 'uniqueID'
-                    />
-                </Form.Group>
-                <Form.Group controlId="dateStart">
-                <Form.Label>Starting date</Form.Label>
-                <Form.Control 
-                type = 'date'
-                name = 'dateStart'
-                />
-                </Form.Group>
-                <Form.Group controlId="dateEnd">
-                    <Form.Label>Deadline</Form.Label>
-                    <Form.Control 
-                    type = 'date'
-                    name = 'dateEnd'
-                    />
-                </Form.Group>
-                <Form.Group controlId="isFinished">
-                    <Form.Check 
-                    label = "Status"
-              //      inline
-                    name='isFinished'
-                    />
+        <>
+        <NavBar />
+            <Container>
+                <Form onSubmit={handleSubmit} className="FormProjectCreate">
+                    <InputText atribute="Project Name" value='' />
+                    <InputText atribute="Unique ID" value='' />
+                  
+                    <Form.Group controlId="dateStart">
+                        <Form.Label>Starting date</Form.Label>
+                        <Form.Control
+                            type='date'
+                            name='dateStart'
+                        />
+                    </Form.Group>
 
-                </Form.Group>
-                <Row className="actions">
-                    <Col>
-                    <Link className='btn btn-danger'
-                    to={RoutesNames.PROJECTS_READ}> CANCEL</Link>
-                    </Col>
-                    <Col>
-                    <Button   variant='primary'
-                    type="submit"
-                    className="addBtn"
-                    > ADD PROJECT</Button>
-                    </Col>
-                </Row>
-
-            </Form>
-        </Container>
+                    <Form.Group controlId="dateEnd">
+                        <Form.Label>Deadline</Form.Label>
+                        <Form.Control
+                            type='date'
+                            name='dateEnd'
+                        />
+                    </Form.Group>
+                    <InputCheckbox atribute="isFinished" value={false} />
+                    <Actions cancel={RoutesNames.PROJECTS_READ} action="Add project" />
+                </Form>
+            </Container>
+        </>
     );
 
 }

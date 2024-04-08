@@ -4,40 +4,74 @@ namespace PO.Mappers
 {
     public class Mapping<T,DTR,DTI>
     {
-        public List<DTR> MapReadList(List<T> list)
-        {
-            var mapper = new Mapper(
+        protected Mapper MapperReadToDTO;
+        protected Mapper MapperMapInsertUpdatedFromDTO;
+        protected Mapper MapperMapInsertUpdateToDTO;
+        protected Mapper MapperReadMemberAuthDTO;
+
+        public Mapping()
+
+        { 
+            
+                MapperReadToDTO = new Mapper(
+                    new MapperConfiguration(c =>
+                    {
+                        c.AllowNullDestinationValues = true;
+                        c.CreateMap<T, DTR>();
+                    }));
+            
+
+            /// <summary>
+            /// 
+            /// </summary>
+            /// <param name="entity"></param>
+            /// <returns></returns>
+                MapperMapInsertUpdatedFromDTO = new Mapper(
+                    new MapperConfiguration(c =>
+                    {
+                        c.CreateMap<DTI, T>();
+                    }));
+            
+                MapperMapInsertUpdateToDTO = new Mapper(
+                    new MapperConfiguration(c =>
+                    {
+                        c.CreateMap<T, DTI>();
+                    }));
+
+            MapperReadMemberAuthDTO = new Mapper(
                 new MapperConfiguration(c =>
                 {
-                    c.AllowNullDestinationValues = true;
-                    c.CreateMap<T,DTR>();
+                    c.CreateMap<T, DTR>();
                 }));
-            var returnList = new List<DTR>();
-            list.ForEach(x => { 
-                
-                returnList.Add(mapper.Map<DTR>(x));
+
+
+
+        }
+
+        public List<DTR> MapReadList(List<T> list)
+        {
+            var returnResult = new List<DTR>();
+            list.ForEach(e =>
+            {
+                returnResult.Add(MapReadToDTO(e));
             });
-            return returnList;
+            return returnResult;
         }
 
         public DTR MapReadToDTO(T entity)
         {
-            var mapper = new Mapper(
-                new MapperConfiguration(c =>
-                {
-                    c.AllowNullDestinationValues = true;
-                    c.CreateMap<T, DTR>();
-                }));
-            return mapper.Map<DTR>(entity);
+            return MapperReadToDTO.Map<DTR>(entity);
         }
-        public T MapInsertUpdateFromDTO(DTI entity)
+
+        public T MapInsertUpdatedFromDTO(DTI entity)
         {
-            var mapper = new Mapper(
-                new MapperConfiguration(c =>
-                {
-                    c.CreateMap<DTI, T>();
-                }));
-            return mapper.Map<T>(entity);
+            return MapperMapInsertUpdatedFromDTO.Map<T>(entity);
+        }
+
+        public DTI MapInsertUpdateToDTO(T entity)
+        {
+            return MapperMapInsertUpdateToDTO.Map<DTI>(entity);
         }
     }
 }
+

@@ -1,43 +1,31 @@
 import { App } from "../constants";
-import { handleSuccess, httpService, processError } from "./httpService";
+
+import { handleSuccess, httpService, processError,read, getByID, create, update, remove } from "./httpService";
 
 const name = 'Activity';
-
-async function get() {
-    return await httpService.get('/' + name)
-        .then((res) => { return handleSuccess(res);}).catch((e)=>{return processError(e);});
-}
-
-async function deleteActivities(id) {
- return await httpService.delete('/' + name + '/' + id)
-    .then((res)=>{return handleSuccess(res);}).catch((e)=>{return processError(e);});
-}
-
-async function create(entity) {
- return await httpService.post('/'+ name, entity)
-    .then((res)=>{return handleSuccess(res);}).catch((e)=>{return processError(e);});
-}
-
-async function getById(id) {
-    return await httpService.get('/' + name + '/' + id)
-    .then((res)=>{return handleSuccess(res);}).catch((e)=>{return processError(e);});
-}
-
-async function updateActivity(id, entity) {
-   return await httpService.put('/'+name+'/' + id, entity)
-   .then((res)=> {return handleSuccess(res);}).catch((e)=>{return processError(e);});
-}
 
 async function getActivityMembers(id) {
     return await httpService.get('/' + name + '/Members/' + id)
     .then((res)=>{ return handleSuccess(res);}).catch((e)=> {return processError(e);});
 }
 
+async function assignMemberToActivity(id, memberId) {
+    return await httpService.post('/'+name+'/'+id+'/add/'+memberId)
+    .then((res)=> {return handleSuccess(res);}).catch((e)=>{return processError(e);});
+}
+
+async function removeMemberFromActivity(id, memberId) {
+    return await httpService.delete('/' + name+ '/' + id+'/delete/' + memberId)
+    .then((res)=>{return handleSuccess(res);}).catch((e)=> {return processError(e);});
+}
+
 export default {
-    get,
-    deleteActivities,
+    read,
+    remove,
     create,
-    getById,
-    updateActivity,
-    getActivityMembers
+    getByID,
+    update,
+    getActivityMembers,
+    assignMemberToActivity,
+    removeMemberFromActivity
 }

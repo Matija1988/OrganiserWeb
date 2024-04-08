@@ -1,6 +1,6 @@
-import { useEffect, useState } from "react";
-import { Button, Col, Container, Form, Row } from "react-bootstrap";
-import { Link,  useNavigate, useParams } from "react-router-dom";
+import { useEffect, useRef, useState } from "react";
+import { Button, Col, Container, Form, Row, Table } from "react-bootstrap";
+import { Link, useNavigate, useParams } from "react-router-dom";
 import { RoutesNames } from "../../constants";
 
 import ActivitiesService from "../../services/ActivitiesService";
@@ -10,6 +10,17 @@ import { getAlertMessages } from "../../services/httpService";
 import moment from "moment";
 
 import './activitiesStyle.css';
+import NavBar from "../../components/NavBar";
+import InputText from "../../components/InputText";
+import DateAndTime from "../../components/DateAndTime";
+import useError from "../../hooks/useError";
+import useLoading from "../../hooks/useLoading";
+import InputCheckbox from "../../components/InputCheckbox";
+import InputTextAsTextArea from "../../components/InputTextAsTextArea";
+import { AsyncTypeahead, TypeaheadRef } from "react-bootstrap-typeahead";
+import MembersService from "../../services/MembersService";
+import Actions from "../../components/Actions";
+import { FaTrash } from "react-icons/fa";
 
 
 export default function ActivitiesUpdate() {
@@ -19,59 +30,132 @@ export default function ActivitiesUpdate() {
     const [project, setProject] = useState([]);
     const [projectID, setProjectID] = useState(0);
 
+    const [Members, setMember] = useState();
+    const [foundMember, setFoundMember] = useState([]);
+
+    const [SearchName, setSearchedName] = useState('');
+
+    const typeaheadRef = useRef(null);
+
     const routeParams = useParams();
     const navigate = useNavigate();
 
+    const { showError } = useError();
+    const { showLoading, hideLoading } = useLoading();
+
     async function fetchActivities() {
-            const response = await ActivitiesService.getById(routeParams.id);
-            if(!response.ok) {
-                alert(getAlertMessages(response.data));
-                return;
-            }
-            let activity = response.data;
-            activity.startTime = moment.utc(activity.dateStart).format('HH:mm');
-            activity.startingDate = moment.utc(activity.dateStart).format('yyyy-MM-DD');
-            activity.deadlineTime = moment.utc(activity.dateFinished).format('HH:mm');
-            activity.deadlineDate = moment.utc(activity.dateFinished).format('yyyy-MM-DD');
-            activity.acceptanceTime = moment.utc(activity.dateAccepted).format('HH:mm');
-            activity.acceptanceDate = moment.utc(activity.dateAccepted).format('yyyy-MM-DD');
-            delete activity.dateStart;
-            delete activity.dateFinished;
-            delete activity.dateAccepted;
-            setActivity(activity);
-            setProjectID(activity.projectID);
-            
+        showLoading();
+        const response = await ActivitiesService.getByID('Activity', routeParams.id);
+        if (!response.ok) {
+            hideLoading();
+            showError(response.data);
+            return;
+        }
+        let activity = response.data;
+        activity.startTime = moment.utc(activity.dateStart).format('HH:mm');
+        activity.startingDate = moment.utc(activity.dateStart).format('yyyy-MM-DD');
+        activity.deadlineTime = moment.utc(activity.dateFinished).format('HH:mm');
+        activity.deadlineDate = moment.utc(activity.dateFinished).format('yyyy-MM-DD');
+        activity.acceptanceTime = moment.utc(activity.dateAccepted).format('HH:mm');
+        activity.acceptanceDate = moment.utc(activity.dateAccepted).format('yyyy-MM-DD');
+        delete activity.dateStart;
+        delete activity.dateFinished;
+        delete activity.dateAccepted;
+        setActivity(activity);
+        setProjectID(activity.ProjectID);
+        hideLoading();
+
     }
 
     async function fetchProject() {
-        const response = await ProjectService.getProjects();
-        if(!response.ok){
-            alert(getAlertMessages(response.data));
+        showLoading();
+        const response = await ProjectService.read('Project');
+        if (!response.ok) {
+            hideLoading();
+            showError(response.data);
             return;
         }
         setProject(response.data);
         setProjectID(response.data[0].id);
+        hideLoading();
+    }
+
+    async function fetchActivityMember() {
+        showLoading();
+        const response = await ActivitiesService.getActivityMembers(routeParams.id);
+        if(!response.ok){
+            showError(response.data);
+            hideLoading();
+            return;
+        }
+        setMember(response.data);
+        hideLoading();
+            
+    }
+
+    async function SearchMemberByName(input) {
+        showLoading();
+        const response = await MembersService.searchMemberByName(input);
+        if(!response.ok){
+           hideLoading();
+           showError(response.data);
+           return;
+        } 
+        setFoundMember(response.data);
+        setSearchedName(input);
+        hideLoading();
     }
 
     async function load() {
+        showLoading();
+        await fetchActivityMember();
         await fetchActivities();
         await fetchProject();
+        hideLoading();
     }
 
-    useEffect(()=>{load();},[]);
+    useEffect(() => { load(); }, []);
+
+    async function AssignMemberToActivity(e) {
+        showLoading();
+        const response = await ActivitiesService.assignMemberToActivity(routeParams.id, e[0].id);
+        if(response.ok) {
+            fetchActivityMember();
+            hideLoading();
+            return;
+        }
+        showError(response.data);
+        hideLoading();
+    }
+
+    async function RemoveMemberFromActivity(e, member) {
+        const response = await ActivitiesService.removeMemberFromActivity(e, member);
+        if(response.ok) {
+            await fetchActivityMember();
+            return;
+        }
+        showError(response.data);
+        
+    }
+
+    function MemberStatusDisplayText(member) {
+        if (member.isTeamLeader == null) return 'No input';
+        if (member.isTeamLeader) return 'Team leader';
+        return 'Member';
+    }
 
 
     async function UpdateActivity(activity) {
-
-        const reply = await ActivitiesService.updateActivity(routeParams.id, activity);
-
+        showLoading();
+        const reply = await ActivitiesService.update('Activity', routeParams.id, activity);
         if (reply.ok) {
             navigate(RoutesNames.ACTIVITIES_READ);
+            hideLoading();
             return;
-            
-        } else {
-            alert(reply.message);
         }
+        showError(reply.data);
+        hideLoading();
+        
     }
 
     function handleSubmit(e) {
@@ -81,153 +165,174 @@ export default function ActivitiesUpdate() {
         const information = new FormData(e.target);
 
         const startingDate = moment.utc(information.get('dateStart') + ' ' + information.get('startTime'));
-        const deadlineDate = moment.utc(information.get('datefinished') + ' ' + information.get('deadlineTime'));
+        const deadlineDate = moment.utc(information.get('datefinish') + ' ' + information.get('deadlineTime'));
         const acceptanceDate = moment.utc(information.get('dateaccepted') + ' ' + information.get('acceptanceTime'));
 
         UpdateActivity({
-            activityName: information.get('activityName'),
-            activityDescription: information.get('description'),
+            activityName: information.get('Activity'),
+            description: information.get('Description'),
             dateStart: startingDate,
             dateFinish: deadlineDate,
             isFinished: information.get('isFinished') == 'on' ? true : false,
             dateAccepted: acceptanceDate,
-            Project: parseInt(projectID)
+            ProjectID: parseInt(projectID)
         });
 
     }
 
     return (
-        <Container>
-            <Form onSubmit={handleSubmit} className='FormActivity'>
+        <>
+            <NavBar />
+            <Container>
+                <Form onSubmit={handleSubmit} className='FormActivity'>
 
-                <Form.Group controlId="activityName">
-                    <Form.Label>Activity</Form.Label>
-                    <Form.Control
-                        type='text'
-                        name='activityName'
-                        defaultValue={activity.activityName}
-                        maxLength={100}
-                        required
-                    />
-                </Form.Group>
+                    <Row>
+                        <Col key='1'>
+                            <InputText atribute="Activity" value={activity.activityName} />
+                            <InputTextAsTextArea atribute="Description" value={activity.description} />
+                            <Row>
+                                <Col>
+                                    <Form.Group controlId="dateStart">
+                                        <Form.Label>Date start</Form.Label>
+                                        <Form.Control
+                                            type='date'
+                                            name='dateStart'
+                                            defaultValue={activity.startingDate}
+                                            required
+                                        />
+                                    </Form.Group>
+                                </Col>
+                                <Col>
+                                    <Form.Group>
+                                        <Form.Label>Start time</Form.Label>
+                                        <Form.Control
+                                            type="time"
+                                            name='startTime'
+                                            defaultValue={activity.startTime}
+                                        />
+                                    </Form.Group>
+                                </Col>
+                            </Row>
+                            <Row>
+                                <Col>
+                                    <Form.Group controlId="datefinish">
+                                        <Form.Label>Deadline</Form.Label>
+                                        <Form.Control
+                                            type='date'
+                                            name='datefinish'
+                                            defaultValue={activity.deadlineDate}
+                                            required
+                                        />
+                                    </Form.Group>
+                                </Col>
+                                <Col>
+                                    <Form.Group>
+                                        <Form.Label>Deadline time</Form.Label>
+                                        <Form.Control
+                                            type="time"
+                                            name='deadlineTime'
+                                            defaultValue={activity.deadlineTime}
+                                        />
+                                    </Form.Group>
+                                </Col>
+                            </Row>
+                            <InputCheckbox atribute="isFinished" value={activity.isFinished} />
+                            <Row>
+                        <Col>
+                            <Form.Group controlId="dateaccepted">
+                                <Form.Label>Date accepted</Form.Label>
+                                <Form.Control
+                                    type='date'
+                                    name='dateaccepted'
+                                    defaultValue={activity.acceptanceDate}
 
-                <Form.Group  controlId="description">
-                    <Form.Label>Description</Form.Label>
-                    <Form.Control
-                        type='text'
-                        name='description'
-                        defaultValue={activity.activityDescription}
-                        maxLength={500}
-                        
-                    />
-                </Form.Group>
-                <Row>
-                    <Col key='1'>
-                    <Form.Group controlId="dateStart">
-                        <Form.Label>Date start</Form.Label>
-                        <Form.Control
-                            type='date'
-                            name='dateStart'
-                            defaultValue={activity.startingDate}
-                            required
-                        />
-                    </Form.Group>
-                    </Col>
-                    <Col key='2'>
-                        <Form.Group>
-                            <Form.Label>Start time</Form.Label>
-                            <Form.Control
-                            type="time"
-                            name='startTime'
-                            defaultValue={activity.startTime}
+                                />
+                            </Form.Group>
+                        </Col>
+                        <Col>
+                            <Form.Group>
+                                <Form.Label>Acceptance time</Form.Label>
+                                <Form.Control
+                                    type="time"
+                                    name='acceptanceTime'
+                                    defaultValue={activity.acceptanceTime}
+                                />
+                                    </Form.Group>
+                                </Col>
+                            </Row>
+                        </Col>
+                        <Col key='2'>
+                            <Row>
+                            <Form.Label>Members</Form.Label>
+                            </Row>
+                            <AsyncTypeahead
+                            className="autocomplete"
+                            id='condition'
+                            emptyLabel='No result'
+                            searchText='Searching'
+                            labelKey={(member) => `${member.firstName} ${member.lastName}`}  
+                            minLength={3}
+                            options={foundMember}
+                            onSearch={SearchMemberByName}
+                            placeholder="Part of first or last name"
+                            renderMenuItemChildren={(member) =>(
+                                <>
+                                <span>
+                                    {member.firstName} {member.lastName}
+                                </span>
+                                </>
+                            )}  
+                            onChange={AssignMemberToActivity}
+                            ref={typeaheadRef}
                             />
-                        </Form.Group>
-                    </Col>
-                </Row>
+                            <Table striped bordered hover responsive variant="dark" className="tableStyle">
 
-                <Row>
-                    <Col>
-                    <Form.Group controlId="datefinished">
-                        <Form.Label>Deadline</Form.Label>
-                        <Form.Control
-                            type='date'
-                            name='datefinished'
-                            defaultValue={activity.deadlineDate}
-                            required
-                        />
-                    </Form.Group>
-                    </Col>
-                    <Col>
-                    <Form.Group>
-                            <Form.Label>Deadline time</Form.Label>
-                            <Form.Control
-                            type="time"
-                            name='deadlineTime'
-                            defaultValue={activity.deadlineTime}
-                            />
-                        </Form.Group>
-                    </Col>
-                </Row>
+                                <thead>
 
-                <Form.Group  controlId="isFinished">
-                    <Form.Label>Status</Form.Label>
-                    <Form.Check 
-                      label = "Is finished?"
-                    //defaultValue =  {activity.isFinished}
-                      name ="isFinished"                   
+                                    <tr>
+                                        <th>Member</th>
+                                        <th>Position</th>
+                                        <th>Akcije</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+
+                                    {Members && Members.map((member, index) => (
+                                        <tr key={index}>
+                                            <td>{member.firstName + " " + member.lastName}</td>
+                                            <td>{MemberStatusDisplayText(member)}</td>
+                                            <td>
+                                                <Button
+                                                    onClick={() => RemoveMemberFromActivity(routeParams.id, member.id)}>
+                                                    <FaTrash />
+                                                </Button>
+
+                                            </td>
+
+                                        </tr>
+                                    )
+                                    )}
+                                </tbody>
+                            </Table>
+                        </Col>
+                    </Row>
                     
-                    />
-                </Form.Group>
-
-                <Row>
-                    <Col>
-                        <Form.Group controlId="dateaccepted">
-                            <Form.Label>Date accepted</Form.Label>
-                            <Form.Control
-                                type='date'
-                                name='dateaccepted'
-                                defaultValue={activity.acceptanceDate}
-                                
-                            />
-                        </Form.Group>
-                    </Col>
-                    <Col>
-                    <Form.Group>
-                            <Form.Label>Acceptance time</Form.Label>
-                            <Form.Control
-                            type="time"
-                            name='acceptanceTime'
-                            defaultValue={activity.acceptanceTime}
-                            />
-                        </Form.Group>
-                    </Col>
-                </Row>           
-                <Form.Group  controlId='project'>
+                    <Form.Group controlId='project'>
                         <Form.Label>Associated project</Form.Label>
                         <Form.Select
-                            onChange = {(e) => {setProjectID(e.target.value)}}
+                            value={projectID}
+                            onChange={(e) => { setProjectID(e.target.value) }}
                         >
-                        {project && project.map((e, index) =>(
-                            <option key ={index} value={e.id}>{e.projectName}</option>
-                        ))}
+                            {project && project.map((e, index) => (
+                                <option key={index} value={e.id}>{e.projectName}</option>
+                            ))}
                         </Form.Select>
-                </Form.Group>
-                <Row>
-                    <Col>
-                    <Link className="btn btn-danger gumb" to={RoutesNames.ACTIVITIES_READ}>
-                        CANCEL
-                    </Link>
-                    </Col>
-                    <Col>
-                    <Button varian='primary' className="gumb" type='submit'>
-                            UPDATE ACTIVITY
-                    </Button>
-                    </Col>
-                </Row>
+                    </Form.Group>
+                    <Actions cancel={RoutesNames.ACTIVITIES_READ} action="UPDATE ACTIVITY"/>
 
-
-            </Form>
-        </Container>
+                </Form>
+            </Container>
+        </>
     );
 
 }
