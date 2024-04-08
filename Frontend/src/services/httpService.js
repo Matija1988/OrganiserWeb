@@ -45,7 +45,7 @@ export async function update(name, id, entity) {
 
 export async function remove(name, id) {
     return await httpService.delete('/' + name + '/' + id)
-        .then((res) => { return handleSuccess(res); }).catch((e) => { return processError(res); })
+        .then((res) => { return handleSuccess(res); }).catch((e) => { return processError(e); })
 }
 
 export function handleSuccess(res) {

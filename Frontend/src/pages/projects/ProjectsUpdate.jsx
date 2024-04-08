@@ -11,6 +11,9 @@ import InputText from "../../components/InputText";
 import useError from "../../hooks/useError";
 import useLoading from "../../hooks/useLoading";
 import DateAndTime from "../../components/DateAndTime";
+import NavBar from "../../components/NavBar";
+import InputCheckbox from "../../components/InputCheckbox";
+import Actions from "../../components/Actions";
 
 
 export default function ProjectsUpdate() {
@@ -18,17 +21,18 @@ export default function ProjectsUpdate() {
     const navigate = useNavigate();
     const routeParams = useParams();
     const [project, setProject] = useState({});
-    const {showError} = useError();
-    const {showLoading, hideLoading} = useLoading();
+    const { showError } = useError();
+    const { showLoading, hideLoading } = useLoading();
 
     async function fetchProject() {
         showLoading();
-        const response = await ProjectService.getByID('Project',routeParams.id);
-        if(!response.ok) {
+        const response = await ProjectService.getByID('Project', routeParams.id);
+        if (!response.ok) {
             showError(response.data);
             navigate(RoutesNames.PROJECTS_READ);
             return;
         }
+        let project = response.data;
         project.timeStart = moment.utc(project.dateStart).format('HH:mm');
         project.date = moment.utc(project.dateStart).format('yyyy-MM-DD');
         project.deadlineTime = moment.utc(project.dateEnd).format('HH:mm');
@@ -50,7 +54,7 @@ export default function ProjectsUpdate() {
             navigate(RoutesNames.PROJECTS_READ);
             hideLoading();
             return;
-        } 
+        }
         showError(response.data);
         hideLoading();
     }
@@ -65,92 +69,72 @@ export default function ProjectsUpdate() {
         const deadlineDate = moment.utc(information.get('dateEnd') + ' ' + information.get('deadlineTime'));
 
         const project = {
-            projectName: information.get('projectName'),
-            uniqueID: information.get('uniqueID'),
+            projectName: information.get('Project name'),
+            uniqueID: information.get('UniqueID'),
             dateStart: startingDate,
             dateEnd: deadlineDate,
-            isFinished: information.get('isFinished')=='on' ? true : false
+            isFinished: information.get('isFinished') == 'on' ? true : false
         };
         updateProject(project);
 
     }
 
     return (
-        <Container>
-            <Form onSubmit={handleSubmit} className= "FormProjectCreate">
-                <InputText atribute= 'projectName' value={project.projectName}/>
-                <InputText atribute="uniqueID" value={project.uniqueID} />
-                
-                <Row>
-                    <Col>
-                    <Form.Group controlId="dateStart">
-                        <Form.Label>Start Date</Form.Label>
-                        <Form.Control
-                            type='date'
-                            name='date'
-                            defaultValue={project.date}
-                        />
-                    </Form.Group>
-                    </Col>
-                    <Col>
-                    <Form.Group>
-                            <Form.Label>Start time</Form.Label>
-                            <Form.Control
-                            type="time"
-                            name='timeStart'
-                            defaultValue={project.timeStart}
-                            />
-                        </Form.Group>
-                    </Col>
-                </Row>
-                <Row>
-                    <Col>
-                        <Form.Group controlId="dateEnd">
-                            <Form.Label>Deadline</Form.Label>
-                            <Form.Control
-                                type='date'
-                                name='dateEnd'
-                                defaultValue={project.deadlineDate}
-                            />
-                        </Form.Group>
-                    </Col>
-                    <Col>
-                    <Form.Group>
-                            <Form.Label>Deadline time</Form.Label>
-                            <Form.Control
-                            type="time"
-                            name='deadlineTime'
-                            defaultValue={project.deadlineTime}
-                            />
-                        </Form.Group>
-                    </Col>
-                </Row>
-                <Form.Group controlId="isFinished">
-                    <Form.Check 
-                      label = "Status"
-                 
-                      name ="isFinished"                   
-                    
-                    />
-                </Form.Group>
-
-                <Row className="actions">
-                    <Col>
-                        <Link className="btn btn-danger"
-                            to={RoutesNames.PROJECTS_READ}> CANCEL</Link>
-                    </Col>
-
-                    <Col>
-                        <Button
-                        className="editBtn"
-                            variant='primary'
-                            type='submit'
-                        > UPDATE PROJECT</Button>
-                    </Col>
-
-                </Row>
-            </Form>
-        </Container>
+        <>
+        <NavBar />
+            <Container>
+                <Form onSubmit={handleSubmit} className="FormProjectCreate">
+                    <InputText atribute='Project name' value={project.projectName} />
+                    <InputText atribute="UniqueID" value={project.uniqueID} />
+                    <Row>
+                        <Col>
+                            <Form.Group controlId="dateStart">
+                                <Form.Label>Start Date</Form.Label>
+                                <Form.Control
+                                    type='date'
+                                    name='date'
+                                    defaultValue={project.date}
+                                />
+                            </Form.Group>
+                        </Col>
+                        <Col>
+                            <Form.Group>
+                                <Form.Label>Start time</Form.Label>
+                                <Form.Control
+                                    type="time"
+                                    name='timeStart'
+                                    defaultValue={project.timeStart}
+                                />
+                            </Form.Group>
+                        </Col>
+                    </Row>
+                    <Row>
+                        <Col>
+                            <Form.Group controlId="dateEnd">
+                                <Form.Label>Deadline</Form.Label>
+                                <Form.Control
+                                    type='date'
+                                    name='dateEnd'
+                                    defaultValue={project.deadlineDate}
+                                />
+                            </Form.Group>
+                        </Col>
+                        <Col>
+                            <Form.Group>
+                                <Form.Label>Deadline time</Form.Label>
+                                <Form.Control
+                                    type="time"
+                                    name='deadlineTime'
+                                    defaultValue={project.deadlineTime}
+                                />
+                            </Form.Group>
+                        </Col>
+                    </Row>
+                    <InputCheckbox atribute="isFinished" value={project.isFinished}/>
+                    <Actions cancel={RoutesNames.PROJECTS_READ} action="UPDATE PROJECT" />
+                </Form>
+            </Container>
+        </>
     );
 
 }

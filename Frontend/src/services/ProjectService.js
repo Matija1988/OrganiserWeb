@@ -16,16 +16,7 @@ async function searchProjectByName(input) {
 
 async function listProjectActivities(id) {
     return await httpService.get('/Activity/listprojectactivities/' + id)
-    .then((res) => {
-        if (App.DEV) console.table(res.data);
-        return res;
-    }).catch((e) => {
-        console.log(e);
-        return { message: e };
-    });
+    .then((res) => { return handleSuccess(res);}).catch((e) => { return processError(e);});
 }
-
-
-
 
 export default { read, getByID, create, update, remove, searchProjectByName, listProjectActivities};

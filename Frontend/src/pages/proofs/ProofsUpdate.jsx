@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import { Button, Col, Container, Form, Row } from "react-bootstrap";
+import { Button, Col, Container, Form, Modal, Row } from "react-bootstrap";
 import { Link,  useNavigate, useParams } from "react-router-dom";
 import { RoutesNames } from "../../constants";
 
@@ -10,6 +10,11 @@ import { getAlertMessages } from "../../services/httpService";
 
 import './proofsStyle.css';
 import moment from "moment";
+import useError from "../../hooks/useError";
+import useLoading from "../../hooks/useLoading";
+import NavBar from "../../components/NavBar";
+import InputText from "../../components/InputText";
+import { FaUpload } from "react-icons/fa";
 
 export default function ProofUpdate() {
 
@@ -25,10 +30,19 @@ export default function ProofUpdate() {
     const routeParams = useParams();
     const navigate = useNavigate();
 
+    const {showError} = useError();
+
+    const {showLoading, hideLoading} = useLoading();
+
+    const [showModal, setShowModal] = useState(false);
+
     async function fetchProof() {
-        const response = await ProofsService.getById(routeParams.id);
+        showLoading();
+        const response = await ProofsService.getByID('Proof',routeParams.id);
+
         if(!response.ok){
-            alert(getAlertMessages(response.data));
+            hideLoading();
+            showError(response.data);
             return;
         }
         let proof = response.data;
@@ -39,27 +53,34 @@ export default function ProofUpdate() {
         if(proof.member != null) {
             setMemberID(proof.member);
         } 
-        setActivityID(proof.activity)
+        setActivityID(proof.activity);
+        hideLoading();
     }
 
     async function fetchMembers() {
-        const res = await MembersService.getMembers();
+        showLoading();
+        const res = await MembersService.read('Member');
         if(!res.ok) {
-            alert(getAlertMessages(res.data));
+            hideLoading();
+            showError(res.data);
             return;
         } 
         setMember(res.data);
         setMemberID(res.data[0].id);
+        hideLoading();
     }
 
     async function fetchAcitivties() {
-        const response = await ActivitiesService.get();
+        showLoading();
+        const response = await ActivitiesService.read('Activity');
         if(!response.ok) {
-            alert(getAlertMessages(response.data));
+            hideLoading();
+            showError(response.data);
             return; 
         }
         setActivity(response.data);
         setActivityID(response.data[0].id);
+        hideLoading();
     }
 
     async function load() {
@@ -74,13 +95,43 @@ export default function ProofUpdate() {
     }, []);
 
     async function changeProof(proof) {
-        const response = await ProofsService.updateProof(routeParams.id, proof);
+        const response = await ProofsService.update('Proof',routeParams.id, proof);
         if (response.ok) {
             navigate(RoutesNames.PROOFS_READ);
             return;
         } 
         alert(getAlertMessages(response.data));
     }
+
+    function setFileModal() {
+        
+        setShowModal(true);
+    }
+
+    function closeModal() {
+        setShowModal(false);
+    }
+
+    async function setFile(e) {
+        if (e.currentTarget.files) {
+            const formData = new FormData();
+            formData.append('file', e.currentTarget.files[0]);
+            const config = {
+                headers: {
+                    'content-type': 'multipart/form-data',
+                },
+            };
+            const response = await ProofsService.uploadFile(routeParams.id, formData, config);
+            
+            if (!response.ok) {
+                showError(response.data);
+                setShowModal(false);
+            }
+            setShowModal(false);
+
+        }
+    }
+
 
     function handleSubmit(e) {
 
@@ -91,7 +142,7 @@ export default function ProofUpdate() {
         const date = moment.utc(information.get('date') + ' ' + information.get('time'));
 
         changeProof({
-            documentName: information.get('documentName'),
+            documentName: information.get('Document name'),
             memberID: parseInt(idMember),
             location: information.get('Location'),
             datecreated: date,
@@ -101,19 +152,13 @@ export default function ProofUpdate() {
     }
 
     return (
+        <>
+        <NavBar />
+
         <Container>
             <Form onSubmit={handleSubmit} className='FormMemberCreate'>
-
-                <Form.Group controlId="documentName">
-                    <Form.Label>Document Name</Form.Label>
-                    <Form.Control
-                        type='text'
-                        name='documentName'
-                        defaultValue={proof.documentName}
-                        maxLength={100}
-                        
-                    />
-                </Form.Group>
+            <InputText atribute="Document name" value={proof.documentName}/>
+                
                 <Row>
                     <Col>
                         <Form.Group controlId="memberID">
@@ -164,7 +209,9 @@ export default function ProofUpdate() {
                     />
                 </Form.Group>
 
-                
+                    <Button onClick={() => setFileModal(proof)}>
+                        <FaUpload />
+                    </Button>
 
                 <Form.Group  controlId="activityID">
                     <Form.Label>ActivityID</Form.Label>
@@ -196,9 +243,34 @@ export default function ProofUpdate() {
                     </Col>
                 </Row>
 
-
             </Form>
         </Container>
+
+        <Modal show={showModal} onHide={closeModal} className="dataModal">
+                <Modal.Header closeButton>
+                    <Modal.Title>Set datafile on <br /> {proof.documentName}</Modal.Title>
+                </Modal.Header>
+
+                <Modal.Body>
+                    <Form>
+                        <Form.Group>
+                            <Form.Control type="file" size="lg"
+                                name="file"
+                                id="file"
+                                onChange={setFile}
+                            />
+                        </Form.Group>
+                        <hr />
+                    </Form>
+                </Modal.Body>
+                <Modal.Footer>
+                    <Button variant="secondary" onClick={closeModal}>
+                        Close
+                    </Button>
+                </Modal.Footer>
+            </Modal>
+
+        </>
     );
 
 }

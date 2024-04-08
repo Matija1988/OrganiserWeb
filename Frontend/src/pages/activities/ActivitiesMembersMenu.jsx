@@ -1,13 +1,18 @@
 import { useEffect, useRef, useState } from "react";
-import { Button, Col, Container, FormGroup, FormLabel, Row, Table } from "react-bootstrap";
+import { Button, Col, Container, Form, FormLabel, Row, Table } from "react-bootstrap";
 import { useNavigate, useParams } from "react-router-dom";
 import ActivitiesService from "../../services/ActivitiesService";
 
 import './activitiesStyle.css';
 import { AsyncTypeahead } from "react-bootstrap-typeahead";
 import MembersService from "../../services/MembersService";
-import { ALIGN_VALUES } from "react-bootstrap-typeahead/types/constants";
-import { getAlertMessages } from "../../services/httpService";
+
+import NavBar from "../../components/NavBar";
+import useError from "../../hooks/useError";
+import useLoading from "../../hooks/useLoading";
+import { FaTrash } from "react-icons/fa";
+import Actions from "../../components/Actions";
+import { RoutesNames } from "../../constants";
 
 
 
@@ -16,7 +21,7 @@ export default function ActivitiesMembersMenu() {
     const navigate = useNavigate();
 
     const [Members, setMember] = useState();
-    const [SearchedMember, setSearchedMember] = useState([]);
+    const [foundMember, setFoundMember] = useState([]);
 
     const [SearchName, setSearchedName] = useState('');
 
@@ -24,56 +29,83 @@ export default function ActivitiesMembersMenu() {
 
     const typeaheadRef = useRef(null);
 
-    async function fetchActivityMember() {
+    const {showError} = useError();
 
-        await ActivitiesService.getActivityMembers(routeParams.id)
-            .then((res) => {
-                setMember(res.data)
-            }).catch((e) => {
-                alert.e
-            });
+    const {showLoading, hideLoading} = useLoading();
+
+    async function fetchActivityMember() {
+        showLoading();
+        const response = await ActivitiesService.getActivityMembers(routeParams.id);
+        if(!response.ok){
+            showError(response.data);
+            hideLoading();
+            return;
+        }
+        setMember(response.data);
+        hideLoading();
+            
     }
 
     async function SearchMemberByName(input) {
-        const response = MembersService.searchMemberByName(input);
+        showLoading();
+        const response = await MembersService.searchMemberByName(input);
         if(!response.ok){
-           alert(getAlertMessages(response.data));
+           hideLoading();
+           showError(response.data);
            return;
         } 
-        setSearchedMember(response.data);
+        setFoundMember(response.data);
         setSearchedName(input);
+        hideLoading();
     }
+    
+    
 
     async function AssignMemberToActivity(e) {
-        const response = await ActivitiesService.AssignMemberToActivity(routeParams.id, e[0].id);
+        showLoading();
+        const response = await ActivitiesService.assignMemberToActivity(routeParams.id, e[0].id);
+        if(response.ok) {
+            await fetchActivityMember();
+            hideLoading();
+            return;
+        }
+        showError(response.data);
+        hideLoading();
+    }
+
+    async function load() {
+        showLoading();
+        await fetchActivityMember();
+        hideLoading();
+    }
+
+    useEffect(() => {
+        load();
+    }, []);
+
+    async function RemoveMemberFromActivity(e, member) {
+        const response = await ActivitiesService.removeMemberFromActivity(e, member);
         if(response.ok) {
             await fetchActivityMember();
             return;
         }
-        alert(getAlertMessages(response.data));
+        showError(response.data);
+        
     }
-
-    async function addMemberManually(member) {
-        const response = await MembersService.createMember(member);
-        if(response.ok) {
-            const response2 = await ActivitiesService.AssignMemberToActivity(routeParams.id, response.data.id);
-            if(response2?.ok) {
-                typeaheadRef.current.clear();
-                await fetchActivityMember();
-                return;
-            } alert(getAlertMessages(response2.data));
-            return;
-        } alert(getAlertMessages(response.data));
-    }
-
-    useEffect(() => {
-        fetchActivityMember();
-    }, []);
 
     function MemberStatusDisplayText(member) {
         if (member.isTeamLeader == null) return 'No input';
         if (member.isTeamLeader) return 'Team leader';
         return 'Member';
+    }
+
+    async function update(e) {
+        const response = await ActivitiesService.update('Activity', routeParams.id, e);
+        if(response.ok) {
+            navigate(RoutesNames.PROJECTS_READ);
+            return;
+        }
+        showError(response.data);
     }
 
     // async function SearchMember (condition) {
@@ -83,15 +115,20 @@ export default function ActivitiesMembersMenu() {
 
 
     return (
+        <>
+        <NavBar />
         <Container>
             <Row>
                 <Col>
+                <label className="searchLabel">Members assigned to an activity</label>
                     <Table striped bordered hover responsive variant="dark" className="tableStyle">
+                        
                         <thead>
-                            <tr>
+                            
+                            <tr> 
                                 <th>Member</th>
-                                <th>Email</th>
                                 <th>Position</th>
+                                <th>Akcije</th>
                             </tr>
                         </thead>
                          <tbody>
@@ -99,21 +136,24 @@ export default function ActivitiesMembersMenu() {
                             {Members && Members.map((member, index) => (
                                 <tr key={index}>
                                     <td>{member.firstName + " " + member.lastName}</td>
-                                    <td>{member.email}</td>
                                     <td>{MemberStatusDisplayText(member)}</td>
+                                    <td>
+                                    <Button
+                                    onClick={()=> RemoveMemberFromActivity(routeParams.id, member.id)}>
+                                        <FaTrash />
+                                    </Button>
+
+                                    </td>
 
                                 </tr>
-
                             )
                             )} 
-
-
                         </tbody>
                     </Table>
                 </Col>
                 <Col>
-                <FormGroup controlId="condition">
-                    <FormLabel>Search member</FormLabel>
+                <Form.Group controlId="condition">
+                    
                     <AsyncTypeahead
                     className="autocomplete"
                     id="condition"
@@ -121,9 +161,9 @@ export default function ActivitiesMembersMenu() {
                     searchText = "Searching ..."
                     labelKey={(member) => `${member.firstName} ${member.lastName}`}
                     minLength={3}
-                    options={SearchedMember}
+                    options={foundMember}
                     onSearch={SearchMemberByName}
-                    placeholder="Part of the member first or last name"
+                    placeholder="Search member"
                     renderMenuItemChildren={(member)=>(
                         <>
                         <span>
@@ -136,16 +176,13 @@ export default function ActivitiesMembersMenu() {
                     > 
                         
                     </AsyncTypeahead>
-                </FormGroup>
-                </Col>
-                <Col>
-                <Button onClick={addMemberManually}>
-                    ADD
-                </Button>
-                </Col>
+                </Form.Group>
+
+                </Col>    
             </Row>
-           
+        <Actions cancel={RoutesNames.PROJECTS_READ} action="TEMP"/>
         </Container>
+        </>
     );
 
 }

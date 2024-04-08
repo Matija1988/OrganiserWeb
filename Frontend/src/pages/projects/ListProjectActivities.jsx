@@ -13,6 +13,7 @@ import { RoutesNames } from "../../constants";
 
 import "bootstrap/dist/css/bootstrap.min.css";
 import './projectsStyle.css';
+import NavBar from "../../components/NavBar";
 
 
 export default function ListProjectActivities() {
@@ -106,7 +107,8 @@ export default function ListProjectActivities() {
     }
 
     return (
-
+        <>
+        <NavBar />
         <Container>
             <Form>
                 <Row>
@@ -201,5 +203,6 @@ export default function ListProjectActivities() {
 
             </Table>
         </Container>
+        </>
     );
 }

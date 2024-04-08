@@ -14,6 +14,9 @@ import Actions from "../../components/Actions";
 
 import "bootstrap/dist/css/bootstrap.min.css";
 import './projectsStyle.css';
+import DateAndTime from "../../components/DateAndTime";
+import NavBar from "../../components/NavBar";
+import DateOnly from "../../components/DateOnly";
 
 
 export default function ProjectsCreate() {
@@ -29,7 +32,7 @@ export default function ProjectsCreate() {
         if (response.ok) {
             navigate(RoutesNames.PROJECTS_READ);
             return;
-        } 
+        }
         showError(response.data);
         hideLoading();
     }
@@ -41,40 +44,43 @@ export default function ProjectsCreate() {
         const information = new FormData(e.target);
 
         createProject({
-            projectName: information.get('projectName'),
-            uniqueID: information.get('uniqueID'),
+            projectName: information.get('Project Name'),
+            uniqueID: information.get('Unique ID'),
             dateStart: information.get('dateStart'),
             dateEnd: information.get('dateEnd'),
             isFinished: information.get('isFinished') == 'on' ? true : false
         });
-           
+
     }
 
     return (
-        <Container>
-            <Form onSubmit={handleSubmit} className="FormProjectCreate">
-                <InputText atribute="projectName" value='' />
-                <InputText atribute="uniqueID" value='' />
+        <>
+        <NavBar />
+            <Container>
+                <Form onSubmit={handleSubmit} className="FormProjectCreate">
+                    <InputText atribute="Project Name" value='' />
+                    <InputText atribute="Unique ID" value='' />
+                  
+                    <Form.Group controlId="dateStart">
+                        <Form.Label>Starting date</Form.Label>
+                        <Form.Control
+                            type='date'
+                            name='dateStart'
+                        />
+                    </Form.Group>
 
-                <Form.Group controlId="dateStart">
-                <Form.Label>Starting date</Form.Label>
-                <Form.Control 
-                type = 'date'
-                name = 'dateStart'
-                />
-                </Form.Group>
-
-                <Form.Group controlId="dateEnd">
-                    <Form.Label>Deadline</Form.Label>
-                    <Form.Control 
-                    type = 'date'
-                    name = 'dateEnd'
-                    />
-                </Form.Group>
-                <InputCheckbox atribute="isFinished" value={false}/>
-                <Actions cancel={RoutesNames.PROJECTS_READ} action="Add project"/>
-               </Form>
-        </Container>
+                    <Form.Group controlId="dateEnd">
+                        <Form.Label>Deadline</Form.Label>
+                        <Form.Control
+                            type='date'
+                            name='dateEnd'
+                        />
+                    </Form.Group>
+                    <InputCheckbox atribute="isFinished" value={false} />
+                    <Actions cancel={RoutesNames.PROJECTS_READ} action="Add project" />
+                </Form>
+            </Container>
+        </>
     );
 
 }

@@ -1,6 +1,6 @@
-import {  useEffect, useState } from "react";
+import { useEffect, useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
-import { Container, Button, Table, InputGroup, Row,Col } from "react-bootstrap";
+import { Container, Button, Table, InputGroup, Row, Col } from "react-bootstrap";
 import { IoIosAdd } from 'react-icons/io';
 import { FaEdit, FaTrash, FaWrench } from 'react-icons/fa';
 import ProgressBar from "react-bootstrap/ProgressBar";
@@ -16,6 +16,7 @@ import { getAlertMessages, httpService } from "../../services/httpService";
 import "bootstrap/dist/css/bootstrap.min.css";
 
 import './projectsStyle.css';
+import NavBar from "../../components/NavBar";
 
 
 
@@ -23,12 +24,12 @@ import './projectsStyle.css';
 export default function Projects() {
 
     const [projects, setProjects] = useState();
-    
+
     const [filter, setFilter] = useState();
-    
+
     const [search, setSearch] = useState("");
     const { showError } = useError();
-    const { showLoading, hideLoading} = useLoading();
+    const { showLoading, hideLoading } = useLoading();
 
 
     const navigate = useNavigate();
@@ -36,7 +37,7 @@ export default function Projects() {
     async function readProjects() {
         showLoading();
         const response = await ProjectService.read('Project');
-        if(!response.ok){
+        if (!response.ok) {
             showError(response.data);
             return;
         }
@@ -112,121 +113,125 @@ export default function Projects() {
     }
 
     async function projectDelete(id) {
-        showLoading();      
-        const response = await ProjectService.remove('Project',id);  
-        showError(response.data);
-        if(response.ok) {
+        showLoading();
+        const response = await ProjectService.remove('Project', id);
+
+        if (response.ok) {
             readProjects();
-        }     
+        } else {
+            showError(response.data);
+        }
         hideLoading();
     }
 
     return (
+        <>
+            <NavBar />
+            <Container className="mt-4">
 
-        <Container className="mt-4">
-            <Link to={RoutesNames.PROJECTS_CREATE} className="btn btn-success gumb">
-                <IoIosAdd
-                    size={25}
-                />ADD
-            </Link>
-           
-            <Form>
-                <Row>
-                    <Col>
-                    <InputGroup>
-                        <Form.Control
-                            placeholder="Search project by name or unique id..."
-                            onChange={(e) => setSearch(e.target.value)}
-                            className="searchLabel" />
-                    </InputGroup>
-                    </Col>
-                </Row>
-            </Form>
-            
-            <Table striped bordered hover responsive variant="dark" className="tableStyle" >
-                <thead>
-                    <tr className="projectTableHead">
-                        <th>Project Name</th>
-                        <th className="projectTableHeadAlignCenter">Unique ID</th>
-                        <th>Start date / Deadline</th>
-                        <th>Status</th>
-                        <th>Actions</th>
-                    </tr>
-                </thead>
-                <tbody>
-                    {projects && projects.filter((projects)=>{
-                        return search.toLowerCase() === '' ? projects : projects.projectName.toLowerCase().includes(search)
-                        || search === '' ? projects : projects.uniqueID.includes(search);
-                    }).map((project, index) => ( 
-                        <tr key={index}>
-                            <td>{project.projectName}</td>
-                            <td className="alignRight">{project.uniqueID}</td>
-                            <td >
+                <Link to={RoutesNames.PROJECTS_CREATE} className="btn btn-success gumb">
+                    <IoIosAdd
+                        size={25}
+                    />ADD
+                </Link>
 
-                                <p>
-                                    {FormatDateStart(project)}
-                                    /
-                                    {FormatDateEnd(project)}
+                <Form>
+                    <Row>
+                        <Col>
+                            <InputGroup>
+                                <Form.Control
+                                    placeholder="Search project by name or unique id..."
+                                    onChange={(e) => setSearch(e.target.value)}
+                                    className="searchLabel" />
+                            </InputGroup>
+                        </Col>
+                    </Row>
+                </Form>
 
-                                </p>
-                                <ProgressBar
-                                    //  label = {progresLabel(project)} 
-                                    variant="danger"
-                                    now={progresLabel(project)}
-                                    max={progresLabelMaxValue(project)}
-                                    title="Measures days from the start date"
-                                />
-
-                            </td>
-                            <td className="alignCenter" 
-                             color= {IsFinishedDisplayColor(project)}                            
-                            >
-                                {IsFinishedDisplayText(project)}
-                            </td>
-
-                            <td className="alignCenter">
-                                
-                                <Button
-                                    variant='outline-success'
-                                    className="workBtn"
-                                    title="Work on project"
-                                    onClick={() => { navigate(`/listprojectactivities/${project.id}`) }}
-                                >
-                                    <FaWrench
-                                        color="green"
-                                        size={15}
-                                    >
-                                    </FaWrench>
-                                </Button>
-
-                                <Button className="editBtn"
-                                    variant="primary"
-                                    label = "Edit project"
-                                    onClick={() => { navigate(`/projects/${project.id}`) }}>
-                                    <FaEdit
-                                        size={15}
-                                    />
-                                </Button>
-
-                                <Button className="trashBtn"
-                                    variant='danger'
-                                    label = "Delete project"
-                                    onClick={() => projectDelete(project.id)}
-                                >
-                                    <FaTrash
-                                        size={15}
-                                    />
-
-                                </Button>
-                            </td>
+                <Table striped bordered hover responsive variant="dark" className="tableStyle" >
+                    <thead>
+                        <tr className="projectTableHead">
+                            <th>Project Name</th>
+                            <th className="projectTableHeadAlignCenter">Unique ID</th>
+                            <th>Start date / Deadline</th>
+                            <th>Status</th>
+                            <th>Actions</th>
                         </tr>
-                        
-                    ))}
-                </tbody>
+                    </thead>
+                    <tbody>
+                        {projects && projects.filter((projects) => {
+                            return search.toLowerCase() === '' ? projects : projects.projectName.toLowerCase().includes(search)
+                                || search === '' ? projects : projects.uniqueID.includes(search);
+                        }).map((project, index) => (
+                            <tr key={index}>
+                                <td>{project.projectName}</td>
+                                <td className="alignRight">{project.uniqueID}</td>
+                                <td >
 
-            </Table>
-        </Container>
+                                    <p>
+                                        {FormatDateStart(project)}
+                                        /
+                                        {FormatDateEnd(project)}
 
+                                    </p>
+                                    <ProgressBar
+                                        //  label = {progresLabel(project)} 
+                                        variant="danger"
+                                        now={progresLabel(project)}
+                                        max={progresLabelMaxValue(project)}
+                                        title="Measures days from the start date"
+                                    />
+
+                                </td>
+                                <td className="alignCenter"
+                                    color={IsFinishedDisplayColor(project)}
+                                >
+                                    {IsFinishedDisplayText(project)}
+                                </td>
+
+                                <td className="alignCenter">
+
+                                    <Button
+                                        variant='outline-success'
+                                        className="workBtn"
+                                        title="Work on project"
+                                        onClick={() => { navigate(`/listprojectactivities/${project.id}`) }}
+                                    >
+                                        <FaWrench
+                                            color="green"
+                                            size={15}
+                                        >
+                                        </FaWrench>
+                                    </Button>
+
+                                    <Button className="editBtn"
+                                        variant="primary"
+                                        label="Edit project"
+                                        onClick={() => { navigate(`/projects/${project.id}`) }}>
+                                        <FaEdit
+                                            size={15}
+                                        />
+                                    </Button>
+
+                                    <Button className="trashBtn"
+                                        variant='danger'
+                                        label="Delete project"
+                                        onClick={() => projectDelete(project.id)}
+                                    >
+                                        <FaTrash
+                                            size={15}
+                                        />
+
+                                    </Button>
+                                </td>
+                            </tr>
+
+                        ))}
+                    </tbody>
+
+                </Table>
+            </Container>
+        </>
     );
 
 }

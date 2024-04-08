@@ -32,7 +32,7 @@ export default function DateAndTime({atributeDate, valueDate, atributeTime, valu
 
 DateAndTime.propTypes={
     atributeDate: PropTypes.DateTime,
-    valueTime: PropTypes.DateTime,
+    valueDate: PropTypes.DateTime,
     atributeTime: PropTypes.DateTime,
     valueTime: PropTypes.DateTime
 }

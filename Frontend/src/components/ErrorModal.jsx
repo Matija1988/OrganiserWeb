@@ -1,7 +1,12 @@
 import { Modal, Button } from "react-bootstrap";
 import PropTypes from 'prop-types';
+import { useState } from "react";
+
 
 export default function ErrorModal({show, onHide, errors}) {
+
+
+    
     return (
         <Modal show={show} onHide={onHide}>
             <Modal.Header closeButton>

@@ -12,6 +12,9 @@ import Form from 'react-bootstrap/Form';
 
 import './proofsStyle.css';
 import { getAlertMessages } from "../../services/httpService";
+import NavBar from "../../components/NavBar";
+import useError from "../../hooks/useError";
+import useLoading from "../../hooks/useLoading";
 
 
 export default function Proofs() {
@@ -23,15 +26,21 @@ export default function Proofs() {
     const [pickedEntity, setPickedEntity] = useState({});
     const [showModal, setShowModal] = useState(false);
 
+    const {showError} = useError();
+    const {showLoading, hideLoading} = useLoading();
+
     let navigate = useNavigate();
 
     async function fetchProofs() {
-        const response = await ProofsService.getProofs();
+        showLoading();
+        const response = await ProofsService.read('Proof');
         if (!response.ok) {
-            alert(getAlertMessages(response.data));
+            hideLoading();
+            showError(response.data);
             return;
         }
         setProofs(response.data);
+        hideLoading();
     }
 
     function FormatDateCreated(proof) {
@@ -41,13 +50,16 @@ export default function Proofs() {
 
 
     async function deleteProofs(id) {
-        const response = await ProofsService.deleteProof(id);
+        showLoading();
+        const response = await ProofsService.remove('Proof',id);
 
         if (response.ok) {
+            hideLoading();
             fetchProofs();
-        } else {
-            alert(getAlertMessages(response.data));
+            return;
         }
+        showError(response.data);
+        hideLoading();
 
     }
 
@@ -85,6 +97,7 @@ export default function Proofs() {
 
     return (
         <>
+        <NavBar />
             <Container>
                 <Link to={RoutesNames.PROOFS_CREATE} className="btn btn-success gumb" >
                     <IoIosAdd size={25} /> ADD

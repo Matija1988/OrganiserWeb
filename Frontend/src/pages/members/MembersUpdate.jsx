@@ -6,6 +6,12 @@ import { RoutesNames } from "../../constants";
 
 import './membersStyle.css';
 import { getAlertMessages } from "../../services/httpService";
+import NavBar from "../../components/NavBar";
+import useError from "../../hooks/useError";
+import useLoading from "../../hooks/useLoading";
+import InputText from "../../components/InputText";
+import InputCheckbox from "../../components/InputCheckbox";
+import Actions from "../../components/Actions";
 
 export default function MembersUpdate() {
 
@@ -14,28 +20,35 @@ export default function MembersUpdate() {
     const routeParams = useParams();
     const navigate = useNavigate();
 
-    async function fetchMember() {
+    const {showError} = useError();
+    const {showLoading, hideLoading} = useLoading();
 
-        const response = await MembersService.getById(routeParams.id);
-            if(!response.ok) {
-                alert(getAlertMessages(response.data));
-                return;
-            }
-            setMember(response.data);
-    }
+    async function fetchMember() {
+        showLoading();
+        const response = await MembersService.getByID('Member', routeParams.id);
+        if (!response.ok) {
+            hideLoading();
+            showError(response.data);
+            return;
+        }
+        setMember(response.data);
+        hideLoading();
+    }   
 
     useEffect(() => {
         fetchMember();
     }, []);
 
     async function UpdateMember(member) {
-
-        const response = await MembersService.updateMember(routeParams.id, member);
+        showLoading();    
+        const response = await MembersService.update('Member', routeParams.id, member);
         if (response.ok) {
+            hideLoading();
             navigate(RoutesNames.MEMBERS_READ);
             return;
         } 
-        alert(getAlertMessages(response.data));
+        showError(response.data);
+        hideLoading();
     }
 
     function handleSubmit(e) {
@@ -45,101 +58,32 @@ export default function MembersUpdate() {
         const information = new FormData(e.target);
 
         UpdateMember({
-            firstName: information.get('firstName'),
-            lastName: information.get('lastName'),
-            username: information.get('username'),
-            password: information.get('password'),
+            firstName: information.get('First name'),
+            lastName: information.get('Last name'),
+            username: information.get('Username'),
+            password: information.get('Password'),
             email: information.get('email'),
-            isTeamLeader: information.get('isTeamLeader') == 'on' ? true : false
+            isTeamLeader: information.get('Is team leader') == 'on' ? true : false
         });
 
     }
 
     return (
+        <>
+        <NavBar />
         <Container>
             <Form onSubmit={handleSubmit} className='FormMemberCreate'>
-
-                <Form.Group controlId="firstName">
-                    <Form.Label>First Name</Form.Label>
-                    <Form.Control
-                        type='text'
-                        name='firstName'
-                        defaultValue={member.firstName}
-                        maxLength={50}
-                        required
-                    />
-                </Form.Group>
-
-                <Form.Group  controlId="lastName">
-                    <Form.Label>First Name</Form.Label>
-                    <Form.Control
-                        type='text'
-                        name='lastName'
-                        defaultValue={member.lastName}
-                        maxLength={50}
-                        required
-                    />
-                </Form.Group>
-
-                <Form.Group  controlId="username">
-                    <Form.Label>Username</Form.Label>
-                    <Form.Control
-                        type='text'
-                        name='username'
-                        defaultValue={member.username}
-                        maxLength={50}
-                        required
-                    />
-                </Form.Group>
-
-                <Form.Group  controlId="password">
-                    <Form.Label>Password</Form.Label>
-                    <Form.Control
-                        type='text'
-                        name='password'
-                        defaultValue={member.password}
-                        maxLength={100}
-                        required
-                    />
-                </Form.Group>
-
-                <Form.Group  controlId="email">
-                    <Form.Label>Password</Form.Label>
-                    <Form.Control
-                        type='email'
-                        name='email'
-                        defaultValue={member.email}
-                        maxLength={255}
-                        required
-                    />
-                </Form.Group>
-
-
-                <Form.Group  controlId="isTeamLeader">
-                    <Form.Label>Position</Form.Label>
-                    <Form.Check
-                        label= 'isTeamLeder'
-                        name='isTeamLeader'
-                        
-                    />
-                </Form.Group>
-
-                <Row>
-                    <Col>
-                    <Link className="btn btn-danger gumb" to={RoutesNames.MEMBERS_READ}>
-                        CANCEL
-                    </Link>
-                    </Col>
-                    <Col>
-                    <Button varian='primary' className="gumb" type='submit'>
-                            UPDATE MEMBER
-                    </Button>
-                    </Col>
-                </Row>
-
-
+                <InputText atribute="First name" value={member.firstName}/>
+                <InputText atribute="Last name" value={member.lastName}/>                   
+                <InputText atribute="Username" value={member.username} />
+                <InputText atribute="Password" value={member.password} />
+                <InputText atribute="email" value={member.email} />
+                <InputCheckbox atribute="Is team leader" value={member.isTeamLeader} />
+                <Actions cancel={RoutesNames.MEMBERS_READ} action="UPDATE MEMBER"/>                
+                
             </Form>
         </Container>
+        </>
     );
 
 }

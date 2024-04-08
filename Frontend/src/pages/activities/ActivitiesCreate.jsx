@@ -9,37 +9,54 @@ import ActivitiesService from '../../services/ActivitiesService';
 import { getAlertMessages } from '../../services/httpService';
 
 import './activitiesStyle.css';
+import NavBar from '../../components/NavBar';
+import useError from '../../hooks/useError';
+import useLoading from '../../hooks/useLoading';
+import InputText from '../../components/InputText';
+import InputCheckbox from '../../components/InputCheckbox';
+import Actions from '../../components/Actions';
+import InputTextAsTextArea from '../../components/InputTextAsTextArea';
 
 export default function ActivitiesCreate() {
 
     const navigate = useNavigate();
 
-    const [project, setProject] = useState([]);
+    const [projects, setProjects] = useState([]);
     const [projectIDinput, setProjectIDinput] = useState(0);
 
+    const {showError} = useError();
+    const {showLoading, hideLoading} = useLoading();
+
     async function fetchProject() {
-        const response = await ProjectService.getProjects();
-        if(!response.ok){
-            alert(getAlertMessages(response.data));
+        const response = await ProjectService.read('Project');
+        if (!response.ok) {
+            showError(response.data);
             return;
         }
-        setProject(response.data);
+        setProjects(response.data);
         setProjectIDinput(response.data[0].id);
     }
 
+    
     async function load() {
+        showLoading();
         await fetchProject();
+        hideLoading();
     }
 
-    useEffect(()=>{load();},[]);
+    useEffect(() => { load(); }, []);
 
     async function addActivity(e) {
-        const response = await ActivitiesService.create(e);
-        if(response.ok) {
+        showLoading();
+        const response = await ActivitiesService.create('Activity', e);
+        if (response.ok) {
             navigate(RoutesNames.ACTIVITIES_READ);
+            hideLoading();
             return;
         }
-        alert(getAlertMessages(response.data));
+        hideLoading();
+        showError(response.data);
+        
     }
 
     function handleSubmit(e) {
@@ -48,48 +65,48 @@ export default function ActivitiesCreate() {
 
         const information = new FormData(e.target);
 
-        if(information.get('datestart') == '' && information.get('timestart')!='') {
+        if (information.get('datestart') == '' && information.get('timestart') != '') {
             alert('User must set date AND time values for start date and start time');
             return;
-        } 
+        }
         let datestarted = '';
 
-        if(information.get('datestart') != '' && information.get('timestart') =='') {
-            datestarted = information.get('datestart') + 'T00:00:00.000Z'; 
+        if (information.get('datestart') != '' && information.get('timestart') == '') {
+            datestarted = information.get('datestart') + 'T00:00:00.000Z';
         } else {
             datestarted = information.get('datestart') + 'T' + information.get('timestart') + ':00.000Z';
         }
 
-        if(information.get('datefinish') == '' && information.get('deadlinetime')!='') {
+        if (information.get('datefinish') == '' && information.get('deadlinetime') != '') {
             alert('User must set date AND time values for deadline and deadline time');
             return;
-        } 
+        }
         let dateend = '';
 
-        if(information.get('datefinish') != '' && information.get('deadlinetime') =='') {
-            dateend = information.get('datefinish') + 'T00:00:00.000Z'; 
+        if (information.get('datefinish') != '' && information.get('deadlinetime') == '') {
+            dateend = information.get('datefinish') + 'T00:00:00.000Z';
         } else {
             dateend = information.get('datefinish') + 'T' + information.get('deadlinetime') + ':00.000Z';
         }
-        
+
         let dateaccept = '';
 
-        if(information.get('dateaccepted') == null || information.get('dateaccepted')=='') {
-            
+        if (information.get('dateaccepted') == null || information.get('dateaccepted') == '') {
+
             dateaccept = null;
         } else {
             dateaccept = information.get('dateaccepted') + 'T00:00:00.000Z';
         }
 
         addActivity({
-            activityName: information.get('activityName'),
-            description: information.get('description'),
-            dateStart:  datestarted,   
+            activityName: information.get('Activity name'),
+            description: information.get('Description'),
+            dateStart: datestarted,
             dateFinish: dateend,
-            isFinished: information.get('isFinished') == 'on' ? true : false,
+            isFinished: information.get('Is finished') == 'on' ? true : false,
             dateAccepted: dateaccept,
             projectID: parseInt(projectIDinput)
-       
+
         });
 
     }
@@ -98,117 +115,81 @@ export default function ActivitiesCreate() {
 
 
     return (
-        <Container>
-            <Form onSubmit={handleSubmit} className='FormActivity'>
+        <>
+        <NavBar />
+            <Container>
+                <Form onSubmit={handleSubmit} className='FormActivity'>
+                    <InputText atribute='Activity name' value=''/>
+                    <InputTextAsTextArea atribute='Description' value=''/>
+                    
+                    <Row>
+                        <Col>
+                            <Form.Group controlId='datestart'>
+                                <Form.Label>Date start</Form.Label>
+                                <Form.Control
+                                    type='date'
+                                    name='datestart'
+                                    placeholder='dateStart'
+                                    required
+                                />
+                            </Form.Group>
+                        </Col>
+                        <Col>
+                            <Form.Group controlId='time'>
+                                <Form.Label>Time</Form.Label>
+                                <Form.Control type='time' name='timestart' />
+                            </Form.Group>
+                        </Col>
+                    </Row>
 
-                <Form.Group  controlId='activityName'>
-                    <Form.Label>Activity</Form.Label>
-                    <Form.Control
-                        type='text'
-                        name='activityName'
-                        placeholder='Activity'
-                        maxLength={100}
-                        required
-                    />
-                </Form.Group>
+                    <Row>
+                        <Col>
+                            <Form.Group controlId='datefinish'>
+                                <Form.Label>Deadline</Form.Label>
+                                <Form.Control
+                                    type='date'
+                                    name='datefinish'
+                                    placeholder='dateFinish'
+                                    required
+                                />
+                            </Form.Group>
+                        </Col>
+                        <Col>
+                            <Form.Group controlId='time'>
+                                <Form.Label>Deadline time</Form.Label>
+                                <Form.Control type='time' name='deadlinetime' />
+                            </Form.Group>
+                        </Col>
+                    </Row>
+                    <InputCheckbox atribute='Is finished' value=''/>
+                    <Form.Group controlId='dateaccepted'>
+                        <Form.Label>Date Accepted</Form.Label>
+                        <Form.Control
+                            type='date'
+                            name='dateaccepted'
+                            placeholder='dateAccepted'
 
-                <Form.Group  controlId='description'>
-                    <Form.Label>Description</Form.Label>
-                    <Form.Control
-                        type='text'
-                        name='description'
-                        placeholder='description'
-                        maxLength={500}
-                        
-                    />
+                        />
 
-                </Form.Group>
-                <Row>
-                    <Col>
-                        <Form.Group controlId='datestart'>
-                            <Form.Label>Date start</Form.Label>
-                            <Form.Control
-                                type='date'
-                                name='datestart'
-                                placeholder='dateStart'
-                                required
-                            />
-                        </Form.Group>
-                    </Col>
-                    <Col>
-                        <Form.Group controlId='time'>
-                            <Form.Label>Time</Form.Label>
-                            <Form.Control type='time' name='timestart' />
-                        </Form.Group>
-                    </Col>
-                </Row>
-
-                <Row>
-                    <Col>
-                        <Form.Group controlId='datefinish'>
-                            <Form.Label>Deadline</Form.Label>
-                            <Form.Control
-                                type='date'
-                                name='datefinish'
-                                placeholder='dateFinish'
-                                required
-                            />
-                        </Form.Group>
-                    </Col>
-                    <Col>
-                        <Form.Group controlId='time'>
-                            <Form.Label>Deadline time</Form.Label>
-                            <Form.Control type='time' name='deadlinetime' />
-                        </Form.Group>
-                    </Col>
-                </Row>
-                <Form.Group  controlId="isFinished">
-                    <Form.Check
-                        label="Status"
-                        inline
-                        name='isFinished'
-                    />
-
-                </Form.Group>
-                <Form.Group  controlId='dateaccepted'>
-                    <Form.Label>Date Accepted</Form.Label>
-                    <Form.Control
-                        type='date'
-                        name='dateaccepted'
-                        placeholder='dateAccepted'
-                        
-                    />
-
-                </Form.Group>
+                    </Form.Group>
 
 
-                <Form.Group  controlId='project'>
+                    <Form.Group controlId='project'>
                         <Form.Label>Associated project</Form.Label>
                         <Form.Select
-                            onChange = {(e) => {setProjectIDinput(e.target.value)}}
+                            value={projects.id}
+                            onChange={(e) => { setProjectIDinput(e.target.value) }}
                         >
-                        {project && project.map((e, index) =>(
-                            <option key ={index} value={e.id}>{e.projectName}</option>
-                        ))}
+                            {projects && projects.map((e, index) => (
+                                <option key={index} value={e.id}>{e.projectName}</option>
+                            ))}
                         </Form.Select>
-                </Form.Group>
-
-                <Row>
-                    <Col>
-                        <Link className='btn btn-danger gumb' to={RoutesNames.ACTIVITIES_READ}>
-                            CANCEL
-                        </Link>
-                    </Col>
-
-                    <Col>
-                        <Button variant='primary' className='gumb' type='submit'>
-                            ADD ACTIVITY
-                        </Button>
-                    </Col>
-                </Row>
-            </Form>
-        </Container>
-
+                    </Form.Group>
+                    <Actions cancel={RoutesNames.ACTIVITIES_READ} action="ADD ACTIVITY"/>            
+                    
+                </Form>
+            </Container>
+        </>
     );
 
 }

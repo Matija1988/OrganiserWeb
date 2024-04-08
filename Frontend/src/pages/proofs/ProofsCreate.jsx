@@ -1,4 +1,4 @@
-import { Button, Col, Container, Form, FormLabel, FormSelect, Row } from 'react-bootstrap';
+import { Button, Col, Container, Form, FormLabel, FormSelect, Modal, Row } from 'react-bootstrap';
 import { Link, useNavigate} from "react-router-dom";
 import { useEffect, useState } from 'react';
 
@@ -10,6 +10,12 @@ import ActivitesService from '../../services/ActivitiesService';
 import { getAlertMessages } from '../../services/httpService';
 
 import './proofsStyle.css';
+import NavBar from '../../components/NavBar';
+import useError from '../../hooks/useError';
+import useLoading from '../../hooks/useLoading';
+import InputText from '../../components/InputText';
+import Actions from '../../components/Actions';
+import { FaUpload } from 'react-icons/fa';
 
 
 export default function ProofsCreate() {
@@ -22,24 +28,33 @@ export default function ProofsCreate() {
     const [activity, setActivity] = useState([]);
     const [activityIDa, setActivityID] = useState(0);
 
+    const {showError} = useError();
+    const {showLoading, hideLoading} = useLoading();
+
     async function fetchMembers() {
-        const res = await MembersService.getMembers();
+        showLoading();
+        const res = await MembersService.read('Member');
         if(!res.ok) {
-            alert(getAlertMessages(res.data));
+            hideLoading();
+            showError(res.data);
             return;
         } 
         setMember(res.data);
         setMemberID(res.data[0].id);
+        hideLoading();
     }
 
     async function fetchAcitivties() {
-        const response = await ActivitesService.get();
+        showLoading();
+        const response = await ActivitesService.read('Activity');
         if(!response.ok) {
-            alert(getAlertMessages(response.data));
+            hideLoading();
+            showError(response.data);
             return; 
         }
         setActivity(response.data);
         setActivityID(response.data[0].id);
+        hideLoading();
     }
 
     async function load() {
@@ -50,15 +65,18 @@ export default function ProofsCreate() {
     useEffect(()=>{
         load();
     },[]);
-    
-    async function addProof(Proof) {
 
-        const response = await ProofsService.createProof(Proof);
+
+    async function addProof(Proof) {
+        showLoading();
+        const response = await ProofsService.create('Proof', Proof);
         if (response.ok) {
+            hideLoading();
             navigate(RoutesNames.PROOFS_READ);
-        } else {
-            alert(getAlertMessages(response.data));
+            return;
         }
+        showError(response.data);
+        hideLoading();
     }
 
     function handleSubmit(e) {
@@ -78,30 +96,22 @@ export default function ProofsCreate() {
         }
 
         addProof({
-            documentName: information.get('documentName'),
+            documentName: information.get('Document name'),
             datecreated: dateOfCreation,
             memberID: parseInt(memberIDa),
-            location: information.get('Location'),
+            
             activityID: parseInt(activityIDa)
         });
 
     }
 
     return (
+        <>
+        <NavBar />
         <Container>
             <Form onSubmit={handleSubmit} className='FormActivity'>
-
-                <Form.Group  controlId='documentName'>
-                    <Form.Label>Document Name</Form.Label>
-                    <Form.Control
-                        type='text'
-                        name='documentName'
-                        placeholder='Document Name'
-                        maxLength={100}
-                        required
-                    />
-                </Form.Group>
-
+            <InputText atribute='Document name' value=''/>
+                
                 <Row>
                     <Col>
                         <Form.Group controlId='memberID'>
@@ -136,48 +146,27 @@ export default function ProofsCreate() {
                     />
                     </Col>
                 </Row>
-                <Form.Group  controlId='Location'>
-                    <Form.Label>Location</Form.Label>
-                    <Form.Control
-                        type='text'
-                        name='Location'
-                        placeholder='Location'
-                        maxLength={200}
-                        
-                    />
+                    
 
-                </Form.Group>
+                    <Form.Group controlId='activityID'>
+                        <Form.Label>Activity</Form.Label>
+                        <FormSelect
+                            onChange={(e) => { setActivityID(e.target.value) }}
+                        >
+                            {activity && activity.map((e, index) => (
+                                <option key={index} value={e.id}>
+                                    {e.activityName}
+                                </option>
+                            ))}
 
-                <Form.Group  controlId='activityID'>
-                    <Form.Label>Activity</Form.Label>
-                   <FormSelect 
-                   onChange ={(e) => {setActivityID(e.target.value)}}
-                   >
-                    {activity && activity.map((e, index)=>(
-                    <option key={index} value={e.id}>
-                        {e.activityName}
-                    </option>
-                   ))}
+                        </FormSelect>
+                    </Form.Group>
+                    <Actions cancel={RoutesNames.PROOFS_READ} action='ADD PROOF' />
 
-                    </FormSelect>
-                </Form.Group>
-
-                <Row>
-                    <Col>
-                        <Link className='btn btn-danger gumb' to={RoutesNames.PROOFS_READ}>
-                            CANCEL
-                        </Link>
-                    </Col>
-
-                    <Col>
-                        <Button variant='primary' className='gumb' type='submit'>
-                            ADD PROOF
-                        </Button>
-                    </Col>
-                </Row>
-            </Form>
-        </Container>
-
+                </Form>
+            </Container>
+            
+        </>
     );
 
 }

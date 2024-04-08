@@ -17,9 +17,11 @@ export const RoutesNames = {
     PROOFS_CREATE: '/proofs/create',
     PROOFS_UPDATE: '/proofs/:id',
 
-    LIST_PROJECT_ACTIVITIES: '/listprojectactivities/:id'
+    LIST_PROJECT_ACTIVITIES: '/listprojectactivities/:id',
 
+    LOGIN: '/login',
 
+    MAIN_PANEL: '/mainpanel',
 
 };
 
