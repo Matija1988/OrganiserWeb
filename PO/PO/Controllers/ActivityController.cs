@@ -298,6 +298,7 @@ namespace PO.Controllers
 
         }
 
+     
         /// <summary>
         /// Premoscivanje i prilagodavanje delete metode
         /// Override and adaptation of delete method
@@ -400,6 +401,7 @@ namespace PO.Controllers
             return entityFromDB;    
 
         }
+        
 
     }
 }

@@ -3,6 +3,9 @@ import PropTypes from 'prop-types';
 
 
 export default function DateAndTime({atributeDate, valueDate, atributeTime, valueTime}) {
+
+   
+
     return (
         <Row>
             <Col>

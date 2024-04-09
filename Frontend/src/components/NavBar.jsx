@@ -40,6 +40,7 @@ const navigate = useNavigate();
           </Nav>
         </Navbar.Collapse>
         <Navbar.Collapse className='justify-content-end'>
+          <Nav.Link className='linkToMain' target='_blank' href={RoutesNames.MAIN_PANEL} >MAIN</Nav.Link>
           <Nav.Link target="_blank" href="https://matijapavkovic-001-site1.itempurl.com/swagger/index.html">API documentation</Nav.Link>
 
         </Navbar.Collapse>
