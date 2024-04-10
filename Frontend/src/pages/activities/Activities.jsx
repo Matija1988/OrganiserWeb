@@ -170,7 +170,7 @@ export default function Activities() {
                                         title="Measures days from the start date"
                                     />
                                 </td>
-
+                            
                                 <td>{ActivityStatusDisplayText(activity)}</td>
                                 <td>{FormatDateAccepted(activity)}</td>
                                 <td>{activity.projectName}</td>
