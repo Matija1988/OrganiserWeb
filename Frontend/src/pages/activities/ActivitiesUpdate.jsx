@@ -178,6 +178,24 @@ export default function ActivitiesUpdate() {
             return;
         }
 
+        var today = new Date();
+
+        var dd = String(today.getDate()).padStart(2, '0');
+        var mm = String(today.getMonth() + 1).padStart(2, '0'); //January is 0!
+        var yyyy = today.getFullYear();
+
+        today = mm + '/' + dd + '/' + yyyy;
+       
+        console.log("Date now " + today);
+
+        let checkFinished = new Boolean(information.get('isFinished') =='on' ? true : false); 
+
+        if((today < startingDate) && (checkFinished == true)) {
+            alert("Activity cannot end before it begins!!! Check your input!!!");
+            checkFinished = false;
+            return;
+        }
+
         UpdateActivity({
             activityName: information.get('Activity'),
             description: information.get('Description'),
@@ -198,8 +216,10 @@ export default function ActivitiesUpdate() {
 
                     <Row>
                         <Col key='1'>
+
                             <InputText atribute="Activity" value={activity.activityName} />
                             <InputTextAsTextArea atribute="Description" value={activity.description} />
+
                             <Row>
                                 <Col>
                                     <Form.Group controlId="dateStart">

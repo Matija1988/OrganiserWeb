@@ -282,8 +282,9 @@ namespace PO.Controllers
 
             try
             {
-                var activities = _context.activities
-                    .Where(a => EF.Functions.Like(a.ActivityName.ToLower(), "%"+ condition +"%"))
+                var activities = _context.activities.Include(p => p.Project)
+                    .Where(a => EF.Functions.Like(a.ActivityName.ToLower(), "%"+ condition +"%") 
+                    || EF.Functions.Like(a.Project.ProjectName.ToLower(), "%" + condition+"%" ))
                     .Skip((byPage + page) - byPage)
                     .Take(byPage)
                     .OrderBy(a => a.ActivityName)

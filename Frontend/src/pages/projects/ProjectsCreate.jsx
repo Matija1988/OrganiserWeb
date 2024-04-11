@@ -50,14 +50,27 @@ export default function ProjectsCreate() {
             alert("Projects cannot end before they start!!! Check your input!!!");
             return;
         }
+        
+        var today = new Date();
+
+        console.log("Date now " + today);
+        
+        let checkFinished = new Boolean(information.get('isFinished') =='on' ? true : false); 
+
+        if((today < startingDate) && (checkFinished == true)) {
+            alert("Project cannot end before it begins!!! Check your input!!!");
+            checkFinished = false;
+            return;
+        }
+
         showLoading();
         
         createProject({
             projectName: information.get('Project Name'),
             uniqueID: information.get('Unique ID'),
-            dateStart: information.get('dateStart'),
-            dateEnd: information.get('dateEnd'),
-            isFinished: information.get('isFinished') == 'on' ? true : false
+            dateStart: startingDate,
+            dateEnd: endingDate,
+            isFinished: checkFinished
         });
         hideLoading();
     

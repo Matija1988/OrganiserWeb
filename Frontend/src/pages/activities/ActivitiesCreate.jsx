@@ -119,8 +119,9 @@ export default function ActivitiesCreate() {
 
         let checkFinished = new Boolean(information.get('Is finished') =='on' ? true : false); 
 
-        if((today < datestarted) && (checkFinished)) {
+        if((today < datestarted) && (checkFinished == true)) {
             alert("Activity cannot end before it begins!!! Check your input!!!");
+            checkFinished = false;
             return;
         }
         
