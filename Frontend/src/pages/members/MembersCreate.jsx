@@ -39,16 +39,43 @@ export default function MembersCreate() {
 
         const information = new FormData(e.target);
 
+        const name = information.get('First name');
+
+        if(name == "") {
+            alert("Must enter first name!");
+        }
+
+        const surname = information.get('Last name');
+        if(surname == "") {
+            alert("Must enter last name!");
+        }
+
+        const user = information.get('Username');
+        if(user == ""){
+            alert("Must enter username!");
+        }
+
+        const pass = information.get('Password');
+        if(pass == "") {
+            alert("Must enter password!");
+        }
+
+        const mail = information.get('email');
+        if(mail == "") {
+            alert("Must enter email!")
+        }
+
         const member = {
-            firstName: information.get('First name'),
-            lastName: information.get('Last name'),
-            userName: information.get('Username'),
-            password: information.get('Password'),
-            email: information.get('email'),
+            firstName: name,
+            lastName: surname,
+            userName: user,
+            password: pass,
+            email: mail,
             isTeamLeader: information.get('Is team leader') == 'on' ? true : false
         };
-
+       
         addMember(member);
+        hideLoading();
 
     }
 

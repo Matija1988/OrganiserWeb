@@ -152,7 +152,7 @@ export default function Projects() {
                     <thead>
                         <tr className="projectTableHead">
                             <th>Project Name</th>
-                            <th className="projectTableHeadAlignCenter">Unique ID</th>
+                            <th>Unique ID</th>
                             <th>Start date / Deadline</th>
                             <th>Status</th>
                             <th>Actions</th>
@@ -190,39 +190,46 @@ export default function Projects() {
                                 </td>
 
                                 <td className="alignCenter">
+                                    <Row className="tableActionsRow1">
 
-                                    <Button
-                                        variant='outline-success'
-                                        className="workBtn"
-                                        title="Work on project"
-                                        onClick={() => { navigate(`/listprojectactivities/${project.id}`) }}
-                                    >
-                                        <FaWrench
-                                            color="green"
-                                            size={15}
+                                        <Button
+                                            variant='outline-success'
+                                            className="workBtn"
+                                            title="Work on project"
+                                            onClick={() => { navigate(`/listprojectactivities/${project.id}`) }}
                                         >
-                                        </FaWrench>
-                                    </Button>
+                                            <FaWrench
+                                                color="green"
+                                                size={15}
+                                            >
+                                            </FaWrench>
+                                        </Button>
 
-                                    <Button className="editBtn"
-                                        variant="primary"
-                                        label="Edit project"
-                                        onClick={() => { navigate(`/projects/${project.id}`) }}>
-                                        <FaEdit
-                                            size={15}
-                                        />
-                                    </Button>
+                                        <Button className="editBtn"
+                                            variant="primary"
+                                            label="Edit project"
+                                            onClick={() => { navigate(`/projects/${project.id}`) }}>
+                                            <FaEdit
+                                                size={15}
+                                            />
+                                        </Button>
 
-                                    <Button className="trashBtn"
-                                        variant='danger'
-                                        label="Delete project"
-                                        onClick={() => projectDelete(project.id)}
-                                    >
-                                        <FaTrash
-                                            size={15}
-                                        />
+                                    </Row>
+                                    <Row>
+                                        <Col>
+                                            <Button className="trashBtn"
+                                                variant='danger'
+                                                label="Delete project"
+                                                onClick={() => projectDelete(project.id)}
+                                            >
+                                                <FaTrash
+                                                    size={15}
+                                                />
 
-                                    </Button>
+                                            </Button>
+                                        </Col>
+
+                                    </Row>
                                 </td>
                             </tr>
 

@@ -14,9 +14,8 @@ import Actions from "../../components/Actions";
 
 import "bootstrap/dist/css/bootstrap.min.css";
 import './projectsStyle.css';
-import DateAndTime from "../../components/DateAndTime";
 import NavBar from "../../components/NavBar";
-import DateOnly from "../../components/DateOnly";
+
 
 
 export default function ProjectsCreate() {
@@ -31,6 +30,7 @@ export default function ProjectsCreate() {
         const response = await ProjectService.create('Project', project);
         if (response.ok) {
             navigate(RoutesNames.PROJECTS_READ);
+            hideLoading();
             return;
         }
         showError(response.data);
@@ -43,6 +43,15 @@ export default function ProjectsCreate() {
 
         const information = new FormData(e.target);
 
+        let startingDate = new Date(information.get('dateStart'));
+        let endingDate = new Date(information.get('dateEnd'));
+
+        if(startingDate > endingDate) {
+            alert("Projects cannot end before they start!!! Check your input!!!");
+            return;
+        }
+        showLoading();
+        
         createProject({
             projectName: information.get('Project Name'),
             uniqueID: information.get('Unique ID'),
@@ -50,7 +59,8 @@ export default function ProjectsCreate() {
             dateEnd: information.get('dateEnd'),
             isFinished: information.get('isFinished') == 'on' ? true : false
         });
-
+        hideLoading();
+    
     }
 
     return (

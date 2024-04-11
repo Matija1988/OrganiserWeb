@@ -24,10 +24,11 @@ export default function Footer2() {
                 <Form.Label>Matija Pavković</Form.Label>
                 </Col>
                 <Col>
-                <Link href="https://strukturnifondovi.hr/">STRUKTURNI FONDOVI</Link>
+                <a href="https://strukturnifondovi.hr/">STRUKTURNI FONDOVI</a>
+                
                 </Col>
                 <Col>
-                <Link href="https://narodne-novine.nn.hr/clanci/sluzbeni/2016_12_120_2607.html">ZAKON O JAVNOJ NABAVI</Link>
+                <a href="https://narodne-novine.nn.hr/clanci/sluzbeni/2016_12_120_2607.html">ZAKON O JAVNOJ NABAVI</a>
                 </Col>
             </Row>
             <Row className="links">
@@ -35,32 +36,35 @@ export default function Footer2() {
                 <Form.Label>Made in WEB DEVELOPMENT class EDUNOVA, Osijek</Form.Label>
                 </Col>
                 <Col>
-                <Link href="https://strukturnifondovi.hr/dokumenti/">STRUKTURNI FONDOVI DOKUMENTI</Link>
+                <a href="https://strukturnifondovi.hr/dokumenti/">STRUKTURNI FONDOVI DOKUMENTI</a>
                 </Col>
                 <Col>
-                <Link href="https://www.zakon.hr/z/114/Zakon-o-za%C5%A1titi-tr%C5%BEi%C5%A1nog-natjecanja">ZAKON O ZAŠTITI TRŽIŠNOG NATJECANJA</Link>
-                </Col>
-            </Row>
-            <Row className="links">
-                <Col>
-                <Link href="https://www.edunova.hr/">EDUNOVA</Link>
-                </Col>
-                <Col>
-                <Link href="https://hamagbicro.hr/otvoreni-natjecaji/">HAMAGBICRO NATJEČAJI</Link>
-                </Col>
-                <Col>
-                <Link href="https://dkom.hr/">DKOM</Link>
+                <a href="https://www.zakon.hr/z/114/Zakon-o-za%C5%A1titi-tr%C5%BEi%C5%A1nog-natjecanja">ZAKON O ZAŠTITI TRŽIŠNOG</a>
+            
                 </Col>
             </Row>
             <Row className="links">
                 <Col>
+                <a href="https://www.edunova.hr/">EDUNOVA</a>
                 </Col>
                 <Col>
-                <Link href="https://mingor.gov.hr/javni-pozivi-i-natjecaji-7371/javni-pozivi-i-natjecaji-ministarstva/otvoreni-javni-pozivi-i-natjecaji/7390">
-                    MINGO NATJEČAJI</Link>
+                <a href="https://hamagbicro.hr/otvoreni-natjecaji/">HAMAGBICRO NATJEČAJI</a>
                 </Col>
                 <Col>
-                <Link href="https://www.zakon.hr/z/307/Zakon-o-radu">ZAKON O RADU</Link>
+                <a href="https://dkom.hr/">DKOM</a>
+                </Col>
+            </Row>
+            <Row className="links">
+                <Col>
+                </Col>
+                <Col>
+                        <a href="https://mingor.gov.hr/javni-pozivi-i-natjecaji-7371/javni-pozivi-i-natjecaji-ministarstva/otvoreni-javni-pozivi-i-natjecaji/7390">
+                            MINGO NATJEČAJI
+                        </a>
+                </Col>
+                <Col>
+                <a href="https://www.zakon.hr/z/307/Zakon-o-radu">ZAKON O RADU</a>
+               
                 </Col>
             </Row>
         </Container>

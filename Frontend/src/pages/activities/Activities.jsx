@@ -136,7 +136,7 @@ export default function Activities() {
 
                 <Table striped bordered hover responsive variant="dark" className="tableStyle">
                     <thead>
-                        <tr>
+                        <tr className="projectTableHead">
                             <th>Activity</th>
                             <th>Description</th>
                             <th>Start date / Deadline</th>
@@ -162,7 +162,7 @@ export default function Activities() {
 
                                     </p>
                                     <ProgressBar
-                                        // label = {progresLabel(activity)}
+                                        
 
                                         variant="danger"
                                         now={progresLabel(activity)}
@@ -175,7 +175,7 @@ export default function Activities() {
                                 <td>{FormatDateAccepted(activity)}</td>
                                 <td>{activity.projectName}</td>
                                 <td className="alignCenter">
-                                    <Button className="editBtn"
+                                    <Button className="editBtnMember"
                                         variant="primary"
                                         onClick={() => { navigate(`/activities/${activity.id}`) }}
                                     >

@@ -14,6 +14,7 @@ import DateAndTime from "../../components/DateAndTime";
 import NavBar from "../../components/NavBar";
 import InputCheckbox from "../../components/InputCheckbox";
 import Actions from "../../components/Actions";
+import { IoMdReturnLeft } from "react-icons/io";
 
 
 export default function ProjectsUpdate() {
@@ -67,6 +68,11 @@ export default function ProjectsUpdate() {
 
         const startingDate = moment.utc(information.get('date') + ' ' + information.get('timeStart'));
         const deadlineDate = moment.utc(information.get('dateEnd') + ' ' + information.get('deadlineTime'));
+
+        if(startingDate > deadlineDate) {
+            alert("Project cannot start after it ends!!! Check your input!!!");
+            return;
+        }
 
         const project = {
             projectName: information.get('Project name'),

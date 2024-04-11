@@ -38,7 +38,7 @@ export default function Login() {
                     <Form.Control
                         type="username"
                         name="email"
-                        placeholder="email"
+                        placeholder="texasranger@gmail.com"
                         maxLength={255}
                         required
                     />
@@ -48,7 +48,7 @@ export default function Login() {
                     <Form.Control
                         type="password"
                         name="password"
-                        placeholder="Password"
+                        placeholder="chuckneedsnopassword"
                         required
                     />
                 </Form.Group>

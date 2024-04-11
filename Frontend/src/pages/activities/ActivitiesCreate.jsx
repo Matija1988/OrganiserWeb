@@ -98,12 +98,39 @@ export default function ActivitiesCreate() {
             dateaccept = information.get('dateaccepted') + 'T00:00:00.000Z';
         }
 
+        if(datestarted > dateend) {
+            alert("Activity cannot start after it ends!!! Check your input!!!");
+            return;
+        }
+
+        if(dateaccept < datestarted) {
+            alert("Activity cannot be accepted before it starts!!! Check your input!!!");
+            return;
+        }
+
+        var today = new Date();
+        var dd = String(today.getDate()).padStart(2, '0');
+        var mm = String(today.getMonth() + 1).padStart(2, '0'); //January is 0!
+        var yyyy = today.getFullYear();
+
+        today = mm + '/' + dd + '/' + yyyy;
+
+        console.log("Date now " + today);
+
+        let checkFinished = new Boolean(information.get('Is finished') =='on' ? true : false); 
+
+        if((today < datestarted) && (checkFinished)) {
+            alert("Activity cannot end before it begins!!! Check your input!!!");
+            return;
+        }
+        
+
         addActivity({
             activityName: information.get('Activity name'),
             description: information.get('Description'),
             dateStart: datestarted,
             dateFinish: dateend,
-            isFinished: information.get('Is finished') == 'on' ? true : false,
+            isFinished: checkFinished,
             dateAccepted: dateaccept,
             projectID: parseInt(projectIDinput)
 

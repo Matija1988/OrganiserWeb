@@ -98,7 +98,7 @@ export default function Proofs() {
     return (
         <>
         <NavBar />
-            <Container>
+            <Container className="mt-4">
                 <Link to={RoutesNames.PROOFS_CREATE} className="btn btn-success gumb" >
                     <IoIosAdd size={25} /> ADD
                 </Link>
@@ -111,7 +111,7 @@ export default function Proofs() {
                     </InputGroup>
                 </Form>
                 <Table striped bordered hover responsive variant="dark" className="tableStyle">
-                    <thead>
+                    <thead className="projectTableHead">
                         <tr>
                             <th>Document</th>
                             <th>Member</th>
@@ -140,8 +140,11 @@ export default function Proofs() {
                                         onClick={() => { navigate(`/proofs/${proof.id}`) }}
                                     >
                                         <FaEdit
-                                            size={25}
+                                            size={15}
                                         />
+                                    </Button>
+                                    <Button className="uploadFileBtn" onClick={() => setFileModal(proof)}>
+                                        <FaUpload size={15}/>
                                     </Button>
 
                                     <Button className="trashBtn"
@@ -149,12 +152,8 @@ export default function Proofs() {
                                         onClick={() => deleteProofs(proof.id)}
                                     >
                                         <FaTrash
-                                            size={25}
+                                            size={15}
                                         />
-                                    </Button>
-
-                                    <Button onClick={() => setFileModal(proof)}>
-                                        <FaUpload />
                                     </Button>
 
                                 </td>

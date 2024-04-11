@@ -168,6 +168,16 @@ export default function ActivitiesUpdate() {
         const deadlineDate = moment.utc(information.get('datefinish') + ' ' + information.get('deadlineTime'));
         const acceptanceDate = moment.utc(information.get('dateaccepted') + ' ' + information.get('acceptanceTime'));
 
+        if(startingDate > deadlineDate) {
+            alert("Activity cannot start after it ends!!! Check your input!!!");
+            return;
+        }
+
+        if(startingDate > acceptanceDate) {
+            alert("Activity cannot be accepted before it starts!!! Check your input!!!");
+            return;
+        }
+
         UpdateActivity({
             activityName: information.get('Activity'),
             description: information.get('Description'),

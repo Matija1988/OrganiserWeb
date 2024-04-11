@@ -24,12 +24,15 @@ export default function Members() {
     let navigate = useNavigate();
 
     async function fetchMembers() {
+        showLoading();
         const response = await MembersService.read('Member');
         if(!response.ok){
-            alert(getAlertMessages(response.data));
+            hideLoading();
+            showError(response.data);
             return;
         }
         setMembers(response.data);
+        hideLoading();
      }
 
     useEffect(() => {
@@ -38,10 +41,12 @@ export default function Members() {
 
     async function deleteMember(id) {
         const reply = await MembersService.remove('Member', id)
-
+        showLoading();
         if (reply.ok) {
             fetchMembers();
+            hideLoading();
         } else {
+            hideLoading();
             showError(reply.data);
         }
     }
@@ -71,7 +76,7 @@ export default function Members() {
             </Form>
             <Table striped bordered hover responsive variant="dark" className="tableStyle"> 
             <thead>
-                <tr>
+                <tr className="projectTableHead">
                     <th>Member</th>
                     <th>Username</th>
                     <th>Password</th>
@@ -93,7 +98,7 @@ export default function Members() {
                         <td>{Text = MemberStatusDisplayText(member)}</td>
                         <td>{member.email}</td>
                         <td className="alignCenter">
-                            <Button className="editBtn"
+                            <Button className="editBtnMember"
                             variant="primary"
                             onClick={() =>{navigate(`/members/${member.id}`)}}
                             >

@@ -18,7 +18,7 @@ export const RoutesNames = {
     PROOFS_UPDATE: '/proofs/:id',
 
     LIST_PROJECT_ACTIVITIES: '/listprojectactivities/:id',
-
+    
     LOGIN: '/login',
 
     MAIN_PANEL: '/mainpanel',

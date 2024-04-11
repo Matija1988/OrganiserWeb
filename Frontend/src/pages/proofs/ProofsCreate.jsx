@@ -102,6 +102,7 @@ export default function ProofsCreate() {
             
             activityID: parseInt(activityIDa)
         });
+        hideLoading();
 
     }
 

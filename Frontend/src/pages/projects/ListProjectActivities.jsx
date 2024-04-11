@@ -1,6 +1,6 @@
 
 import { Button, Container, ProgressBar, Table, Form, Row, Col, InputGroup } from "react-bootstrap";
-import { FaAd, FaEdit, FaFemale, FaMale, FaPersonBooth, FaTrash, FaUser, FaUserAlt, FaUsers } from "react-icons/fa";
+import { FaAd, FaEdit, FaFemale, FaFile, FaMale, FaPersonBooth, FaTrash, FaUser, FaUserAlt, FaUsers } from "react-icons/fa";
 import { useEffect, useState } from "react";
 import { useParams } from "react-router-dom";
 import { useNavigate } from "react-router-dom";
@@ -163,37 +163,36 @@ export default function ListProjectActivities() {
                             <td>{ActivityStatusDisplayText(activity)}</td>
                             <td>{FormatDateAccepted(activity)}</td>
                             <td className="alignCenter">
+                                <Row className="tableActionsRow1">
+                                    <Button
+                                        className="memBtn"
+                                        title="Assign member/s to activity"
+                                        onClick={() => { navigate(`/activitiesmembersmenu/${activity.id}`) }}
+                                    >
+                                        <FaUsers
+                                            size={20}
+                                        ></FaUsers>
 
-                                <Button
-                                    className="memBtn"
-                                    title="Assign member/s to activity"
-                                    onClick={() => { navigate(`/activitiesmembersmenu/${activity.id}`) }}
-                                >
-                                    <FaUsers
-                                    size={25}
-                                    ></FaUsers>
-                                   
-                                </Button>
+                                    </Button>
 
-
-                                <Button className="editBtn"
-                                    variant="primary"
-                                    onClick={() => { navigate(`/activities/${activity.id}`) }}
-                                >
-                                    <FaEdit
-                                        size={25}
-                                    />
-                                </Button>
-
-                                <Button className="trashBtn"
-                                    variant="danger"
-                                    onClick={() => deleteActivities(activity.id)}
-                                >
-                                    <FaTrash
-                                        size={25}
-                                    />
-                                </Button>
-
+                                    <Button className="editBtn"
+                                        variant="primary"
+                                        onClick={() => { navigate(`/activities/${activity.id}`) }}
+                                    >
+                                        <FaEdit
+                                            size={20}
+                                        />
+                                    </Button>
+                                </Row>    
+                                    <Button className="trashBtn"
+                                        variant="danger"
+                                        onClick={() => deleteActivities(activity.id)}
+                                    >
+                                        <FaTrash
+                                            size={20}
+                                        />
+                                    </Button>
+                                    
                             </td>
                         </tr>
                     )
