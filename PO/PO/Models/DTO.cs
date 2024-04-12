@@ -106,4 +106,12 @@ namespace PO.Models
         string? Password
         );
 
+    public record EmailMetadataDTORead(
+        
+        string emailRecipient,
+        string nameRecipient,
+        string subjectActivity,
+        string subjectBody
+
+        );
 }
