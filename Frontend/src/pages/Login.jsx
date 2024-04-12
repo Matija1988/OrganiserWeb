@@ -18,7 +18,7 @@ export default function Login() {
         const data = new FormData(e.target);
         login({
 
-            email:data.get('email'),
+            email:data.get('username'),
             password: data.get('password'),
         });
     }
@@ -39,7 +39,7 @@ export default function Login() {
                     <Form.Control
                         type="username"
                         name="email"
-                        placeholder="texasranger@gmail.com"
+                        placeholder="texasranger"
                         maxLength={255}
                         
                     />

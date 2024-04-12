@@ -29,7 +29,7 @@ namespace PO.Mappers
                     c.CreateMap<Member, MemberDTOAuth>()
                     .ConstructUsing(entity =>
                     new MemberDTOAuth(
-                        entity.Email,
+                        entity.Username,
                         entity.Password
                         ));
                 }

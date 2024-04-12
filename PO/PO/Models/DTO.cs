@@ -101,9 +101,9 @@ namespace PO.Models
     public record MemberDTOAuth(
 
         [Required(ErrorMessage = "Mandatory input")]
-        string? Email,
+        string Username,
         [Required(ErrorMessage = "Mandatory input")]
-        string? Password
+        string Password
         );
 
 }

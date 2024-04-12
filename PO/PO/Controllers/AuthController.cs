@@ -24,7 +24,7 @@ namespace PO.Controllers
         {
             if (!ModelState.IsValid) { return BadRequest(ModelState); }
 
-            var userBase = _context.members.Where(p => p.Email!.Equals(user.Email)).FirstOrDefault();
+            var userBase = _context.members.Where(p => p.Username!.Equals(user.Username)).FirstOrDefault();
 
             if (userBase == null)
             {
