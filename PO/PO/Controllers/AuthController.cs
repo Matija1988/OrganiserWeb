@@ -22,16 +22,16 @@ namespace PO.Controllers
         [HttpPost("token")]
         public IActionResult GenerateToken(MemberDTOAuth user)
         {
-            if(!ModelState.IsValid) { return BadRequest(ModelState); }
+            if (!ModelState.IsValid) { return BadRequest(ModelState); }
 
             var userBase = _context.members.Where(p => p.Email!.Equals(user.Email)).FirstOrDefault();
 
-            if(userBase == null) 
+            if (userBase == null)
             {
                 return StatusCode(StatusCodes.Status403Forbidden, "You are not authorized to preform this action!");
             }
 
-            if(!BCrypt.Net.BCrypt.Verify(user.Password, userBase.Password)) 
+            if (!BCrypt.Net.BCrypt.Verify(user.Password, userBase.Password))
             {
                 return StatusCode(StatusCodes.Status403Forbidden, "You are not authorized to preform this action!");
             }

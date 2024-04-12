@@ -57,15 +57,26 @@ export default function MembersUpdate() {
 
         const information = new FormData(e.target);
 
+        
+        const name = information.get('First name');
+        const surname = information.get('Last name');
+        const user = information.get('Username');
+        const pass = information.get('Password');
+        const mail = information.get('email');
+
+        if(name == "" || surname == "" || user =="" || pass == ""  || mail == ""  ) {
+            alert("ALERT!!! \nFOLLOWING FIELDS: \nFirst name \nLast name \nUsername \nPassword \nEmail \nare mandatory inputs!!!");
+        }
+
         UpdateMember({
-            firstName: information.get('First name'),
-            lastName: information.get('Last name'),
-            username: information.get('Username'),
-            password: information.get('Password'),
-            email: information.get('email'),
+            firstName: name,
+            lastName: surname,
+            username: user,
+            password: pass,
+            email: mail,
             isTeamLeader: information.get('Is team leader') == 'on' ? true : false
         });
-
+        hideLoading();
     }
 
     return (

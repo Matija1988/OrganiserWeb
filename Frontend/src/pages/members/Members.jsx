@@ -40,15 +40,15 @@ export default function Members() {
     }, []);
 
     async function deleteMember(id) {
-        const reply = await MembersService.remove('Member', id)
         showLoading();
-        if (reply.ok) {
+        const response = await MembersService.remove('Member', id)
+        if (response.ok) {
             fetchMembers();
             hideLoading();
-        } else {
-            hideLoading();
-            showError(reply.data);
+        } else {     
+            showError(response.data);
         }
+        hideLoading();
     }
 
     

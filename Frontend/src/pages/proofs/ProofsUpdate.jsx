@@ -141,8 +141,15 @@ export default function ProofUpdate() {
 
         const date = moment.utc(information.get('date') + ' ' + information.get('time'));
 
+        const name = information.get('Document name');
+
+        if(name == "") {
+            alert("ALERT!!! \nFOLLOWING FIELDS: \nDocument name \nActivity \nare mandatory inputs!!!");
+            return; 
+        }
+
         changeProof({
-            documentName: information.get('Document name'),
+            documentName: name,
             memberID: parseInt(idMember),
             location: information.get('Location'),
             datecreated: date,

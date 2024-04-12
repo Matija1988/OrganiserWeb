@@ -17,6 +17,7 @@ export default function Login() {
 
         const data = new FormData(e.target);
         login({
+
             email:data.get('email'),
             password: data.get('password'),
         });
@@ -40,7 +41,7 @@ export default function Login() {
                         name="email"
                         placeholder="texasranger@gmail.com"
                         maxLength={255}
-                        required
+                        
                     />
                 </Form.Group>
 

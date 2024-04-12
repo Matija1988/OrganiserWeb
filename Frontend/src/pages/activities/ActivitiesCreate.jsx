@@ -109,13 +109,13 @@ export default function ActivitiesCreate() {
         }
 
         var today = new Date();
-        var dd = String(today.getDate()).padStart(2, '0');
-        var mm = String(today.getMonth() + 1).padStart(2, '0'); //January is 0!
-        var yyyy = today.getFullYear();
+ 
+        // var dd = String(today.getDate()).padStart(2, '0');
+        // var mm = String(today.getMonth() + 1).padStart(2, '0'); //January is 0!
+        // var yyyy = today.getFullYear();
 
-        today = mm + '/' + dd + '/' + yyyy;
-
-        console.log("Date now " + today);
+        // today = dd + '/' + mm + '/' + yyyy;
+       
 
         let checkFinished = new Boolean(information.get('Is finished') =='on' ? true : false); 
 
@@ -124,10 +124,23 @@ export default function ActivitiesCreate() {
             checkFinished = false;
             return;
         }
+
+        if(today > dateend) {
+            alert("Current date is past deadline. Is finished property has been set to TRUE (Finished) automatically!" + 
+            "\n If activity is not finished update the deadline and reset the affected property!");
+            checkFinished = true;
+        }
+
+        const name = information.get('Activity name');
         
+        if(name == "") {
+            alert("ALERT!!! \nFOLLOWING FIELDS: \nActivity name" 
+            + "\nDate start \nDeadline \nAssociated project \nare mandatory inputs!!!");
+            return;
+        }
 
         addActivity({
-            activityName: information.get('Activity name'),
+            activityName: name,
             description: information.get('Description'),
             dateStart: datestarted,
             dateFinish: dateend,
@@ -138,9 +151,6 @@ export default function ActivitiesCreate() {
         });
 
     }
-
-
-
 
     return (
         <>
@@ -189,7 +199,9 @@ export default function ActivitiesCreate() {
                             </Form.Group>
                         </Col>
                     </Row>
-                    <InputCheckbox atribute='Is finished' value=''/>
+
+                    <InputCheckbox atribute='Is finished' value={false}/>
+
                     <Form.Group controlId='dateaccepted'>
                         <Form.Label>Date Accepted</Form.Label>
                         <Form.Control

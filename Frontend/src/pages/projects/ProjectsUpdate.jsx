@@ -31,6 +31,7 @@ export default function ProjectsUpdate() {
         if (!response.ok) {
             showError(response.data);
             navigate(RoutesNames.PROJECTS_READ);
+            hideLoading();
             return;
         }
         let project = response.data;
@@ -68,20 +69,35 @@ export default function ProjectsUpdate() {
 
         const startingDate = moment.utc(information.get('date') + ' ' + information.get('timeStart'));
         const deadlineDate = moment.utc(information.get('dateEnd') + ' ' + information.get('deadlineTime'));
+        var today = new Date();
+        let checkFinished = new Boolean(information.get('isFinished') =='on' ? true : false); 
 
         if(startingDate > deadlineDate) {
             alert("Project cannot start after it ends!!! Check your input!!!");
             return;
         }
 
-        const project = {
-            projectName: information.get('Project name'),
-            uniqueID: information.get('UniqueID'),
+        if (today > deadlineDate) {
+            alert("Current date is past deadline. Is finished property will be set to TRUE (Finished) automatically!" +
+                "\nIf project is not finished update the deadline and reset the affected property!");
+            checkFinished = true;
+        }
+        
+        const name = information.get('Project name');
+        const uID = information.get('UniqueID');
+
+        if(name == "" || uID == "") {
+            alert("ALERT!!! \nFOLLOWING FIELDS: \nProject name \nUnique ID \nare mandatory inputs!!!");  
+        }
+
+        updateProject({
+            projectName: name,
+            uniqueID: uID,
             dateStart: startingDate,
             dateEnd: deadlineDate,
-            isFinished: information.get('isFinished') == 'on' ? true : false
-        };
-        updateProject(project);
+            isFinished: checkFinished
+        });
+        hideLoading();
 
     }
 

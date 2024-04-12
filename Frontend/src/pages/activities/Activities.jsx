@@ -1,7 +1,7 @@
 import { useEffect, useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import ActivitiesService from "../../services/ActivitiesService";
-import { Container, Button, Table, InputGroup } from "react-bootstrap";
+import { Container, Button, Table, InputGroup, Row, Col, Pagination } from "react-bootstrap";
 import { RoutesNames } from "../../constants";
 import { IoIosAdd } from 'react-icons/io';
 import { FaEdit, FaTrash } from 'react-icons/fa';
@@ -9,6 +9,8 @@ import Form from 'react-bootstrap/Form';
 
 import moment from 'moment';
 import ProgressBar from "react-bootstrap/ProgressBar";
+import "bootstrap/dist/css/bootstrap.min.css";
+
 
 
 import './activitiesStyle.css';
@@ -22,6 +24,8 @@ import useLoading from "../../hooks/useLoading";
 export default function Activities() {
 
     const [Activities, setActivities] = useState();
+    const [page, setPage] = useState(1);
+    const [condition, setCondtion] = useState('');
     const [search, setSearch] = useState("");
 
     let navigate = useNavigate();
@@ -30,13 +34,30 @@ export default function Activities() {
 
     const {showLoading, hideLoading} = useLoading();
 
+    // async function fetchActivities() {
+    //     const response = await ActivitiesService.read('Activity');
+    //     if (!response.ok) {
+    //         showError(response.data);
+    //         return;
+    //     }
+    //     setActivities(response.data);
+    // }
+
     async function fetchActivities() {
-        const response = await ActivitiesService.read('Activity');
-        if (!response.ok) {
+        showLoading();
+        const response = await ActivitiesService.getPagination(page, condition);
+        if(!response.ok) {
             showError(response.data);
+            hideLoading();
+            return;
+        } 
+        if(response.data.length==0) {
+            setPage(page-1);
+            hideLoading();
             return;
         }
         setActivities(response.data);
+        hideLoading();
     }
 
     useEffect(() => {
@@ -53,6 +74,25 @@ export default function Activities() {
           showError(res.data);
         }
         hideLoading();
+    }
+
+    function changeCondition(e) {
+        if (e.nativeEvent.key == "Enter") {
+            setPage(1);
+            setCondtion(e.nativeEvent.srcElement.value);
+            setActivities([]);
+        }
+    }
+
+    function increasePage() {
+        setPage(page + 1);
+    }
+
+    function decreasePage() {
+        if(page==1) {
+            return;
+        }
+        setPage(page-1);
     }
 
 
@@ -112,10 +152,6 @@ export default function Activities() {
         return 'Ongoing';
     }
 
-
-
-
-
     return (
         <>
         <NavBar />
@@ -123,16 +159,41 @@ export default function Activities() {
                 <Link to={RoutesNames.ACTIVITIES_CREATE} className="btn btn-success gumb" >
                     <IoIosAdd size={25} /> ADD
                 </Link>
-
-                <Form>
-                    <InputGroup>
-                        <Form.Control
-                            placeholder="Search activity by name..."
-                            onChange={(e) => setSearch(e.target.value)}
-                            className="searchLabel" />
-                    </InputGroup>
-                </Form>
-
+                <Row>
+                    <Col>                    
+                    <Form>
+                        <InputGroup>
+                            <Form.Control
+                                placeholder="Filter activity by name..."
+                                onChange={(e) => setSearch(e.target.value)}
+                                className="searchLabel" />
+                        </InputGroup>
+                    </Form>
+                    </Col>
+                    <Col>
+                    <Form.Control 
+                    className="searchLabel"
+                    type = 'text'
+                    name = 'search'
+                    placeholder ='Part of activity or project name [Enter]'
+                    maxLength={255}
+                    defaultValue=''
+                    onKeyUp={changeCondition}
+                    />
+                    </Col>
+                    <Col>
+                    {Activities && Activities.length > 0 && (
+                        <div style={{display : "flex", justifyContent:"center"}}>
+                            <Pagination size ="lg" className="pagination">
+                            <Pagination.Prev onClick={decreasePage} />
+                            <Pagination.Item disabled>{page}</Pagination.Item>
+                            <Pagination.Next onClick={increasePage} />
+                            </Pagination>
+                        </div>
+                    )}
+                    </Col>
+                </Row>
+                
 
                 <Table striped bordered hover responsive variant="dark" className="tableStyle">
                     <thead>

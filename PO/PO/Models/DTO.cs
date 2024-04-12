@@ -99,7 +99,8 @@ namespace PO.Models
     /// <param name="email"></param>
     /// <param name="password"></param>
     public record MemberDTOAuth(
-        [Required(ErrorMessage ="Mandatory input")]
+
+        [Required(ErrorMessage = "Mandatory input")]
         string? Email,
         [Required(ErrorMessage = "Mandatory input")]
         string? Password

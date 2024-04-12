@@ -95,8 +95,15 @@ export default function ProofsCreate() {
             dateOfCreation = information.get('dateCreated') + 'T' + information.get('timeCreated') + ':00.000Z';
         }
 
+        const name = information.get('Document name');
+
+        if(name == "") {
+            alert("ALERT!!! \nFOLLOWING FIELDS: \nDocument name \nActivity \nare mandatory inputs!!!"); 
+            return;
+        }
+
         addProof({
-            documentName: information.get('Document name'),
+            documentName: name,
             datecreated: dateOfCreation,
             memberID: parseInt(memberIDa),
             
@@ -151,7 +158,7 @@ export default function ProofsCreate() {
 
                     <Form.Group controlId='activityID'>
                         <Form.Label>Activity</Form.Label>
-                        <FormSelect
+                        <FormSelect required
                             onChange={(e) => { setActivityID(e.target.value) }}
                         >
                             {activity && activity.map((e, index) => (

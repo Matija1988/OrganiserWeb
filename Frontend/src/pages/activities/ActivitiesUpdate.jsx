@@ -129,12 +129,15 @@ export default function ActivitiesUpdate() {
     }
 
     async function RemoveMemberFromActivity(e, member) {
+        showLoading();
         const response = await ActivitiesService.removeMemberFromActivity(e, member);
         if(response.ok) {
             await fetchActivityMember();
+            hideLoading();
             return;
         }
         showError(response.data);
+        hideLoading();
         
     }
 
@@ -153,8 +156,9 @@ export default function ActivitiesUpdate() {
             hideLoading();
             return;
         }
-        showError(reply.data);
         hideLoading();
+        showError(reply.data);
+        
         
     }
 
@@ -205,6 +209,8 @@ export default function ActivitiesUpdate() {
             dateAccepted: acceptanceDate,
             ProjectID: parseInt(projectID)
         });
+
+       
 
     }
 
@@ -265,9 +271,11 @@ export default function ActivitiesUpdate() {
                                         />
                                     </Form.Group>
                                 </Col>
+                                
                             </Row>
                             <InputCheckbox atribute="isFinished" value={activity.isFinished} />
                             <Row>
+
                         <Col>
                             <Form.Group controlId="dateaccepted">
                                 <Form.Label>Date accepted</Form.Label>

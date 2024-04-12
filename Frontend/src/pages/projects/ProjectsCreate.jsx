@@ -53,8 +53,6 @@ export default function ProjectsCreate() {
         
         var today = new Date();
 
-        console.log("Date now " + today);
-        
         let checkFinished = new Boolean(information.get('isFinished') =='on' ? true : false); 
 
         if((today < startingDate) && (checkFinished == true)) {
@@ -63,11 +61,25 @@ export default function ProjectsCreate() {
             return;
         }
 
+
+        if (today > endingDate) {
+            alert("Current date is past deadline. Is finished property has been set to TRUE (Finished) automatically!" +
+                "\n If project is not finished update the deadline and reset the affected property!");
+            checkFinished = true;
+        }
+
+        const name = information.get('Project name');
+        const uID = information.get('Unique ID');
+
+        if(name == "" || uID == "") {
+            alert("ALERT!!! \nFOLLOWING FIELDS: \nProject name \nUnique ID \nare mandatory inputs!!!");  
+        }
+
         showLoading();
         
         createProject({
-            projectName: information.get('Project Name'),
-            uniqueID: information.get('Unique ID'),
+            projectName: name,
+            uniqueID: uID,
             dateStart: startingDate,
             dateEnd: endingDate,
             isFinished: checkFinished
@@ -81,7 +93,7 @@ export default function ProjectsCreate() {
         <NavBar />
             <Container>
                 <Form onSubmit={handleSubmit} className="FormProjectCreate">
-                    <InputText atribute="Project Name" value='' />
+                    <InputText atribute="Project name" value='' />
                     <InputText atribute="Unique ID" value='' />
                   
                     <Form.Group controlId="dateStart">
@@ -99,7 +111,9 @@ export default function ProjectsCreate() {
                             name='dateEnd'
                         />
                     </Form.Group>
+
                     <InputCheckbox atribute="isFinished" value={false} />
+
                     <Actions cancel={RoutesNames.PROJECTS_READ} action="Add project" />
                 </Form>
             </Container>

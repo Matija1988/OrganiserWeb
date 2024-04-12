@@ -16,4 +16,5 @@ export default function InputText({atribute, value}) {
 InputText.propTypes ={
     atribute: PropTypes.string.isRequired,
     value: PropTypes.any,
+    
 }

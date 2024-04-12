@@ -19,6 +19,11 @@ async function removeMemberFromActivity(id, memberId) {
     .then((res)=>{return handleSuccess(res);}).catch((e)=> {return processError(e);});
 }
 
+async function getPagination(page, condition) {
+    return await httpService.get('/' + name + '/getPagination/' + page + '?condition=' + condition)
+        .then((res) => { return handleSuccess(res); }).catch((e) => { return processError(e); });
+}
+
 export default {
     read,
     remove,
@@ -27,5 +32,6 @@ export default {
     update,
     getActivityMembers,
     assignMemberToActivity,
-    removeMemberFromActivity
+    removeMemberFromActivity,
+    getPagination
 }

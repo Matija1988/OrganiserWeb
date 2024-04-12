@@ -30,8 +30,8 @@ export default function MembersCreate() {
             navigate(RoutesNames.MEMBERS_READ);
             return;
         }
-        showError(response.data);
         hideLoading();
+        showError(response.data);
     }
 
     function handleSubmit(e) {
@@ -40,41 +40,23 @@ export default function MembersCreate() {
         const information = new FormData(e.target);
 
         const name = information.get('First name');
-
-        if(name == "") {
-            alert("Must enter first name!");
-        }
-
         const surname = information.get('Last name');
-        if(surname == "") {
-            alert("Must enter last name!");
-        }
-
         const user = information.get('Username');
-        if(user == ""){
-            alert("Must enter username!");
-        }
-
         const pass = information.get('Password');
-        if(pass == "") {
-            alert("Must enter password!");
-        }
-
         const mail = information.get('email');
-        if(mail == "") {
-            alert("Must enter email!")
+
+        if(name == "" || surname == "" || user =="" || pass == ""  || mail == ""  ) {
+            alert("ALERT!!! \nFOLLOWING FIELDS: \nFirst name \nLast name \nUsername \nPassword \nEmail \nare mandatory inputs!!!");
         }
 
-        const member = {
+        addMember({
             firstName: name,
             lastName: surname,
             userName: user,
             password: pass,
             email: mail,
             isTeamLeader: information.get('Is team leader') == 'on' ? true : false
-        };
-       
-        addMember(member);
+        });
         hideLoading();
 
     }
@@ -84,7 +66,7 @@ export default function MembersCreate() {
         <NavBar />
         <Container>
             <Form onSubmit={handleSubmit} className='FormMemberCreate'>
-                <InputText atribute='First name' value=''/>
+                <InputText atribute='First name' value='' />
                 <InputText atribute='Last name' value=''/>
                 <InputText atribute='Username' value=''/>
                 <InputText atribute='Password' value=''/>
