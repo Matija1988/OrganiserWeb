@@ -2,12 +2,14 @@ using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.IdentityModel.Tokens;
+using FluentEmail;
 
 using PO.Data;
 using PO.Extensions;
 using System.Text;
 using System.Reflection;
 using Microsoft.OpenApi.Models;
+using PO.Services;
 
 
 
@@ -20,6 +22,11 @@ builder.Services.AddControllers();
 
 // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
 builder.Services.AddEndpointsApiExplorer();
+builder.Services.AddRazorPages().AddRazorRuntimeCompilation();
+builder.Services.AddFluentEmail(builder.Configuration);
+builder.Services.AddScoped<IEmailService, EmailService>();  
+
+
 builder.Services.AddSwaggerGen( c=>
 {
     c.SwaggerDoc("v1", new OpenApiInfo
