@@ -172,7 +172,7 @@ export default function Activities() {
                     </Col>
                     <Col>
                     <Form.Control 
-                    className="searchLabel"
+                    className="searchLabel" 
                     type = 'text'
                     name = 'search'
                     placeholder ='Part of activity or project name [Enter]'

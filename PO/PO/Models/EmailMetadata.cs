@@ -2,8 +2,15 @@
 {
     public class EmailMetadata
     {
-        public Member Recipient { get; set; }
+        public string EmailTitle { get; set; }
 
-        public Activity Subject { get; set; }
+        public string RecipientEmail { get; set; }
+
+        public string RecipientName { get; set; }
+
+        public string EmailBody { get; set; }
+        //public Member Recipient { get; set; }
+
+        //public Activity Subject { get; set; }
     }
 }

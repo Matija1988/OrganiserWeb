@@ -13,11 +13,11 @@ namespace PO.Mappers
                     c.CreateMap<EmailMetadata, EmailMetadataDTORead>()
                     .ConstructUsing(entity =>
                     new EmailMetadataDTORead(
-                        entity.Recipient.Email,
-                        entity.Recipient.FirstName + " " + entity.Recipient.LastName,
-                        entity.Subject.ActivityName,
-                        entity.Subject.Description
-                        ));
+                        entity.EmailTitle,
+                        entity.RecipientEmail,
+                        entity.RecipientName,
+                        entity.EmailBody
+                        )); 
                 })
                 );
         }
