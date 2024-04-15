@@ -164,6 +164,7 @@ export default function ListProjectActivities() {
                             <td>{FormatDateAccepted(activity)}</td>
                             <td className="alignCenter">
                                 <Row className="tableActionsRow1">
+                                    <Col>
                                     <Button
                                         className="memBtn"
                                         title="Assign member/s to activity"
@@ -172,9 +173,9 @@ export default function ListProjectActivities() {
                                         <FaUsers
                                             size={20}
                                         ></FaUsers>
-
                                     </Button>
-
+                                    </Col>
+                                    <Col>
                                     <Button className="editBtn"
                                         variant="primary"
                                         onClick={() => { navigate(`/activities/${activity.id}`) }}
@@ -183,6 +184,7 @@ export default function ListProjectActivities() {
                                             size={20}
                                         />
                                     </Button>
+                                    </Col>
                                 </Row>    
                                     <Button className="trashBtn"
                                         variant="danger"

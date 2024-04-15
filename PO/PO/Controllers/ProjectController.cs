@@ -31,7 +31,7 @@ namespace PO.Controllers
 
         }
         [HttpDelete]
-        [Route("Project/Killswitchproject/{id:int}")]
+        [Route("/Killswitchproject/{id:int}")]
         public IActionResult KillSwitchProject(MemberDTOAuth user, int id)
         {
             var entity = _context.Projects.Find(id);
@@ -63,7 +63,6 @@ namespace PO.Controllers
                 }
                 else
                 {
-
                     foreach (Activity activity in entityList)
                     {
                         activity.Members = null;

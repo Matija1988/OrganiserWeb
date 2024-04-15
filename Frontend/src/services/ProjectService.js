@@ -19,8 +19,8 @@ async function listProjectActivities(id) {
     .then((res) => { return handleSuccess(res);}).catch((e) => { return processError(e);});
 }
 
-async function killswitch(input, id){
-    return await httpService.delete('/'+name+'/'+name+'/Killswitchproject')
+async function killswitch(id){
+    return await httpService.delete('/'+name+'/'+name+'/Killswitchproject/'+id)
     .then((res) => {return handleSuccess(res);}).catch((e)=> {return processError(e);});
 }
 

@@ -195,7 +195,15 @@ export default function Activities() {
                 </Row>
                 
 
-                <Table striped bordered hover responsive variant="dark" className="tableStyle">
+                <Table 
+                striped 
+                bordered 
+                hover 
+                responsive 
+                
+                variant="dark" 
+                className="tableStyle"
+                >
                     <thead>
                         <tr className="projectTableHead">
                             <th>Activity</th>
@@ -223,8 +231,6 @@ export default function Activities() {
 
                                     </p>
                                     <ProgressBar
-                                        
-
                                         variant="danger"
                                         now={progresLabel(activity)}
                                         max={progresLabelMaxValue(activity)}
@@ -236,7 +242,9 @@ export default function Activities() {
                                 <td>{FormatDateAccepted(activity)}</td>
                                 <td>{activity.projectName}</td>
                                 <td className="alignCenter">
-                                    <Button className="editBtnMember"
+                                    <Row>
+                                        <Col>
+                                    <Button className="editBtn"
                                         variant="primary"
                                         onClick={() => { navigate(`/activities/${activity.id}`) }}
                                     >
@@ -244,7 +252,8 @@ export default function Activities() {
                                             size={25}
                                         />
                                     </Button>
-
+                                    </Col>
+                                    <Col>
                                     <Button className="trashBtn"
                                         variant="danger"
                                         onClick={() => deleteActivities(activity.id)}
@@ -253,7 +262,8 @@ export default function Activities() {
                                             size={25}
                                         />
                                     </Button>
-
+                                    </Col>
+                                    </Row>
                                 </td>
 
                             </tr>

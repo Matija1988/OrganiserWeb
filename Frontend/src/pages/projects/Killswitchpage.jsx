@@ -1,5 +1,5 @@
 import { Container, Form, Row, Button, Col } from "react-bootstrap";
-import { useParams } from "react-router-dom";
+import { useNavigate, useParams } from "react-router-dom";
 import NavBar from "../../components/NavBar";
 import useError from "../../hooks/useError";
 import useLoading from "../../hooks/useLoading";
@@ -14,14 +14,15 @@ export default function Killswitchpage() {
     const [project, setProject] = useState({});
     const {showError } = useError();
     const {showLoading, hideLoading} = useLoading();
+    const navigate = useNavigate();
 
 
     async function getProject() {
         showLoading();
-        const response = await ProjectService.getByID('Project',routeParams.id);
+        const response = await ProjectService.getByID('Project', routeParams.id);
         if(!response.ok) {
             showError();
-            navigate(RoutesNames.PROJECTS_READ);
+            //navigate(RoutesNames.PROJECTS_READ);
             hideLoading();
             return;
         }
@@ -36,7 +37,7 @@ export default function Killswitchpage() {
         if(!response.ok){
             showError();
             hideLoading();
-            navigate(RoutesNames.PROJECTS_READ);
+            //navigate(RoutesNames.PROJECTS_READ);
             return;
         }    
         hideLoading();
@@ -53,7 +54,7 @@ export default function Killswitchpage() {
 
         const data = new FormData(e.target);
         kill({
-            project: project.id,
+            id: parseInt(project.id),
             username:data.get('username'),
             password: data.get('password'),
         });
