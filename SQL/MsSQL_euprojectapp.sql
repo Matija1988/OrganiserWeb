@@ -84,7 +84,7 @@ values
 
 insert into members (firstName, lastName, userName, password, email, isTeamLeader)
 values 
-('Chuck','Norris','N0rr1s','$2a$12$yQlP0/3oJv0QGLJ5PJmM/eC5h47AgKGizapXB/ZC3pMHsksFImV6a', 'texasranger@gmail.com' ,1),
+('Chuck','Norris','texasranger','$2a$12$yQlP0/3oJv0QGLJ5PJmM/eC5h47AgKGizapXB/ZC3pMHsksFImV6a', 'texasranger@gmail.com' ,1),
 ('Marko','Marković','MM007','JamesBlond069', 'matijapavkovic74@gmail.com',0),
 ('Petar','Bočkaj','Guc2A','OsvetaKanižlićeve', 'matijapavkovic74@gmail.com',0);
 

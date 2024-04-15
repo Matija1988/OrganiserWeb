@@ -30,6 +30,53 @@ namespace PO.Controllers
             DbSet = _context.Projects;
 
         }
+        [HttpDelete]
+        [Route("Project/Killswitchproject/{id:int}")]
+        public IActionResult KillSwitchProject(int id)
+        {
+            var entity = _context.Projects.Find(id);
+            var entityList = _context.activities.Include(p => p.Project).Where(p=> p.Project.ID == id).ToList();
+            var proofList = _context.ProofOfDeliveries.Include(pod => pod.Activity).ToList();
+            var members = _context.members.Include(m => m.IActivities);
+
+            try {
+
+                foreach(Activity activity in entityList) 
+                {
+                    activity.Members = null;
+                    foreach(Member member in members)
+                    {
+                        member.IActivities.Remove(activity);
+                    }
+                    _context.SaveChanges();
+
+                }
+
+
+                foreach (ProofOfDelivery pod in proofList)
+                {
+                    pod.Member = null;
+                    _context.Remove(pod);
+                    _context.SaveChanges();
+                }
+
+                foreach (Activity activity in entityList)
+                    {
+
+                        _context.Remove(activity);
+                        _context.SaveChanges();
+                    }
+
+                _context.Remove(entity);
+                _context.SaveChanges();
+                return Ok("The project has been removed");
+            }
+            catch (Exception ex) 
+            {
+                throw new Exception(ex.InnerException.ToString());
+            }
+
+        }
 
         protected override void ControlDelete(Project entity)
         {
@@ -48,7 +95,6 @@ namespace PO.Controllers
                 throw new Exception(sb.ToString().Substring(0, sb.ToString().Length - 2));
             }
 
-            
         }
     }
 }

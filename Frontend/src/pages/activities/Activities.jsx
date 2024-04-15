@@ -66,12 +66,12 @@ export default function Activities() {
 
     async function deleteActivities(id) {
         showLoading();
-        const res = await ActivitiesService.remove('Activity', id);
+        const response = await ActivitiesService.remove('Activity', id);
 
-        if (res.ok) {
+        if (response.ok) {
             fetchActivities();
         } else {
-          showError(res.data);
+          showError(response.data);
         }
         hideLoading();
     }
