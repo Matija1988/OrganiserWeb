@@ -32,46 +32,63 @@ namespace PO.Controllers
         }
         [HttpDelete]
         [Route("Project/Killswitchproject/{id:int}")]
-        public IActionResult KillSwitchProject(int id)
+        public IActionResult KillSwitchProject(MemberDTOAuth user, int id)
         {
             var entity = _context.Projects.Find(id);
-            var entityList = _context.activities.Include(p => p.Project).Where(p=> p.Project.ID == id).ToList();
+            var entityList = _context.activities.Include(p => p.Project).Where(p => p.Project.ID == id).ToList();
             var proofList = _context.ProofOfDeliveries.Include(pod => pod.Activity).ToList();
             var members = _context.members.Include(m => m.IActivities);
 
-            try {
+            if (!ModelState.IsValid) { return BadRequest(ModelState); }
 
-                foreach(Activity activity in entityList) 
+            var userBase = _context.members.Where(p => p.Username!.Equals(user.Username)).FirstOrDefault();
+
+            if (userBase == null)
+            {
+                return StatusCode(StatusCodes.Status403Forbidden, "You are not authorized to preform this action!");
+            }
+
+            try
+            {
+
+                if (!BCrypt.Net.BCrypt.Verify(user.Password, userBase.Password))
                 {
-                    activity.Members = null;
-                    foreach(Member member in members)
+                    return StatusCode(StatusCodes.Status403Forbidden, "You are not authorized to preform this action!");
+                }
+                else
+                {
+
+                    foreach (Activity activity in entityList)
                     {
-                        member.IActivities.Remove(activity);
+                        activity.Members = null;
+                        foreach (Member member in members)
+                        {
+                            member.IActivities.Remove(activity);
+                        }
+                        _context.SaveChanges();
+
                     }
-                    _context.SaveChanges();
 
-                }
+                    foreach (ProofOfDelivery pod in proofList)
+                    {
+                        pod.Member = null;
+                        _context.Remove(pod);
+                        _context.SaveChanges();
+                    }
 
-
-                foreach (ProofOfDelivery pod in proofList)
-                {
-                    pod.Member = null;
-                    _context.Remove(pod);
-                    _context.SaveChanges();
-                }
-
-                foreach (Activity activity in entityList)
+                    foreach (Activity activity in entityList)
                     {
 
                         _context.Remove(activity);
                         _context.SaveChanges();
                     }
 
-                _context.Remove(entity);
-                _context.SaveChanges();
-                return Ok("The project has been removed");
+                    _context.Remove(entity);
+                    _context.SaveChanges();
+                    return Ok("The project has been removed");
+                }
             }
-            catch (Exception ex) 
+            catch (Exception ex)
             {
                 throw new Exception(ex.InnerException.ToString());
             }
