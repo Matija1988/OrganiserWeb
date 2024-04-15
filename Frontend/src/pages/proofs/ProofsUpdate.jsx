@@ -84,9 +84,11 @@ export default function ProofUpdate() {
     }
 
     async function load() {
+        showLoading();
         await fetchProof();
         await fetchMembers();
         await fetchAcitivties();
+        hideLoading();
     }
 
 

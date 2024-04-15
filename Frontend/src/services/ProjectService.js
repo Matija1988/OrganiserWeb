@@ -20,7 +20,8 @@ async function listProjectActivities(id) {
 }
 
 async function killswitch(input, id){
-    return await httpService.
+    return await httpService.delete('/'+name+'/'+name+'/Killswitchproject')
+    .then((res) => {return handleSuccess(res);}).catch((e)=> {return processError(e);});
 }
 
-export default { read, getByID, create, update, remove, searchProjectByName, listProjectActivities};
+export default { read, getByID, create, update, remove, searchProjectByName, listProjectActivities, killswitch};

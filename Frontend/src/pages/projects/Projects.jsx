@@ -21,6 +21,7 @@ import NavBar from "../../components/NavBar";
 
 
 
+
 export default function Projects() {
 
     const [projects, setProjects] = useState();
@@ -30,6 +31,8 @@ export default function Projects() {
     const [search, setSearch] = useState("");
     const { showError } = useError();
     const { showLoading, hideLoading } = useLoading();
+
+    const [killSwitch, setKillSwitch] = useState("false");
 
 
     const navigate = useNavigate();
@@ -191,32 +194,33 @@ export default function Projects() {
 
                                 <td className="alignCenter">
                                     <Row className="tableActionsRow1">
-
-                                        <Button
-                                            variant='outline-success'
-                                            className="workBtn"
-                                            title="Work on project"
-                                            onClick={() => { navigate(`/listprojectactivities/${project.id}`) }}
-                                        >
-                                            <FaWrench
-                                                color="green"
-                                                size={15}
+                                        <Col className="ml-0">
+                                            <Button
+                                                variant='outline-success'
+                                                className="workBtn"
+                                                title="Work on project"
+                                                onClick={() => { navigate(`/listprojectactivities/${project.id}`) }}
                                             >
-                                            </FaWrench>
-                                        </Button>
-
-                                        <Button className="editBtn"
-                                            variant="primary"
-                                            label="Edit project"
-                                            onClick={() => { navigate(`/projects/${project.id}`) }}>
-                                            <FaEdit
-                                                size={15}
-                                            />
-                                        </Button>
-
+                                                <FaWrench
+                                                    color="green"
+                                                    size={15}
+                                                >
+                                                </FaWrench>
+                                            </Button>
+                                        </Col>
+                                        <Col>
+                                            <Button className="editBtn"
+                                                variant="primary"
+                                                label="Edit project"
+                                                onClick={() => { navigate(`/projects/${project.id}`) }}>
+                                                <FaEdit
+                                                    size={15}
+                                                />
+                                            </Button>
+                                        </Col>
                                     </Row>
                                     <Row>
-                                        
+                                        <Col>
                                             <Button className="trashBtn"
                                                 variant='danger'
                                                 label="Delete project"
@@ -227,18 +231,19 @@ export default function Projects() {
                                                 />
 
                                             </Button>
-                                        
+                                        </Col>
+                                        <Col>
                                             <Button className="killBtn"
                                                 variant='danger'
                                                 label="Delete project"
-                                                onClick={() => projectDelete(project.id)}
+                                            onClick={() => navigate(`/killswitchproject/${project.id}`)}
                                             >
                                                 <FaSkull
                                                     size={15}
                                                 />
-
                                             </Button>
-                                        </Row>
+                                        </Col>
+                                    </Row>
                                 </td>
                             </tr>
 

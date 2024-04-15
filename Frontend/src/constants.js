@@ -23,6 +23,8 @@ export const RoutesNames = {
 
     MAIN_PANEL: '/mainpanel',
 
+    KILL_SWITCH_PAGE: '/killswitchproject/:id',
+
 };
 
 export const App = {
