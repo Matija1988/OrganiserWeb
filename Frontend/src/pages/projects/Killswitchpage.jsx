@@ -42,7 +42,6 @@ export default function Killswitchpage() {
         hideLoading();
     }
 
-    
     useEffect(() => {
         getProject();
         kill();
