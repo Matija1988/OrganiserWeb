@@ -2,7 +2,7 @@ import { useEffect, useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import { Container, Button, Table, InputGroup, Row, Col } from "react-bootstrap";
 import { IoIosAdd } from 'react-icons/io';
-import { FaEdit, FaTrash, FaWrench } from 'react-icons/fa';
+import { FaEdit, FaSkull, FaTrash, FaWrench } from 'react-icons/fa';
 import ProgressBar from "react-bootstrap/ProgressBar";
 import Form from 'react-bootstrap/Form';
 import moment from 'moment';
@@ -216,7 +216,7 @@ export default function Projects() {
 
                                     </Row>
                                     <Row>
-                                        <Col>
+                                        
                                             <Button className="trashBtn"
                                                 variant='danger'
                                                 label="Delete project"
@@ -227,9 +227,18 @@ export default function Projects() {
                                                 />
 
                                             </Button>
-                                        </Col>
+                                        
+                                            <Button className="killBtn"
+                                                variant='danger'
+                                                label="Delete project"
+                                                onClick={() => projectDelete(project.id)}
+                                            >
+                                                <FaSkull
+                                                    size={15}
+                                                />
 
-                                    </Row>
+                                            </Button>
+                                        </Row>
                                 </td>
                             </tr>
 

@@ -19,4 +19,8 @@ async function listProjectActivities(id) {
     .then((res) => { return handleSuccess(res);}).catch((e) => { return processError(e);});
 }
 
+async function killswitch(input, id){
+    return await httpService.
+}
+
 export default { read, getByID, create, update, remove, searchProjectByName, listProjectActivities};

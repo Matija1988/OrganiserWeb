@@ -1,9 +1,12 @@
 ﻿using Microsoft.AspNetCore.Mvc;
+using Microsoft.Build.Construction;
+using Microsoft.Data.SqlClient;
 using Microsoft.EntityFrameworkCore;
 using PO.Data;
 using PO.Mappers;
 using PO.Models;
 using System.Data.OleDb;
+using System.IO.Compression;
 
 namespace PO.Controllers
 {
@@ -18,6 +21,7 @@ namespace PO.Controllers
     [Route("api/v1/[controller]")]
     public class ProofController : POController<ProofOfDelivery, ProofDTORead, ProofDTOInsertUpdate>
     {
+        public IWebHostEnvironment _enviroment;
         public ProofController(POContext context) : base(context)
         {
             DbSet = _context.ProofOfDeliveries;
@@ -166,6 +170,20 @@ namespace PO.Controllers
             }
         }
 
+        //[HttpGet]
+        //[Route("Proofs/download/{int:id}")]
+
+        //public IActionResult DownloadFile(int id)
+        //{
+        //    byte[] fileBytes;
+        //    var proof = _context.ProofOfDeliveries.Find(id);
+
+        
+
+
+            
+        //    return null;
+        //}
 
     }
 

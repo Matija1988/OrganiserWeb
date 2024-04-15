@@ -35,6 +35,12 @@ namespace PO.Controllers
         public IActionResult KillSwitchProject(MemberDTOAuth user, int id)
         {
             var entity = _context.Projects.Find(id);
+
+            if(entity == null)
+            {
+                return StatusCode(StatusCodes.Status404NotFound);
+            }
+
             var entityList = _context.activities.Include(p => p.Project).Where(p => p.Project.ID == id).ToList();
             var proofList = _context.ProofOfDeliveries.Include(pod => pod.Activity).ToList();
             var members = _context.members.Include(m => m.IActivities);
@@ -65,22 +71,18 @@ namespace PO.Controllers
                         {
                             member.IActivities.Remove(activity);
                         }
-                        _context.SaveChanges();
 
-                    }
-
-                    foreach (ProofOfDelivery pod in proofList)
-                    {
-                        pod.Member = null;
-                        _context.Remove(pod);
-                        _context.SaveChanges();
-                    }
-
-                    foreach (Activity activity in entityList)
-                    {
-
+                        foreach (ProofOfDelivery pod in proofList)
+                        {
+                            if(pod.Activity.ID == activity.ID) { 
+                            pod.Member = null;
+                            _context.Remove(pod);
+                            _context.SaveChanges();
+                            }
+                        }
                         _context.Remove(activity);
                         _context.SaveChanges();
+
                     }
 
                     _context.Remove(entity);
