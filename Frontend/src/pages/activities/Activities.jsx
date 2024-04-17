@@ -18,6 +18,7 @@ import { getAlertMessages } from "../../services/httpService";
 import NavBar from "../../components/NavBar";
 import useError from "../../hooks/useError";
 import useLoading from "../../hooks/useLoading";
+import DeleteModal from "../../components/DeleteModal";
 
 
 
@@ -34,31 +35,37 @@ export default function Activities() {
 
     const {showLoading, hideLoading} = useLoading();
 
-    // async function fetchActivities() {
-    //     const response = await ActivitiesService.read('Activity');
-    //     if (!response.ok) {
-    //         showError(response.data);
-    //         return;
-    //     }
-    //     setActivities(response.data);
-    // }
+    const [showDeleteModal, setShowDeleteModal] = useState(false);
+    const [entityID, setEntityID] = useState();
 
     async function fetchActivities() {
         showLoading();
-        const response = await ActivitiesService.getPagination(page, condition);
-        if(!response.ok) {
+        const response = await ActivitiesService.read('Activity');
+        if (!response.ok) {
             showError(response.data);
-            hideLoading();
-            return;
-        } 
-        if(response.data.length==0) {
-            setPage(page-1);
             hideLoading();
             return;
         }
         setActivities(response.data);
         hideLoading();
     }
+
+    // async function fetchActivities() {
+    //     showLoading();
+    //     const response = await ActivitiesService.getPagination(page, condition);
+    //     if(!response.ok) {
+    //         showError(response.data);
+    //         hideLoading();
+    //         return;
+    //     } 
+    //     if(response.data.length==0) {
+    //         setPage(page-1);
+    //         hideLoading();
+    //         return;
+    //     }
+    //     setActivities(response.data);
+    //     hideLoading();
+    // }
 
     useEffect(() => {
         fetchActivities();
@@ -256,7 +263,7 @@ export default function Activities() {
                                     <Col>
                                     <Button className="trashBtn"
                                         variant="danger"
-                                        onClick={() => deleteActivities(activity.id)}
+                                        onClick={() => (setEntityID(activity.id), setShowDeleteModal(true))}
                                     >
                                         <FaTrash
                                             size={25}
@@ -270,8 +277,13 @@ export default function Activities() {
                         ))}
                     </tbody>
                 </Table>
-
             </Container>
+            <DeleteModal
+            show={showDeleteModal}
+            handleClose={()=>setShowDeleteModal(false)}
+            handleDelete={()=> (deleteActivities(entityID), setShowDeleteModal(false))}  
+            />
+            
         </>
     );
 

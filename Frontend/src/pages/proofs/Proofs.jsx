@@ -15,6 +15,7 @@ import { getAlertMessages } from "../../services/httpService";
 import NavBar from "../../components/NavBar";
 import useError from "../../hooks/useError";
 import useLoading from "../../hooks/useLoading";
+import DeleteModal from "../../components/DeleteModal";
 
 
 export default function Proofs() {
@@ -28,6 +29,10 @@ export default function Proofs() {
 
     const {showError} = useError();
     const {showLoading, hideLoading} = useLoading();
+
+    const [showDeleteModal, setShowDeleteModal] = useState(false);
+    const [entityID, setEntityID] = useState();
+
 
     let navigate = useNavigate();
 
@@ -149,7 +154,7 @@ export default function Proofs() {
 
                                     <Button className="trashBtn"
                                         variant="danger"
-                                        onClick={() => deleteProofs(proof.id)}
+                                        onClick={() => (setEntityID(proof.id), setShowDeleteModal(true))}
                                     >
                                         <FaTrash
                                             size={15}
@@ -187,6 +192,13 @@ export default function Proofs() {
                     </Button>
                 </Modal.Footer>
             </Modal>
+
+            <DeleteModal 
+            show={showDeleteModal}
+            handleClose={()=>setShowDeleteModal(false)}
+            handleDelete={()=> (deleteProofs(entityID), setShowDeleteModal(false))}
+            
+            />
         </>
     );
 

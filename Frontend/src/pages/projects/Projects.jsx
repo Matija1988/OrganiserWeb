@@ -17,9 +17,7 @@ import "bootstrap/dist/css/bootstrap.min.css";
 
 import './projectsStyle.css';
 import NavBar from "../../components/NavBar";
-
-
-
+import DeleteModal from "../../components/DeleteModal";
 
 
 export default function Projects() {
@@ -32,8 +30,8 @@ export default function Projects() {
     const { showError } = useError();
     const { showLoading, hideLoading } = useLoading();
 
-    const [killSwitch, setKillSwitch] = useState("false");
-
+    const [showDeleteModal, setShowDeleteModal] = useState(false);
+    const [entityID, setEntityID] = useState();
 
     const navigate = useNavigate();
 
@@ -118,7 +116,7 @@ export default function Projects() {
     async function projectDelete(id) {
         showLoading();
         const response = await ProjectService.remove('Project', id);
-
+        
         if (response.ok) {
             readProjects();
         } else {
@@ -224,13 +222,14 @@ export default function Projects() {
                                             <Button className="trashBtn"
                                                 variant='danger'
                                                 label="Delete project"
-                                                onClick={() => projectDelete(project.id)}
+                                              //  onClick={() => projectDelete(project.id)}
+                                            onClick={()=> (setEntityID(project.id), setShowDeleteModal(true))}
                                             >
                                                 <FaTrash
                                                     size={15}
                                                 />
-
                                             </Button>
+                                       
                                         </Col>
                                         <Col>
                                             <Button className="killBtn"
@@ -252,7 +251,14 @@ export default function Projects() {
 
                 </Table>
             </Container>
+            <DeleteModal
+            show={showDeleteModal}
+            handleClose={()=>setShowDeleteModal(false)}
+            handleDelete={()=> (projectDelete(entityID), setShowDeleteModal(false))}
+            
+            />
+
         </>
     );
-
+x
 }

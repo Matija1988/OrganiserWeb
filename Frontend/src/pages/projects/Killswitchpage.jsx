@@ -5,12 +5,13 @@ import useError from "../../hooks/useError";
 import useLoading from "../../hooks/useLoading";
 import ProjectService from "../../services/ProjectService";
 import { useEffect, useState } from "react";
-import { getByID } from "../../services/httpService";
 import { RoutesNames } from "../../constants";
+import Actions from "../../components/Actions";
 
 export default function Killswitchpage() {
 
     const routeParams = useParams();
+
     const [project, setProject] = useState({});
     const {showError } = useError();
     const {showLoading, hideLoading} = useLoading();
@@ -20,24 +21,24 @@ export default function Killswitchpage() {
     async function getProject() {
         showLoading();
         const response = await ProjectService.getByID('Project', routeParams.id);
+        
         if(!response.ok) {
-            showError();
-            //navigate(RoutesNames.PROJECTS_READ);
+            showError(response.data);
             hideLoading();
             return;
         }
         setProject(response.data);
+        
         hideLoading();
     }
-
     
-    async function kill(input, id) {
+    async function kill(input) {
         showLoading();
-        const response = await ProjectService.killswitch('Project', routeParams.id);
+        const response = await ProjectService.killswitch(routeParams.id, input);
         if(!response.ok){
-            showError();
+            showError(response.data);
             hideLoading();
-            //navigate(RoutesNames.PROJECTS_READ);
+
             return;
         }    
         hideLoading();
@@ -52,12 +53,13 @@ export default function Killswitchpage() {
 
         e.preventDefault();
 
-        const data = new FormData(e.target);
+        const input = new FormData(e.target);
         kill({
-            id: parseInt(project.id),
-            username:data.get('username'),
-            password: data.get('password'),
+            
+            projectName: input.get('projectName'),
+            
         });
+        
     }
 
     return (
@@ -66,31 +68,21 @@ export default function Killswitchpage() {
             <Container>
                 <h1 className="killTextH1">WARNING!!!</h1>
                 <h3 className="killText">This action will delete entries connected to the project and the project!!!</h3>
-                <h4 className="killText">Project - Activities - Proofs of delivery </h4>
+                <h4 className="killText">Project / {project.projectName} - Activities - Proofs of delivery </h4>
                 <h4 className="killText">In order to perform this action user must validate username and password!</h4>
                 <Form onSubmit={handleSubmit}>
 
                     <Form.Group className="mb-3" controlId="formBasicEmail">
                         <Form.Control
-                            type="username"
-                            name="username"
+                            type="text"
+                            name="projectName"
                             placeholder="texasranger"
                             maxLength={255}
-
-                        />
-                    </Form.Group>
-
-                    <Form.Group className="mb-3" controlId="formBasicPassword">
-                        <Form.Control
-                            type="password"
-                            name="password"
-                            placeholder="chuckneedsnopassword"
                             required
                         />
                     </Form.Group>
-                    <Button variant="primary" type="submit" className='SignInButton'>
-                        VALIDATE ACTION
-                    </Button>
+                    <Actions cancel={RoutesNames.PROJECTS_READ} action="CONFIRM ACTION"></Actions>
+                   
 
                 </Form>
             </Container>

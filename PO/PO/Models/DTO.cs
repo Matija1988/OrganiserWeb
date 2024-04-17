@@ -106,9 +106,10 @@ namespace PO.Models
         string Password
         );
 
-    public record MemberDTOValidation(
-        [Required(ErrorMessage = "Mandatory input")]
-        string Password
-        );
+   public record ProjectDTOKillswitch(
+
+       [Required(ErrorMessage = "Mandatory input")]
+       string ProjectName
+       );
 
 }

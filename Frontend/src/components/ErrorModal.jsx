@@ -4,9 +4,7 @@ import { useState } from "react";
 
 
 export default function ErrorModal({show, onHide, errors}) {
-
-
-    
+        console.log("Errors in modal: ",errors);
     return (
         <Modal show={show} onHide={onHide}>
             <Modal.Header closeButton>
@@ -14,9 +12,11 @@ export default function ErrorModal({show, onHide, errors}) {
             </Modal.Header>
             <Modal.Body>
                 <ul>
-                    {errors && console.map((e, i) =>(
-                        <li key={i}>{e.message}</li>
-                    ))}
+
+                    {errors && errors.map((error, index) =>
+                        
+                        <li key={index}>{error.message}</li>)}
+                
                 </ul>
             </Modal.Body>
             <Modal.Footer>
@@ -29,7 +29,9 @@ export default function ErrorModal({show, onHide, errors}) {
 }
 
 ErrorModal.propTypes ={
+ 
+    errors: PropTypes.array,
     show: PropTypes.bool.isRequired,
     onHide: PropTypes.func.isRequired,
-    error: PropTypes.array,
+    
 }

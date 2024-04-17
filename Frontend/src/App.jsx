@@ -38,13 +38,13 @@ import Killswitchpage from './pages/projects/Killswitchpage';
 
 
 function App() {
-  const { error, showErrorModal, hideError} = useError();
+  const { errors, showErrorModal, hideError} = useError();
   const { isLoggedIn} = useAuth();
 
   return (
     <>
     <LoadingSpinner />
-    <ErrorModal show={showErrorModal} errors={error} onHide={hideError}/>
+    <ErrorModal show={showErrorModal} errors={errors} onHide={hideError}/>
       
       <Routes>
       <Route path={RoutesNames.HOME} element={<Home />} />       

@@ -7,10 +7,13 @@ import { useNavigate } from 'react-router-dom';
 import 'bootstrap/dist/css/bootstrap.min.css'
 
 import './NavBar.css';
+import useAuth from '../hooks/useAuth';
 
 function NavBar() {
 
 const navigate = useNavigate();
+
+const {logout} = useAuth();
 
   return (
     <Navbar expand="lg" className="bg-body-tertiary"  data-bs-theme="dark">
@@ -41,6 +44,7 @@ const navigate = useNavigate();
         </Navbar.Collapse>
         <Navbar.Collapse className='justify-content-end'>
           <Nav.Link className='linkToMain' target='_blank' href={RoutesNames.MAIN_PANEL} >MAIN</Nav.Link>
+          <Nav.Link className='linkToMain' onClick={logout}>LOGOUT</Nav.Link>
           <Nav.Link target="_blank" href="https://matijapavkovic-001-site1.itempurl.com/swagger/index.html">API documentation</Nav.Link>
 
         </Navbar.Collapse>

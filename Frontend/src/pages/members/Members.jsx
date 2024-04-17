@@ -11,6 +11,7 @@ import './membersStyle.css';
 import NavBar from "../../components/NavBar";
 import useError from "../../hooks/useError";
 import useLoading from "../../hooks/useLoading";
+import DeleteModal from "../../components/DeleteModal";
 
 
 export default function Members() {
@@ -20,6 +21,9 @@ export default function Members() {
 
     const {showError} = useError();
     const {showLoading, hideLoading} = useLoading();
+
+    const [showDeleteModal, setShowDeleteModal] = useState(false);
+    const [entityID, setEntityID] = useState();
 
     let navigate = useNavigate();
 
@@ -78,8 +82,6 @@ export default function Members() {
             <thead>
                 <tr className="projectTableHead">
                     <th>Member</th>
-                    <th>Username</th>
-                    <th>Password</th>
                     <th>Position</th>
                     <th>Email</th>
                     <th>Actions</th>
@@ -93,12 +95,11 @@ export default function Members() {
                     }).map((member, index) =>(
                     <tr key={index}>
                         <td>{member.firstName + " " + member.lastName}</td>
-                        <td>{member.username}</td>
-                        <td>{member.password}</td>
+                      
                         <td>{Text = MemberStatusDisplayText(member)}</td>
                         <td>{member.email}</td>
                         <td className="alignCenter">
-                            <Button className="editBtnMember"
+                            <Button className="editBtn"
                             variant="primary"
                             onClick={() =>{navigate(`/members/${member.id}`)}}
                             >
@@ -109,7 +110,7 @@ export default function Members() {
 
                             <Button className="trashBtn"
                             variant="danger"
-                            onClick={()=> deleteMember(member.id)}
+                            onClick={()=> (setEntityID(member.id), setShowDeleteModal(true))}
                             >
                             <FaTrash  
                             size = {25}
@@ -124,6 +125,12 @@ export default function Members() {
             </Table>
 
         </Container>
+        <DeleteModal 
+            show={showDeleteModal}
+            handleClose={()=>setShowDeleteModal(false)}
+            handleDelete={()=> (deleteMember(entityID), setShowDeleteModal(false))}
+            
+            />
         </>
     );
 

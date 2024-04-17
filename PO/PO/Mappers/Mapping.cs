@@ -8,7 +8,8 @@ namespace PO.Mappers
         protected Mapper MapperMapInsertUpdatedFromDTO;
         protected Mapper MapperMapInsertUpdateToDTO;
         protected Mapper MapperReadMemberAuthDTO;
-        protected Mapper MapperReadMemberDTOValidation;
+        protected Mapper MapperReadProjectKillSwitchDTO;
+      
 
         public Mapping()
 

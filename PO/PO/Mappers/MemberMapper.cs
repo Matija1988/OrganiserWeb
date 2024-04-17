@@ -35,15 +35,6 @@ namespace PO.Mappers
                 }
                 ));
 
-            MapperReadMemberDTOValidation = new Mapper(
-                new MapperConfiguration(c =>
-                {
-                    c.CreateMap<Member, MemberDTOValidation>()
-                    .ConstructUsing(entity =>
-                    new MemberDTOValidation(
-                        entity.Password
-                        ));
-                }));
 
         }
     }

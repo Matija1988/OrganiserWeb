@@ -41,7 +41,7 @@ export default function ListProjectActivities() {
     }, []);
 
     async function deleteActivities(id) {
-        const reply = await ActivitiesService.deleteActivities(id)
+        const reply = await ActivitiesService.remove('Activity',id)
 
         if (reply.ok) {
             ListProjectActivities();

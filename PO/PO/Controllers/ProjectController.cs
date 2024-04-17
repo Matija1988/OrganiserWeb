@@ -31,36 +31,32 @@ namespace PO.Controllers
 
         }
         [HttpDelete]
-        [Route("/Killswitchproject/{id:int}")]
-        public IActionResult KillSwitchProject(MemberDTOAuth user, int id)
+        [Route("{id:int}/Killswitchproject/{projectName}")]
+        public IActionResult KillSwitchProject(int id, string projectName)
         {
+
             var entity = _context.Projects.Find(id);
 
-            if(entity == null)
+            if (entity == null)
             {
                 return StatusCode(StatusCodes.Status404NotFound);
             }
 
-            var entityList = _context.activities.Include(p => p.Project).Where(p => p.Project.ID == id).ToList();
+            var entityList = _context.activities.Include(p => p.Project)
+                .Where(p => p.Project.ProjectName == projectName).ToList();
             var proofList = _context.ProofOfDeliveries.Include(pod => pod.Activity).ToList();
             var members = _context.members.Include(m => m.IActivities);
 
             if (!ModelState.IsValid) { return BadRequest(ModelState); }
 
-            var userBase = _context.members.Where(p => p.Username!.Equals(user.Username)).FirstOrDefault();
-
-            if (userBase == null)
-            {
-                return StatusCode(StatusCodes.Status403Forbidden, "You are not authorized to preform this action!");
-            }
-
             try
             {
 
-                if (!BCrypt.Net.BCrypt.Verify(user.Password, userBase.Password))
+                if(entity == null)
                 {
-                    return StatusCode(StatusCodes.Status403Forbidden, "You are not authorized to preform this action!");
-                }
+                    return StatusCode(StatusCodes.Status403Forbidden, "WRONG INPUT!");
+                } 
+
                 else
                 {
                     foreach (Activity activity in entityList)
@@ -91,7 +87,7 @@ namespace PO.Controllers
             }
             catch (Exception ex)
             {
-                throw new Exception(ex.InnerException.ToString());
+                throw new Exception(ex.InnerException.Message);
             }
 
         }
