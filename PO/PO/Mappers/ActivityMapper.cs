@@ -65,6 +65,21 @@ namespace PO.Mappers
                             ));
                     })
                     );
+
+                MapperMapActivityCalendarDTORead = new Mapper(
+                    new MapperConfiguration(c =>
+                    {
+                        c.CreateMap<Activity, ActivityCalendarDTORead>()
+                        .ConstructUsing(entity =>
+                        new ActivityCalendarDTORead(
+                            entity.ID, 
+                            entity.ActivityName,
+                            entity.Description == null ? "No input at this time" : entity.Description.Trim(),
+                            entity.DateStart,
+                            entity.DateFinish,
+                            entity.Members
+                            ));
+                    }));
             }
         }
 

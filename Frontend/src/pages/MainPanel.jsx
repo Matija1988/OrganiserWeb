@@ -53,7 +53,6 @@ export default function MainPanel() {
         hideLoading();
     },[]);
 
-
     const components = useMemo(()=>({
         event: (Activity, Member),
      

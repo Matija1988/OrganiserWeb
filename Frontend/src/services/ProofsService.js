@@ -4,7 +4,7 @@ import { handleSuccess, httpService, processError,read, getByID, create, update,
 const name = 'Proof';
 
 async function getPagination(page, condition) {
-    return await httpService.get('/'+name+'/'+'/paginate/'+ page + '?condition=' + condition)
+    return await httpService.get('/'+name+'/getPagination/'+ page + '?condition=' + condition)
     .then((res)=>{return handleSuccess(res);}).catch((e)=>{return processError(e);});
 }
 

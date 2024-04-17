@@ -299,7 +299,23 @@ namespace PO.Controllers
 
         }
 
-     
+        //[HttpGet]
+        //[Route("getCalendar")]
+
+        //public IActionResult GetCalendarDTO ()
+        //{
+        //    var list = _context.activities
+        //        .Include(a => a.Project)
+        //        .ToList();
+
+        //    if (list == null || list.Count == 0)
+        //    {
+        //        throw new Exception("No data in database!");
+        //    }
+
+        //    return ;
+        //}
+
         /// <summary>
         /// Premoscivanje i prilagodavanje delete metode
         /// Override and adaptation of delete method

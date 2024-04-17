@@ -1,7 +1,7 @@
 import { useEffect, useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import ProofsService from "../../services/ProofsService";
-import { Container, Button, Table, InputGroup, Modal } from "react-bootstrap";
+import { Container, Button, Table, InputGroup, Modal, Row, Col, Pagination } from "react-bootstrap";
 import { RoutesNames } from "../../constants";
 import { IoIosAdd } from 'react-icons/io';
 import { FaEdit, FaTrash, FaUpload } from 'react-icons/fa';
@@ -16,6 +16,7 @@ import NavBar from "../../components/NavBar";
 import useError from "../../hooks/useError";
 import useLoading from "../../hooks/useLoading";
 import DeleteModal from "../../components/DeleteModal";
+import TablePagination from "../../components/TablePagination";
 
 
 export default function Proofs() {
@@ -33,20 +34,45 @@ export default function Proofs() {
     const [showDeleteModal, setShowDeleteModal] = useState(false);
     const [entityID, setEntityID] = useState();
 
-
+    const [page, setPage] = useState(1);
+    const [condition, setCondtion] = useState('');
+    const [totalEntities, setTotalEntities] = useState();
+    
     let navigate = useNavigate();
 
     async function fetchProofs() {
         showLoading();
-        const response = await ProofsService.read('Proof');
-        if (!response.ok) {
-            hideLoading();
+
+        const response = await ProofsService.getPagination(page, condition);
+        const proofsResponse = await ProofsService.read('Proof');
+
+        if(!response.ok || !proofsResponse.ok) 
+        {
             showError(response.data);
+            hideLoading();
+            return;
+        }
+        if(response.data.length==0) {
+            setPage(-1);
+            hideLoading();
             return;
         }
         setProofs(response.data);
+        setTotalEntities(proofsResponse);
         hideLoading();
     }
+
+    // async function fetchProofs() {
+    //     showLoading();
+    //     const response = await ProofsService.read('Proof');
+    //     if (!response.ok) {
+    //         hideLoading();
+    //         showError(response.data);
+    //         return;
+    //     }
+    //     setProofs(response.data);
+    //     hideLoading();
+    // }
 
     function FormatDateCreated(proof) {
         return proof.datecreated == null ? 'Not defined' :
@@ -70,7 +96,7 @@ export default function Proofs() {
 
     useEffect(() => {
         fetchProofs();
-    }, []);
+    }, [page, condition]);
 
     function setFileModal(proof) {
         setPickedEntity(proof);
@@ -96,7 +122,31 @@ export default function Proofs() {
                 fetchProofs();
                 setShowModal(false);
             }
+        }
+    }
 
+    const totalPages = Math.ceil(totalEntities / 8);
+
+    const handlePageChange = (page) => {
+        setPage(page);
+    }
+
+    function increasePage() {
+        setPage(page + 1);
+    }
+
+    function decreasePage(){
+        if(page ==1) {
+            return;
+        }
+        setPage(page-1);
+    }
+    
+    function changeCondition(e) {
+        if(e.nativeEvent.key == "Enter") {
+            setPage(1);
+            setCondtion(e.nativeEvent.srcElement.value);
+            setProofs([]);
         }
     }
 
@@ -107,14 +157,41 @@ export default function Proofs() {
                 <Link to={RoutesNames.PROOFS_CREATE} className="btn btn-success gumb" >
                     <IoIosAdd size={25} /> ADD
                 </Link>
-                <Form>
-                    <InputGroup>
-                        <Form.Control
-                            placeholder="Search proofs by document name or member..."
-                            onChange={(e) => setSearch(e.target.value)}
-                            className="searchLabel" />
-                    </InputGroup>
-                </Form>
+                <Row>
+                    <Col>
+                        <Form>
+                            <InputGroup>
+                                <Form.Control
+                                    placeholder="Search proofs by document name or member..."
+                                    onChange={(e) => setSearch(e.target.value)}
+                                    className="searchLabel" />
+                            </InputGroup>
+                        </Form>
+                    </Col>  
+                    <Col>
+                    <Form.Control className="searchLabel"
+                    type = 'text'
+                    name = 'search'
+                    placeholder = 'Part of document name'
+                    maxLength={255}
+                    defaultValue=''
+                    onKeyUp={changeCondition}
+                    />
+                    </Col>
+                    <Col>
+                    {Proofs && Proofs.length > 0 && (
+
+                        <div style={{display: "flex", justifyContent:"center"}}>
+                            <Pagination size="lg" className="pagination">
+                            <Pagination.Prev onClick={decreasePage}/>
+                            <Pagination.Item>{page}</Pagination.Item>
+                            <Pagination.Next onClick={increasePage}/>
+                            </Pagination>
+                        </div>
+
+                    )}
+                    </Col>
+                </Row>
                 <Table striped bordered hover responsive variant="dark" className="tableStyle">
                     <thead className="projectTableHead">
                         <tr>
@@ -127,34 +204,35 @@ export default function Proofs() {
                         </tr>
                     </thead>
                     <tbody>
-                        {Proofs && Proofs.filter((Proofs) => {
-                            return search.toLowerCase() === '' ? Proofs : Proofs.documentName.toLowerCase().includes(search)
-                                || search.toLowerCase() === '' ? Proofs : Proofs.memberName.toLowerCase().includes(search);
-                        }).map((proof, index) => (
+                        {Proofs && Proofs.filter((entity) => {
+                            return search.toLowerCase() === '' ? entity : entity.documentName.toLowerCase().includes(search)
+                                || search.toLowerCase() === '' ? entity : entity.memberName.toLowerCase().includes(search);
+                        }).map((entity, index) => (
+
                             <tr key={index}>
-                                <td>{proof.documentName}</td>
-                                <td>{proof.memberName}</td>
-                                <td>{proof.location}</td>
+                                <td>{entity.documentName}</td>
+                                <td>{entity.memberName}</td>
+                                <td>{entity.location}</td>
                                 <td>
-                                    {FormatDateCreated(proof)}
+                                    {FormatDateCreated(entity)}
                                 </td>
-                                <td>{proof.activityName}</td>
+                                <td>{entity.activityName}</td>
                                 <td className="alignCenter">
                                     <Button className="editBtn"
                                         variant="primary"
-                                        onClick={() => { navigate(`/proofs/${proof.id}`) }}
+                                        onClick={() => { navigate(`/proofs/${entity.id}`) }}
                                     >
                                         <FaEdit
                                             size={15}
                                         />
                                     </Button>
-                                    <Button className="uploadFileBtn" onClick={() => setFileModal(proof)}>
+                                    <Button className="uploadFileBtn" onClick={() => setFileModal(entity)}>
                                         <FaUpload size={15}/>
                                     </Button>
 
                                     <Button className="trashBtn"
                                         variant="danger"
-                                        onClick={() => (setEntityID(proof.id), setShowDeleteModal(true))}
+                                        onClick={() => (setEntityID(entity.id), setShowDeleteModal(true))}
                                     >
                                         <FaTrash
                                             size={15}
@@ -167,6 +245,11 @@ export default function Proofs() {
                         ))}
                     </tbody>
                 </Table>
+                <TablePagination 
+                currentPage={page}
+                totalPAges={totalPages}
+                onPageChange={handlePageChange}
+                />
             </Container>
 
             <Modal show={showModal} onHide={closeModal} className="dataModal">

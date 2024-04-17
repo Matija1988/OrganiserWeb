@@ -154,7 +154,7 @@ namespace PO.Controllers
 
             try
             {
-                var proof = _context.ProofOfDeliveries.Where(
+                var proof = _context.ProofOfDeliveries.Include(m => m.Member).Include(a => a.Activity).Where(
                     p => EF.Functions.Like(p.DocumentName.ToLower(), "%" + condition + "%")
                     || EF.Functions.Like(p.Activity.ActivityName.ToLower(), "%" + condition + "%"))
                     .Skip((byPage * page) - byPage)

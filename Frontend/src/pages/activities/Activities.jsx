@@ -38,19 +38,9 @@ export default function Activities() {
 
     const [showDeleteModal, setShowDeleteModal] = useState(false);
     const [entityID, setEntityID] = useState();
+
     const [totalActivities, setTotalActivities] = useState();
 
-    // async function fetchActivities() {
-    //     showLoading();
-    //     const response = await ActivitiesService.read('Activity');
-    //     if (!response.ok) {
-    //         showError(response.data);
-    //         hideLoading();
-    //         return;
-    //     }
-    //     setActivities(response.data);
-    //     hideLoading();
-    // }
 
     async function fetchActivities() {
         showLoading();

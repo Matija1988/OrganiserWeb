@@ -70,6 +70,9 @@ namespace PO.Models
     public record ActivityDTORead(int ID,  string ActivityName, string? ActivityDescription, DateTime DateStart, 
         DateTime DateFinish,bool? IsFinished, DateTime? DateAccepted, string ProjectName);
 
+    public record ActivityCalendarDTORead(int ID, string ActivityName, string? ActivityDescription, DateTime DateStart,
+        DateTime DateFinish, List<Member> members);
+
     /// <summary>
     /// 
     /// </summary>
@@ -111,5 +114,7 @@ namespace PO.Models
        [Required(ErrorMessage = "Mandatory input")]
        string ProjectName
        );
+
+
 
 }

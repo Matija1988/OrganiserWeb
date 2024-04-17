@@ -34,7 +34,7 @@ export default function Login() {
                 <Row>
                     <Col className='LoginText2'>Launch your projects into cyberspace</Col>
                 </Row>
-
+                <Form.Label>texasranger</Form.Label>
                 <Form.Group className="mb-3" controlId="formBasicEmail">
                     <Form.Control
                         type="username"
@@ -44,7 +44,7 @@ export default function Login() {
                         
                     />
                 </Form.Group>
-
+                <Form.Label>chuckneedsnopassword</Form.Label>
                 <Form.Group className="mb-3" controlId="formBasicPassword">
                     <Form.Control
                         type="password"
