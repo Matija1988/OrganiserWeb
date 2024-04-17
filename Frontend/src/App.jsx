@@ -32,7 +32,7 @@ import LoadingSpinner from './components/LoadingSpinner';
 
 import './style.css';
 import useAuth from './hooks/useAuth';
-import Killswitchpage from './pages/projects/Killswitchpage';
+
 
 
 
@@ -54,7 +54,7 @@ function App() {
             <Route path={RoutesNames.PROJECTS_READ} element={<Projects />} />
             <Route path={RoutesNames.PROJECTS_CREATE} element={<ProjectsCreate />} />
             <Route path={RoutesNames.PROJECTS_UPDATE} element={<ProjectsUpdate />} />
-            <Route path={RoutesNames.KILL_SWITCH_PAGE} element={<Killswitchpage />} />
+
 
             <Route path={RoutesNames.MEMBERS_READ} element={<Members />} />
             <Route path={RoutesNames.MEMBERS_CREATE} element={<MembersCreate />} />

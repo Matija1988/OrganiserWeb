@@ -18,6 +18,7 @@ import "bootstrap/dist/css/bootstrap.min.css";
 import './projectsStyle.css';
 import NavBar from "../../components/NavBar";
 import DeleteModal from "../../components/DeleteModal";
+import KillSwitchModal from "../../components/KillSwitchModal";
 
 
 export default function Projects() {
@@ -32,6 +33,8 @@ export default function Projects() {
 
     const [showDeleteModal, setShowDeleteModal] = useState(false);
     const [entityID, setEntityID] = useState();
+
+    const [showKillModal, setShowKillModal] = useState(false);
 
     const navigate = useNavigate();
 
@@ -122,6 +125,27 @@ export default function Projects() {
         } else {
             showError(response.data);
         }
+        hideLoading();
+    }
+
+    async function kill(input) {
+        showLoading();
+        const response = await ProjectService.killswitch(input);
+        if(!response.ok){
+            showError(response.data);
+            hideLoading();
+            console.log("This input in kill:" + input)
+            return;
+        }    
+        hideLoading();
+    }
+
+    async function handleKillSwitch(customInput) {
+        showLoading();
+        console.log("This is the input costum input: " + customInput);
+        kill(customInput);
+        setShowKillModal(false);
+        await readProjects();
         hideLoading();
     }
 
@@ -235,7 +259,7 @@ export default function Projects() {
                                             <Button className="killBtn"
                                                 variant='danger'
                                                 label="Delete project"
-                                            onClick={() => navigate(`/killswitchproject/${project.id}`)}
+                                            onClick={() => (setShowKillModal(true))}
                                             >
                                                 <FaSkull
                                                     size={15}
@@ -256,6 +280,11 @@ export default function Projects() {
             handleClose={()=>setShowDeleteModal(false)}
             handleDelete={()=> (projectDelete(entityID), setShowDeleteModal(false))}
             
+            />
+            <KillSwitchModal 
+            show={showKillModal}
+            handleClose={()=>setShowKillModal(false)}
+            handleKill={handleKillSwitch}                
             />
 
         </>
