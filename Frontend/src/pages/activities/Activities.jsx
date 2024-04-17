@@ -19,6 +19,7 @@ import NavBar from "../../components/NavBar";
 import useError from "../../hooks/useError";
 import useLoading from "../../hooks/useLoading";
 import DeleteModal from "../../components/DeleteModal";
+import TablePagination from "../../components/TablePagination";
 
 
 
@@ -37,29 +38,13 @@ export default function Activities() {
 
     const [showDeleteModal, setShowDeleteModal] = useState(false);
     const [entityID, setEntityID] = useState();
-
-    async function fetchActivities() {
-        showLoading();
-        const response = await ActivitiesService.read('Activity');
-        if (!response.ok) {
-            showError(response.data);
-            hideLoading();
-            return;
-        }
-        setActivities(response.data);
-        hideLoading();
-    }
+    const [totalActivities, setTotalActivities] = useState();
 
     // async function fetchActivities() {
     //     showLoading();
-    //     const response = await ActivitiesService.getPagination(page, condition);
-    //     if(!response.ok) {
+    //     const response = await ActivitiesService.read('Activity');
+    //     if (!response.ok) {
     //         showError(response.data);
-    //         hideLoading();
-    //         return;
-    //     } 
-    //     if(response.data.length==0) {
-    //         setPage(page-1);
     //         hideLoading();
     //         return;
     //     }
@@ -67,9 +52,30 @@ export default function Activities() {
     //     hideLoading();
     // }
 
+    async function fetchActivities() {
+        showLoading();
+        const response = await ActivitiesService.getPagination(page, condition);
+
+        const activitiesResponse = await ActivitiesService.read('Activity');
+
+        if(!response.ok) {
+            showError(response.data);
+            hideLoading();
+            return;
+        } 
+        if(response.data.length==0) {
+            setPage(page-1);
+            hideLoading();
+            return;
+        }
+        setActivities(response.data);
+        setTotalActivities(activitiesResponse);
+        hideLoading();
+    }
+
     useEffect(() => {
         fetchActivities();
-    }, []);
+    }, [page, condition]);
 
     async function deleteActivities(id) {
         showLoading();
@@ -90,6 +96,14 @@ export default function Activities() {
             setActivities([]);
         }
     }
+
+    const totalPages = Math.ceil(totalActivities / 8);
+
+    const handlePageChange = (page) => {
+        setPage(page);
+    };
+
+
 
     function increasePage() {
         setPage(page + 1);
@@ -193,15 +207,13 @@ export default function Activities() {
                         <div style={{display : "flex", justifyContent:"center"}}>
                             <Pagination size ="lg" className="pagination">
                             <Pagination.Prev onClick={decreasePage} />
-                            <Pagination.Item disabled>{page}</Pagination.Item>
+                            <Pagination.Item >{page}</Pagination.Item>
                             <Pagination.Next onClick={increasePage} />
                             </Pagination>
                         </div>
                     )}
-                    </Col>
+                    </Col>   
                 </Row>
-                
-
                 <Table 
                 striped 
                 bordered 
@@ -277,6 +289,12 @@ export default function Activities() {
                         ))}
                     </tbody>
                 </Table>
+                <TablePagination 
+                currentPage={page}
+                totalPAges={totalPages}
+                onPageChange={handlePageChange}
+                
+                />
             </Container>
             <DeleteModal
             show={showDeleteModal}
