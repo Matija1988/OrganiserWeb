@@ -35,6 +35,7 @@ export default function Proofs() {
     const [entityID, setEntityID] = useState();
 
     const [page, setPage] = useState(1);
+
     const [condition, setCondtion] = useState('');
     const [totalEntities, setTotalEntities] = useState();
     
@@ -46,14 +47,14 @@ export default function Proofs() {
         const response = await ProofsService.getPagination(page, condition);
         const proofsResponse = await ProofsService.read('Proof');
 
-        if(!response.ok || !proofsResponse.ok) 
+        if(!response.ok) 
         {
             showError(response.data);
             hideLoading();
             return;
         }
         if(response.data.length==0) {
-            setPage(-1);
+            setPage(1);
             hideLoading();
             return;
         }
@@ -82,14 +83,14 @@ export default function Proofs() {
 
     async function deleteProofs(id) {
         showLoading();
-        const response = await ProofsService.remove('Proof',id);
+        const response = await ProofsService.remove('Proof', id);
 
-        if (response.ok) {
+        if (!response.ok) {
             hideLoading();
-            fetchProofs();
+            showError(response.data);
             return;
         }
-        showError(response.data);
+        fetchProofs();
         hideLoading();
 
     }
@@ -128,15 +129,27 @@ export default function Proofs() {
     const totalPages = Math.ceil(totalEntities / 8);
 
     const handlePageChange = (page) => {
+        
+        if(page == 0) {
+            setPage(1);
+        }
         setPage(page);
+
     }
 
     function increasePage() {
+        if(page > totalPages) {
+            
+            return;
+        };
+        if(page <=0) {
+            setPage(1);
+        }
         setPage(page + 1);
     }
 
     function decreasePage(){
-        if(page ==1) {
+        if(page<=1) {
             return;
         }
         setPage(page-1);

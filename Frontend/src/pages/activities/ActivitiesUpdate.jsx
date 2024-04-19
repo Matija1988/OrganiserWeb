@@ -54,8 +54,8 @@ export default function ActivitiesUpdate() {
         let activity = response.data;
         activity.startTime = moment.utc(activity.dateStart).format('HH:mm');
         activity.startingDate = moment.utc(activity.dateStart).format('yyyy-MM-DD');
-        activity.deadlineTime = moment.utc(activity.dateFinished).format('HH:mm');
-        activity.deadlineDate = moment.utc(activity.dateFinished).format('yyyy-MM-DD');
+        activity.deadlineTime = moment.utc(activity.dateFinish).format('HH:mm');
+        activity.deadlineDate = moment.utc(activity.dateFinish).format('yyyy-MM-DD');
         activity.acceptanceTime = moment.utc(activity.dateAccepted).format('HH:mm');
         activity.acceptanceDate = moment.utc(activity.dateAccepted).format('yyyy-MM-DD');
         delete activity.dateStart;
@@ -83,24 +83,24 @@ export default function ActivitiesUpdate() {
     async function fetchActivityMember() {
         showLoading();
         const response = await ActivitiesService.getActivityMembers(routeParams.id);
-        if(!response.ok){
+        if (!response.ok) {
             showError(response.data);
             hideLoading();
             return;
         }
         setMember(response.data);
         hideLoading();
-            
+
     }
 
     async function SearchMemberByName(input) {
         showLoading();
         const response = await MembersService.searchMemberByName(input);
-        if(!response.ok){
-           hideLoading();
-           showError(response.data);
-           return;
-        } 
+        if (!response.ok) {
+            hideLoading();
+            showError(response.data);
+            return;
+        }
         setFoundMember(response.data);
         setSearchedName(input);
         hideLoading();
@@ -119,7 +119,7 @@ export default function ActivitiesUpdate() {
     async function AssignMemberToActivity(e) {
         showLoading();
         const response = await ActivitiesService.assignMemberToActivity(routeParams.id, e[0].id);
-        if(response.ok) {
+        if (response.ok) {
             fetchActivityMember();
             hideLoading();
             return;
@@ -131,14 +131,14 @@ export default function ActivitiesUpdate() {
     async function RemoveMemberFromActivity(e, member) {
         showLoading();
         const response = await ActivitiesService.removeMemberFromActivity(e, member);
-        if(response.ok) {
+        if (response.ok) {
             await fetchActivityMember();
             hideLoading();
             return;
         }
         showError(response.data);
         hideLoading();
-        
+
     }
 
     function MemberStatusDisplayText(member) {
@@ -158,8 +158,6 @@ export default function ActivitiesUpdate() {
         }
         hideLoading();
         showError(reply.data);
-        
-        
     }
 
     function handleSubmit(e) {
@@ -172,12 +170,13 @@ export default function ActivitiesUpdate() {
         const deadlineDate = moment.utc(information.get('datefinish') + ' ' + information.get('deadlineTime'));
         const acceptanceDate = moment.utc(information.get('dateaccepted') + ' ' + information.get('acceptanceTime'));
 
-        if(startingDate > deadlineDate) {
+        if (startingDate > deadlineDate) {
             alert("Activity cannot start after it ends!!! Check your input!!!");
+            showError("Activity cannot start after it ends!!! Check your input!!!")
             return;
         }
 
-        if(startingDate > acceptanceDate) {
+        if (startingDate > acceptanceDate) {
             alert("Activity cannot be accepted before it starts!!! Check your input!!!");
             return;
         }
@@ -189,12 +188,12 @@ export default function ActivitiesUpdate() {
         var yyyy = today.getFullYear();
 
         today = mm + '/' + dd + '/' + yyyy;
-       
+
         console.log("Date now " + today);
 
-        let checkFinished = new Boolean(information.get('isFinished') =='on' ? true : false); 
+        let checkFinished = new Boolean(information.get('isFinished') == 'on' ? true : false);
 
-        if((today < startingDate) && (checkFinished == true)) {
+        if ((today < startingDate) && (checkFinished == true)) {
             alert("Activity cannot end before it begins!!! Check your input!!!");
             checkFinished = false;
             return;
@@ -210,7 +209,7 @@ export default function ActivitiesUpdate() {
             ProjectID: parseInt(projectID)
         });
 
-       
+
 
     }
 
@@ -224,8 +223,21 @@ export default function ActivitiesUpdate() {
                         <Col key='1'>
 
                             <InputText atribute="Activity" value={activity.activityName} />
-                            <InputTextAsTextArea atribute="Description" value={activity.description} />
 
+                            <Form.Group controlId='project'>
+                                <Form.Label>Associated project</Form.Label>
+                                <Form.Select
+                                    value={activity.projectID   }
+                                    onChange={(e) => { setProjectID(e.target.value) }}
+                                >
+                                    {project && project.map((e, index) => (
+                                        <option key={index} value={e.id}>{e.projectName}</option>
+                                    ))}
+                                </Form.Select>
+                            </Form.Group>
+
+                            <InputTextAsTextArea atribute="Description" value={activity.description} />
+                            
                             <Row>
                                 <Col>
                                     <Form.Group controlId="dateStart">
@@ -271,57 +283,57 @@ export default function ActivitiesUpdate() {
                                         />
                                     </Form.Group>
                                 </Col>
-                                
+
                             </Row>
                             <InputCheckbox atribute="isFinished" value={activity.isFinished} />
                             <Row>
 
-                        <Col>
-                            <Form.Group controlId="dateaccepted">
-                                <Form.Label>Date accepted</Form.Label>
-                                <Form.Control
-                                    type='date'
-                                    name='dateaccepted'
-                                    defaultValue={activity.acceptanceDate}
+                                <Col>
+                                    <Form.Group controlId="dateaccepted">
+                                        <Form.Label>Date accepted</Form.Label>
+                                        <Form.Control
+                                            type='date'
+                                            name='dateaccepted'
+                                            defaultValue={activity.acceptanceDate}
 
-                                />
-                            </Form.Group>
-                        </Col>
-                        <Col>
-                            <Form.Group>
-                                <Form.Label>Acceptance time</Form.Label>
-                                <Form.Control
-                                    type="time"
-                                    name='acceptanceTime'
-                                    defaultValue={activity.acceptanceTime}
-                                />
+                                        />
+                                    </Form.Group>
+                                </Col>
+                                <Col>
+                                    <Form.Group>
+                                        <Form.Label>Acceptance time</Form.Label>
+                                        <Form.Control
+                                            type="time"
+                                            name='acceptanceTime'
+                                            defaultValue={activity.acceptanceTime}
+                                        />
                                     </Form.Group>
                                 </Col>
                             </Row>
                         </Col>
                         <Col key='2'>
                             <Row>
-                            <Form.Label>Members</Form.Label>
+                                <Form.Label>Members</Form.Label>
                             </Row>
                             <AsyncTypeahead
-                            className="autocomplete"
-                            id='condition'
-                            emptyLabel='No result'
-                            searchText='Searching'
-                            labelKey={(member) => `${member.firstName} ${member.lastName}`}  
-                            minLength={3}
-                            options={foundMember}
-                            onSearch={SearchMemberByName}
-                            placeholder="Part of first or last name"
-                            renderMenuItemChildren={(member) =>(
-                                <>
-                                <span>
-                                    {member.firstName} {member.lastName}
-                                </span>
-                                </>
-                            )}  
-                            onChange={AssignMemberToActivity}
-                            ref={typeaheadRef}
+                                className="autocomplete"
+                                id='condition'
+                                emptyLabel='No result'
+                                searchText='Searching'
+                                labelKey={(member) => `${member.firstName} ${member.lastName}`}
+                                minLength={3}
+                                options={foundMember}
+                                onSearch={SearchMemberByName}
+                                placeholder="Part of first or last name"
+                                renderMenuItemChildren={(member) => (
+                                    <>
+                                        <span>
+                                            {member.firstName} {member.lastName}
+                                        </span>
+                                    </>
+                                )}
+                                onChange={AssignMemberToActivity}
+                                ref={typeaheadRef}
                             />
                             <Table striped bordered hover responsive variant="dark" className="tableStyle">
 
@@ -354,19 +366,9 @@ export default function ActivitiesUpdate() {
                             </Table>
                         </Col>
                     </Row>
-                    
-                    <Form.Group controlId='project'>
-                        <Form.Label>Associated project</Form.Label>
-                        <Form.Select
-                            value={projectID}
-                            onChange={(e) => { setProjectID(e.target.value) }}
-                        >
-                            {project && project.map((e, index) => (
-                                <option key={index} value={e.id}>{e.projectName}</option>
-                            ))}
-                        </Form.Select>
-                    </Form.Group>
-                    <Actions cancel={RoutesNames.ACTIVITIES_READ} action="UPDATE ACTIVITY"/>
+
+
+                    <Actions cancel={(RoutesNames.ACTIVITIES_READ)} action="UPDATE ACTIVITY" />
 
                 </Form>
             </Container>

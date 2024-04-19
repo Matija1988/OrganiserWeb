@@ -100,7 +100,7 @@ export default function Activities() {
     }
 
     function decreasePage() {
-        if(page==1) {
+        if(page<=1) {
             return;
         }
         setPage(page-1);
@@ -128,13 +128,14 @@ export default function Activities() {
         let date2 = new Date(activity.dateFinished);
         let dateNow = Date.now();
 
-        let differenceInTime = dateNow - date1.getTime();
+        let differenceInTime =  dateNow - date1.getTime();
 
         let differenceInDays = Math.round(differenceInTime / (1000 * 3600 * 24));
 
         if (date2 < dateNow) {
             differenceInDays = 100;
         }
+      
 
         return differenceInDays;
     }

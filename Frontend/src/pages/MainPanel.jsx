@@ -10,6 +10,7 @@ import useError from "../hooks/useError";
 import useLoading from "../hooks/useLoading";
 import Footer2 from "../components/Footer2";
 import MembersService from "../services/MembersService";
+import CalendarDataModal from "../components/CalendarDataModal";
 
 
 export default function MainPanel() {
@@ -17,7 +18,11 @@ export default function MainPanel() {
     const [Activity, setActivity] = useState();
     const [Member, setMember] = useState();
 
-    
+    const [ActivityID, setActivityID] = useState(1);
+    const [activityName, setActivityName] = useState('');
+    const [activityDes, setActivityDes] = useState('');
+
+    const [showInfoModal, setShowInfoModal] = useState(false);
 
     const [des, setDes] = useState(Activity, Member);
 
@@ -28,29 +33,27 @@ export default function MainPanel() {
 
 
     async function fetchActivities() {
+        showLoading();
         const response = await ActivitiesService.read('Activity');
         if (!response.ok) {
+            hideLoading();
             showError(response.data);
             return;
         }
         setActivity(response.data);
+        hideLoading();
     }
 
-    async function fetchMembers() {
+    
 
-        const response = await MembersService.read('Member');
-        if(!response.ok) {
-            showError(response.data);
-            return;
-        }
-        setMember(response.data);
+    async function load() {
+        showLoading();
+        fetchActivities();
+        hideLoading();
     }
 
     useEffect(() => {
-        showLoading();
-        fetchActivities();
-        fetchMembers();
-        hideLoading();
+       load();
     },[]);
 
     const components = useMemo(()=>({
@@ -59,25 +62,44 @@ export default function MainPanel() {
         week :{           
             event:(Activity, Member)
         },
-
+        
     }),[])
 
-    const handleSelectSlot = useCallback(({start, end}) => {
-        const title = window.prompt('New Event name')
+  
+
+    function selectSlot() {
+        const title = window.prompt('New Event name');
+       
         if(title) {
-            setDes((Activity, Member) => [...Activity,{ startDate, dateFinish, activityDescription}, ...Member,{firstName, lastName}])
+            setDes((Activity, Member) => [...Activity,{ startDate, dateFinish, activityDescription, id}, 
+                ...Member,{firstName, lastName}]);
+            
+        }
+        [setDes]
+        
+    } 
+
+    const handleSelectedSlot = useCallback((start, end) => {
+        const title = window.prompt('New Event name');
+       
+        if(title) {
+            setDes((Activity, Member) => [...Activity,{ startDate, dateFinish, activityDescription, id}, 
+                ...Member,{firstName, lastName}]);
+         
         }
         [setDes]
     });
 
-    const handleSelectEvent = useCallback((des) => 
-    window.alert(des.activityDescription + "\n Assigned to: " + des.firstName + " " + des.lastName), [])
-    
-
+    const handleSelectEvent = useCallback((des) => {
+                            setActivityID(des.id), 
+                            setActivityName(des.activityName), 
+                            setActivityDes(des.activityDescription),
+                            setShowInfoModal(true), []});
 
     return(
 
         <>
+
             <NavBar />
 
             <Container className="mainPanelContainer" >
@@ -91,17 +113,26 @@ export default function MainPanel() {
                         endAccessor={(Activity) => {return new Date(Activity.dateFinish)}}
                         localizer={localizer}
                         onSelectEvent = {handleSelectEvent}
-                        onSelectSlot = {handleSelectSlot}
+                        onSelectSlot = {handleSelectedSlot} 
                         showMultiDayTimes
                         popup
+                        
                         
                     />
                 </Fragment>
             </Container>
             <Container className="footerContainer">
-            <Footer2  />
+                <Footer2 />
             </Container>
-        
+            <CalendarDataModal 
+            show={showInfoModal} 
+            handleClose={()=>setShowInfoModal(false)}
+            name = {activityName}
+            description = {activityDes}
+            id = {ActivityID}
+            />
+            
         </>
+        
     );
 }

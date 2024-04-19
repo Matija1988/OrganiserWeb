@@ -1,6 +1,7 @@
 import { useState } from "react";
 import { Button, Col, Form, Modal, Row } from "react-bootstrap";
-
+import "bootstrap/dist/css/bootstrap.min.css";
+import "./Modal.css";
 
 export default function KillSwitchModal({show, handleClose,  handleKill}) {
         const [entityName, setEntityName] = useState("");
@@ -20,11 +21,11 @@ export default function KillSwitchModal({show, handleClose,  handleKill}) {
 
     return (
 
-        <Modal show={show} onHide={handleClose} centered>
-            <Modal.Header closeButton>
+        <Modal show={show} onHide={handleClose} centered closeButton>
+            <Modal.Header closeButton className="modalHeader">
                 DANGER!!!!
             </Modal.Header>
-            <Modal.Body>
+            <Modal.Body className="modalBody">
                 This action will delete this entry and all other entries connected to it! 
                 Enter the name of the project you wish to delete along with its connected entities!
                 <Form.Group controlID="entityName">
@@ -37,7 +38,7 @@ export default function KillSwitchModal({show, handleClose,  handleKill}) {
                 </Form.Group>
                 
             </Modal.Body>
-            <Modal.Footer>
+            <Modal.Footer className="modalFooter">
                 <Row>
                     <Col>
                         <Button variant="primary" onClick={handleClose}>CLOSE</Button>

@@ -81,7 +81,7 @@ namespace PO.Controllers
             }
             catch (Exception ex)
             {
-                return BadRequest(ex.InnerException);
+                return BadRequest(ex.Message);
             }
         }
 

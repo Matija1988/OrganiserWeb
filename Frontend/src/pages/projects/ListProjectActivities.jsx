@@ -14,6 +14,9 @@ import { RoutesNames } from "../../constants";
 import "bootstrap/dist/css/bootstrap.min.css";
 import './projectsStyle.css';
 import NavBar from "../../components/NavBar";
+import useError from "../../hooks/useError";
+import DeleteModal from "../../components/DeleteModal";
+import useLoading from "../../hooks/useLoading";
 
 
 export default function ListProjectActivities() {
@@ -23,17 +26,27 @@ export default function ListProjectActivities() {
     const [Activities, setActivities] = useState();
     const [search, setSearch] = useState("");
 
+    const {showError} = useError();
+     const {showLoading, hideLoading} = useLoading();
+
+    const [showDeleteModal, setShowDeleteModal] = useState(false);
+    const [entityID, setEntityID] = useState();
+
+
     const routeParams = useParams();
 
     async function ListProjectActivities() {
+       showLoading();
 
-        await ProjectService.listProjectActivities(routeParams.id)
-            .then((res) => {
-                setActivities(res.data)
-            })
-            .catch((e) => {
-                alert(e);
-            });
+        const response = await ProjectService.listProjectActivities(routeParams.id)
+        if(!response.ok) {
+            showError(response.data);
+            hideLoading();
+            return;
+        }
+        setActivities(response.data);
+        hideLoading();
+        return;
     }
 
     useEffect(() => {
@@ -41,13 +54,16 @@ export default function ListProjectActivities() {
     }, []);
 
     async function deleteActivities(id) {
-        const reply = await ActivitiesService.remove('Activity',id)
+        showLoading();
+        const response = await ActivitiesService.remove('Activity',id)
 
-        if (reply.ok) {
-            ListProjectActivities();
-        } else {
-            alert(reply.message);
+        if (!response.ok) {
+            hideLoading();
+            showError(response.data);
+            return;
         }
+        ListProjectActivities(); 
+        hideLoading();
     }
 
     function FormatDateStart(activity) {
@@ -188,7 +204,7 @@ export default function ListProjectActivities() {
                                 </Row>    
                                     <Button className="trashBtn"
                                         variant="danger"
-                                        onClick={() => deleteActivities(activity.id)}
+                                        onClick={() => (setEntityID(activity.id), setShowDeleteModal(true))}
                                     >
                                         <FaTrash
                                             size={20}
@@ -204,6 +220,13 @@ export default function ListProjectActivities() {
 
             </Table>
         </Container>
+        <DeleteModal 
+        show={showDeleteModal}
+        handleClose={()=> setShowDeleteModal(false)}
+        handleDelete={()=> (deleteActivities(entityID), setShowDeleteModal(false))}
+        />
+
         </>
+        
     );
 }

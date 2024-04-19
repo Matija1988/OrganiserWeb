@@ -100,17 +100,17 @@ export default function ActivitiesMembersMenu() {
     }
 
     async function update(e) {
+        showLoading();
         const response = await ActivitiesService.update('Activity', routeParams.id, e);
         if(response.ok) {
             navigate(RoutesNames.PROJECTS_READ);
+            hideLoading();
             return;
         }
+        hideLoading();
         showError(response.data);
+        
     }
-
-    // async function SearchMember (condition) {
-    //     const response = await MembersService.SearchMember
-    // }
 
 
 

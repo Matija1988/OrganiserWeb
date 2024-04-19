@@ -21,6 +21,7 @@ import NavBar from "../../components/NavBar";
 export default function ProjectsCreate() {
 
     const navigate = useNavigate();
+    
 
     const { showError } = useError();
     const { showLoading, hideLoading } = useLoading();

@@ -183,6 +183,7 @@ namespace PO.Controllers
                 var entity = _context.activities
                     .Include(i => i.Project)
                     .Where(i => i.Project.ID == projectID)
+                    .OrderBy(i => i.ActivityName)
                     .ToList();
 
 
@@ -299,22 +300,7 @@ namespace PO.Controllers
 
         }
 
-        //[HttpGet]
-        //[Route("getCalendar")]
 
-        //public IActionResult GetCalendarDTO ()
-        //{
-        //    var list = _context.activities
-        //        .Include(a => a.Project)
-        //        .ToList();
-
-        //    if (list == null || list.Count == 0)
-        //    {
-        //        throw new Exception("No data in database!");
-        //    }
-
-        //    return ;
-        //}
 
         /// <summary>
         /// Premoscivanje i prilagodavanje delete metode
@@ -345,11 +331,12 @@ namespace PO.Controllers
         /// <param name="entityDTO"></param>
         /// <returns></returns>
         /// <exception cref="Exception"></exception>
-        protected override  Activity CreateEntity(ActivityDTOInsertUpdate entityDTO)
+        protected override Activity CreateEntity(ActivityDTOInsertUpdate entityDTO)
         {
-             
+
             var project = _context.Projects.Find(entityDTO.ProjectID)
                 ?? throw new Exception("There is no project with " + entityDTO.ProjectID + " in database!");
+
 
             var entity = _mapper.MapInsertUpdatedFromDTO(entityDTO);
 
@@ -406,6 +393,9 @@ namespace PO.Controllers
             var projectFromDB = _context.Projects.Find(entityDTO.ProjectID) 
                 ?? throw new Exception("No entitiy with id " + entityFromDB.Project.ID + " in database!");
             //entityFromDB = _mapper.MapInsertUpdatedFromDTO(entityDTO);
+
+            
+
             entityFromDB.ActivityName = entityDTO.ActivityName; 
             entityFromDB.DateAccepted = entityDTO.DateAccepted;
             entityFromDB.Description = entityDTO.Description;

@@ -97,7 +97,7 @@ export default function ProofsCreate() {
 
         const name = information.get('Document name');
 
-        if(name == "") {
+        if(name == "" || dateOfCreation == null) {
             alert("ALERT!!! \nFOLLOWING FIELDS: \nDocument name \nActivity \nare mandatory inputs!!!"); 
             return;
         }
@@ -105,8 +105,7 @@ export default function ProofsCreate() {
         addProof({
             documentName: name,
             datecreated: dateOfCreation,
-            memberID: parseInt(memberIDa),
-            
+            memberID: parseInt(memberIDa),          
             activityID: parseInt(activityIDa)
         });
         hideLoading();

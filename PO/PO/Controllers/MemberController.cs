@@ -55,6 +55,16 @@ namespace PO.Controllers
 
         }
 
+        protected override Member CreateEntity(MemberDTOInsertUpdate dto)
+        {
+            var passwordHash = BCrypt.Net.BCrypt.HashPassword(dto.Password, 12);
+
+           var entity =  _mapper.MapInsertUpdatedFromDTO(dto);
+
+            entity.Password = passwordHash;
+
+            return entity;
+        }
 
         protected override List<MemberDTORead> ReadAll()
         {

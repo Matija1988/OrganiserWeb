@@ -9,7 +9,6 @@ namespace PO.Mappers
         protected Mapper MapperMapInsertUpdateToDTO;
         protected Mapper MapperReadMemberAuthDTO;
         protected Mapper MapperReadProjectKillSwitchDTO;
-        protected Mapper MapperMapActivityCalendarDTORead;
 
         public Mapping()
 
@@ -41,8 +40,10 @@ namespace PO.Mappers
                     }));
 
             
-
         }
+
+
+ 
 
         public List<DTR> MapReadList(List<T> list)
         {

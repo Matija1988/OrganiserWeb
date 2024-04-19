@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import { Link, useParams, useNavigate, Route } from 'react-router-dom';
+import { Link, useParams, useNavigate, Route, useLocation } from 'react-router-dom';
 import { Container, Form, Row, Col, Button } from "react-bootstrap";
 import { RoutesNames } from "../../constants";
 import moment from 'moment';
@@ -19,6 +19,7 @@ import { IoMdReturnLeft } from "react-icons/io";
 
 export default function ProjectsUpdate() {
 
+    const location = useLocation();
     const navigate = useNavigate();
     const routeParams = useParams();
     const [project, setProject] = useState({});
