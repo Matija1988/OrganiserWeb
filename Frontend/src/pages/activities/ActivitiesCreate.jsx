@@ -17,6 +17,7 @@ import InputCheckbox from '../../components/InputCheckbox';
 import Actions from '../../components/Actions';
 import InputTextAsTextArea from '../../components/InputTextAsTextArea';
 import MembersService from '../../services/MembersService';
+import { BsActivity } from 'react-icons/bs';
 
 export default function ActivitiesCreate() {
 
@@ -24,14 +25,6 @@ export default function ActivitiesCreate() {
 
     const [projects, setProjects] = useState([]);
     const [projectIDinput, setProjectIDinput] = useState(0);
-
-    const [projectDateStart, setProjectDateStart] = useState();
-    const [projectDateEnd, setProjectDateEnd] = useState();
-
-    const [members, setMembers] = useState();
-    const [foundMember, setFoundMember] = useState([]);
-
-    const typeaheadRef = useRef();
 
     const { showError } = useError();
     const { showLoading, hideLoading } = useLoading();
@@ -67,6 +60,8 @@ export default function ActivitiesCreate() {
         showError(response.data);
 
     }
+
+
 
     function handleSubmit(e) {
         e.preventDefault();
