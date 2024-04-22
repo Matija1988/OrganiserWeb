@@ -66,6 +66,19 @@ namespace PO.Controllers
             return entity;
         }
 
+        protected override Member UpdateEntity(MemberDTOInsertUpdate entityDTO, Member entityFromDB)
+        {
+            var passwordHash = BCrypt.Net.BCrypt.HashPassword(entityDTO.Password, 12);
+            
+            entityFromDB.FirstName = entityDTO.FirstName;
+            entityFromDB.LastName = entityDTO.LastName;
+            entityFromDB.Username = entityDTO.Username;
+            entityFromDB.Password = passwordHash;
+            entityFromDB.IsTeamLeader = entityDTO.IsTeamLeader;
+
+            return entityFromDB;
+        }
+
         protected override List<MemberDTORead> ReadAll()
         {
             var entityList = _context.members.ToList();

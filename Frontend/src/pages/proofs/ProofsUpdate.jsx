@@ -173,7 +173,7 @@ export default function ProofUpdate() {
                         <Form.Group controlId="memberID">
                             <Form.Label>Member</Form.Label>
                             <Form.Select
-                            value={idMember}
+                            value={proof.memberID}
                             onChange={(e) => {
                                 setMemberID(e.target.value);
                             }}
