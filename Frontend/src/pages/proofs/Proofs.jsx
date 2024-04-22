@@ -22,6 +22,8 @@ import TablePagination from "../../components/TablePagination";
 export default function Proofs() {
 
     const [Proofs, setProofs] = useState();
+    const [ProofName, setProofName] = useState('');
+    const [ProofID, setProofID] = useState();
 
     const [search, setSearch] = useState("");
 
@@ -86,6 +88,7 @@ export default function Proofs() {
 
     useEffect(() => {
         fetchProofs();
+
     }, [page, condition]);
 
     function setFileModal(proof) {
@@ -116,21 +119,55 @@ export default function Proofs() {
     }
 
     
-    async function download(id) { 
+    function onDownloadClick(id, name) {
+          setProofID(id);
+          setProofName(name);
+         download(id, name);
+      
+      }
+
+    
+    async function download(id, name) {
         showLoading();
-        
+
+        console.log("ID ID ID:" + id);
 
         const response = await ProofsService.downloadFile(id);
-        if(!response.ok){
+        if (!response.ok) {
             hideLoading();
             showError(response.data);
             return;
         }
-        
 
-        fetchProofs();
-        hideLoading();
+        console.log("Response is " + response.data);
+
+        try {
+            showLoading();
+            const url = window.URL.createObjectURL(new Blob([response.data]));
+   
+            const fileName = name;
+
+            const link = document.createElement('a');
+
+            link.href = url;
+
+            link.setAttribute('download', fileName + '.pdf');
+            document.body.appendChild(link);
+
+            link.click();
+
+            document.body.removeChild(link);
+            setProofName('');
+            fetchProofs();
+            hideLoading();
+        }
+        catch (error) {
+            console.error('Error downloading file:', error);
+        }
     }
+
+
+
 
     const totalPages = Math.ceil(totalEntities / 8);
 
@@ -219,7 +256,7 @@ export default function Proofs() {
                             <th>Location</th>
                             <th>Date created</th>
                             <th>For activity</th>
-                            <th>Action</th>
+                            <th className="tableProofAction">Action</th>
                         </tr>
                     </thead>
                     <tbody>
@@ -258,7 +295,7 @@ export default function Proofs() {
                                     <Row>
                                         <Col>
                                         <Button className="downloadBtn"
-                                        onClick={()=> download(entityID)}
+                                        onClick={()=> onDownloadClick(entity.id, entity.documentName)}
                                         >
                                             <FaDownload
                                                 size={15}                

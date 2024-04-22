@@ -214,6 +214,7 @@ export default function ProofUpdate() {
                         name='Location'
                         defaultValue={proof.location}
                         maxLength={200}
+                        readOnly
 
                     />
                 </Form.Group>
@@ -225,7 +226,7 @@ export default function ProofUpdate() {
                 <Form.Group  controlId="activityID">
                     <Form.Label>ActivityID</Form.Label>
                     <Form.Select
-                    value={idActivity}
+                    value={proof.activityID}
                     onChange= {((e)=> {
                         setActivityID(e.target.value)
                     })}

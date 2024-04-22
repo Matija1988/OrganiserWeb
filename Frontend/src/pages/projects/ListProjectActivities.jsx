@@ -1,6 +1,6 @@
 
 import { Button, Container, ProgressBar, Table, Form, Row, Col, InputGroup } from "react-bootstrap";
-import { FaAd, FaEdit, FaFemale, FaFile, FaMale, FaPersonBooth, FaTrash, FaUser, FaUserAlt, FaUsers } from "react-icons/fa";
+import { FaAd, FaDownload, FaEdit, FaFemale, FaFile, FaMale, FaPersonBooth, FaTrash, FaUser, FaUserAlt, FaUsers } from "react-icons/fa";
 import { useEffect, useState } from "react";
 import { useParams } from "react-router-dom";
 import { useNavigate } from "react-router-dom";
@@ -47,7 +47,7 @@ export default function ListProjectActivities() {
         setActivities(response.data);
         hideLoading();
         return;
-    }
+    }   
 
     useEffect(() => {
         ListProjectActivities();
@@ -148,7 +148,7 @@ export default function ListProjectActivities() {
                         <th>Start date / Deadline</th>
                         <th>Status</th>
                         <th>Date Accepted</th>
-                        <th>Actions</th>
+                        <th className="tableActivityActions">Actions</th>
                     </tr>
                 </thead>
                 <tbody>
@@ -194,6 +194,7 @@ export default function ListProjectActivities() {
                                     <Col>
                                     <Button className="editBtn"
                                         variant="primary"
+                                        title="Update activity"
                                         onClick={() => { navigate(`/activities/${activity.id}`) }}
                                     >
                                         <FaEdit
@@ -202,14 +203,24 @@ export default function ListProjectActivities() {
                                     </Button>
                                     </Col>
                                 </Row>    
+                                <Row>
+                                    {/* <Col>
+                                    <Button className="downloadBtn">
+                                        <FaDownload size={20}/>
+                                    </Button>
+                                    </Col> */}
+                                    <Col>
                                     <Button className="trashBtn"
                                         variant="danger"
+                                        title="Delete activity"
                                         onClick={() => (setEntityID(activity.id), setShowDeleteModal(true))}
                                     >
                                         <FaTrash
                                             size={20}
                                         />
                                     </Button>
+                                    </Col>
+                                    </Row>
                                     
                             </td>
                         </tr>
