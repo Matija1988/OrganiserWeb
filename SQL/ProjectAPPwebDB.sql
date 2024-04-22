@@ -53,7 +53,7 @@ documentName varchar(100), -- dokument dokaznice npr. izvjesce o provedenoj
 memberID int,
 Location varchar(200),
 dateCreated datetime,
-activityID int,
+activityID int, 
 );
 
 

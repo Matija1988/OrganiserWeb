@@ -1,4 +1,5 @@
 ﻿using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.StaticFiles;
 using Microsoft.Build.Construction;
 using Microsoft.Data.SqlClient;
 using Microsoft.EntityFrameworkCore;
@@ -7,6 +8,7 @@ using PO.Mappers;
 using PO.Models;
 using System.Data.OleDb;
 using System.IO.Compression;
+using System.Net.Mime;
 
 namespace PO.Controllers
 {
@@ -32,7 +34,7 @@ namespace PO.Controllers
         {
             var member = _context.members.Find(entityDTO.memberID)
                 ?? throw new Exception("No entity with id " + entityDTO.memberID + " in database");
-            var activity = _context.activities.Find(entityDTO.activityID) 
+            var activity = _context.activities.Find(entityDTO.activityID)
                 ?? throw new Exception("No entity with id " + entityDTO.activityID + " in database");
             entityFromDB = _mapper.MapInsertUpdatedFromDTO(entityDTO);
 
@@ -47,7 +49,7 @@ namespace PO.Controllers
             var entity = _context.ProofOfDeliveries.Include(p => p.Member).Include(p => p.Activity)
                 .FirstOrDefault(i => i.ID == id);
 
-            if(entity == null)
+            if (entity == null)
             {
                 throw new Exception("No entity with id " + id + " in database!");
             }
@@ -62,7 +64,7 @@ namespace PO.Controllers
                 .Include(p => p.Member)
                 .ToList();
 
-            if(entityList == null || entityList.Count == 0) 
+            if (entityList == null || entityList.Count == 0)
             {
                 throw new Exception("No data in database!");
             }
@@ -81,7 +83,7 @@ namespace PO.Controllers
 
             var act = _context.activities.Find(entityDTO.activityID);
 
-            if(act == null) 
+            if (act == null)
             {
                 throw new Exception("Activity with id " + act.ID + " not found!");
             }
@@ -98,18 +100,18 @@ namespace PO.Controllers
         {
             var entityFromDB = _context.ProofOfDeliveries.Find(entity.ID);
 
-            if (entityFromDB == null) 
-            { 
-                throw new Exception("No data with " + entity.ID + " found. Please check your input!"); 
+            if (entityFromDB == null)
+            {
+                throw new Exception("No data with " + entity.ID + " found. Please check your input!");
             }
 
 
         }
 
         [HttpPatch]
-        [Route("{proofID:int}")] 
+        [Route("{proofID:int}")]
 
-        public async Task<ActionResult> Patch (int proofID, IFormFile file)
+        public async Task<ActionResult> Patch(int proofID, IFormFile file)
         {
             if (file == null) return BadRequest("No file set for upload");
 
@@ -122,12 +124,12 @@ namespace PO.Controllers
                 var ds = Path.DirectorySeparatorChar;
                 string dir = Path.Combine(Directory.GetCurrentDirectory()
                     + ds + "wwwroot" + ds + "file" + ds + "proof");
-                if(!System.IO.Directory.Exists(dir))
+                if (!System.IO.Directory.Exists(dir))
                 {
                     System.IO.Directory.CreateDirectory(dir);
                 }
 
-                var filePath = Path.Combine(dir +ds+proofID+"_"+System.IO.Path.GetExtension(file.FileName));
+                var filePath = Path.Combine(dir + ds + proofID + "_" + System.IO.Path.GetExtension(file.FileName));
                 Stream fileStram = new FileStream(filePath, FileMode.Create);
                 await file.CopyToAsync(fileStram);
 
@@ -138,7 +140,8 @@ namespace PO.Controllers
 
                 return Ok("File uploaded");
 
-            } catch (Exception ex) 
+            }
+            catch (Exception ex)
             {
                 return BadRequest(ex.Message);
             }
@@ -146,8 +149,41 @@ namespace PO.Controllers
         }
 
         [HttpGet]
+        [Route("getFile/{proofID:int}")]
+
+        public async Task<ActionResult> dowloadFile(int proofID)
+        {
+            var proof = _context.ProofOfDeliveries.Find(proofID);
+
+            if (proof == null) return BadRequest("No entity with id " + proofID + " in database.");
+
+            if (proof.Location == null) return NotFound("The requested entity does not have an associated file.");
+
+            try
+            {
+                var ds = Path.DirectorySeparatorChar;
+
+                string fullPath = proof.Location;
+
+                var fileContent = System.IO.File.ReadAllBytes(fullPath);
+
+                if (fileContent == null) return BadRequest("Not found");
+
+                return File(fileContent, MediaTypeNames.Application.Octet, proof.DocumentName + System.IO.Path.GetExtension(proof.Location));
+
+            }
+            catch (Exception ex)
+            {
+
+                return BadRequest(ex.Message);
+
+            }
+
+        }
+
+        [HttpGet]
         [Route("getPagination/{page}")]
-        public IActionResult GetPagination(int page, string condition ="")
+        public IActionResult GetPagination(int page, string condition = "")
         {
             var byPage = 8;
             condition = condition.ToLower();
@@ -166,9 +202,10 @@ namespace PO.Controllers
             }
             catch (Exception ex)
             {
-                return BadRequest(ex.Message);  
+                return BadRequest(ex.Message);
             }
         }
+
 
         //[HttpGet]
         //[Route("Proofs/download/{int:id}")]
@@ -178,10 +215,10 @@ namespace PO.Controllers
         //    byte[] fileBytes;
         //    var proof = _context.ProofOfDeliveries.Find(id);
 
-        
 
 
-            
+
+
         //    return null;
         //}
 

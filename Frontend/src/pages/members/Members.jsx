@@ -1,7 +1,7 @@
 import { useEffect, useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import MembersService from "../../services/MembersService";
-import { Container, Button, Table, InputGroup } from "react-bootstrap";
+import { Container, Button, Table, InputGroup, Row, Col } from "react-bootstrap";
 import { RoutesNames } from "../../constants";
 import { IoIosAdd } from 'react-icons/io';
 import { FaEdit, FaTrash } from 'react-icons/fa';
@@ -99,6 +99,8 @@ export default function Members() {
                         <td>{Text = MemberStatusDisplayText(member)}</td>
                         <td>{member.email}</td>
                         <td className="alignCenter">
+                            <Row>
+                                <Col>
                             <Button className="editBtn"
                             variant="primary"
                             onClick={() =>{navigate(`/members/${member.id}`)}}
@@ -107,7 +109,8 @@ export default function Members() {
                                 size={25}
                                 />
                             </Button>
-
+                            </Col>
+                            <Col>
                             <Button className="trashBtn"
                             variant="danger"
                             onClick={()=> (setEntityID(member.id), setShowDeleteModal(true))}
@@ -116,7 +119,8 @@ export default function Members() {
                             size = {25}
                             />
                             </Button>
-
+                            </Col>
+                            </Row>
                         </td>
 
                     </tr>

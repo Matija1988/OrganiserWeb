@@ -5,6 +5,7 @@ using Microsoft.EntityFrameworkCore.Query.SqlExpressions;
 using PO.Data;
 using PO.Extensions;
 using PO.Models;
+using System.Net.Mime;
 using System.Text;
 using System.Xml;
 
@@ -30,6 +31,16 @@ namespace PO.Controllers
             DbSet = _context.Projects;
 
         }
+
+        /// <summary>
+        /// Metoda koja brise sve entitete povezane sa projektom osim clanova koje mice iz liste
+        /// clanova u aktivnosti
+        /// Deletes all entities connected to the project, except members they are only removed 
+        /// from the member list in the activity
+        /// </summary>
+        /// <param name="projectName"></param>
+        /// <returns></returns>
+        /// <exception cref="Exception"></exception>
         [HttpDelete]
         [Route("Project/Killswitchproject/{projectName}")]
         public IActionResult KillSwitchProject(string projectName)
@@ -84,6 +95,86 @@ namespace PO.Controllers
             }
 
         }
+
+        [HttpGet]
+        [Route("getProjectFiles/{id:int}")]
+
+        public IActionResult getProjectFiles(int id)
+        {
+            var project = _context.Projects.Find(id);
+
+            if (project == null)
+            {
+                return StatusCode(StatusCodes.Status404NotFound);
+            }
+
+            var activities = _context.activities.Include(p => p.Project).Where(p => p.ID == id).ToList();
+            var proofs = _context.ProofOfDeliveries.Include(a => a.Activity).ToList();
+
+            try
+            {
+                var ds = Path.DirectorySeparatorChar;
+
+                string projectFolder = Path.Combine(Directory.GetCurrentDirectory()
+                    + ds + project.ProjectName);
+
+                if (!System.IO.Directory.Exists(projectFolder))
+                {
+                    System.IO.Directory.CreateDirectory(projectFolder);
+
+                
+                }
+
+                foreach (Activity activity in activities)
+                {
+                    if (activity.IsFinished == true)
+                    {
+                        string activityFolder = Path.Combine(Directory.GetCurrentDirectory()
+                        + ds + project.ProjectName + ds + activity.ActivityName);
+
+                        if (!System.IO.Directory.Exists(activityFolder))
+                        {
+                            System.IO.Directory.CreateDirectory(activityFolder);
+
+                
+                        }
+
+                        foreach (ProofOfDelivery pod in proofs)
+                        {
+                            if (pod.Activity.ID == activity.ID && pod.Location != null && pod.Location.Length < 0)
+                            {
+                                var filePath = Path.Combine(activityFolder + ds);
+
+                                var fileContent = System.IO.File.ReadAllBytes(filePath);
+
+                                if (fileContent == null) return BadRequest("Not found");
+
+                                return File(fileContent, MediaTypeNames.Application.Octet,
+                                    pod.DocumentName + System.IO.Path.GetExtension(pod.Location));
+                            }       
+                        }
+                    }
+                }
+            }
+            catch (Exception ex)
+            {
+                StringBuilder sb = new StringBuilder();
+                sb.Append("The download was stopped: Possible issue in entity connections").Append(ex.Message);
+                return BadRequest(sb);
+            }
+
+
+            return StatusCode(StatusCodes.Status200OK);
+
+        }
+
+
+        /// <summary>
+        /// Brisanje entiteta projekt
+        /// Delete project entity
+        /// </summary>
+        /// <param name="entity"></param>
+        /// <exception cref="Exception"></exception>
 
         protected override void ControlDelete(Project entity)
         {

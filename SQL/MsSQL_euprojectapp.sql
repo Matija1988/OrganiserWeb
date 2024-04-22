@@ -229,5 +229,3 @@ select * from members;
 --	values (@firstname, @lastname,@username, @password, @isTeamLeader);
 --END 
 
-
-

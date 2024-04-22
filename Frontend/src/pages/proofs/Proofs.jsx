@@ -4,7 +4,7 @@ import ProofsService from "../../services/ProofsService";
 import { Container, Button, Table, InputGroup, Modal, Row, Col, Pagination } from "react-bootstrap";
 import { RoutesNames } from "../../constants";
 import { IoIosAdd } from 'react-icons/io';
-import { FaEdit, FaTrash, FaUpload } from 'react-icons/fa';
+import { FaDownload, FaEdit, FaTrash, FaUpload } from 'react-icons/fa';
 import moment from "moment";
 import Form from 'react-bootstrap/Form';
 
@@ -63,18 +63,6 @@ export default function Proofs() {
         hideLoading();
     }
 
-    // async function fetchProofs() {
-    //     showLoading();
-    //     const response = await ProofsService.read('Proof');
-    //     if (!response.ok) {
-    //         hideLoading();
-    //         showError(response.data);
-    //         return;
-    //     }
-    //     setProofs(response.data);
-    //     hideLoading();
-    // }
-
     function FormatDateCreated(proof) {
         return proof.datecreated == null ? 'Not defined' :
             moment.utc(proof.datecreated).format('DD.MM.YYYY.')
@@ -94,6 +82,7 @@ export default function Proofs() {
         hideLoading();
 
     }
+
 
     useEffect(() => {
         fetchProofs();
@@ -124,6 +113,23 @@ export default function Proofs() {
                 setShowModal(false);
             }
         }
+    }
+
+    
+    async function download(id) { 
+        showLoading();
+        
+
+        const response = await ProofsService.downloadFile(id);
+        if(!response.ok){
+            hideLoading();
+            showError(response.data);
+            return;
+        }
+        
+
+        fetchProofs();
+        hideLoading();
     }
 
     const totalPages = Math.ceil(totalEntities / 8);
@@ -231,26 +237,45 @@ export default function Proofs() {
                                 </td>
                                 <td>{entity.activityName}</td>
                                 <td className="alignCenter">
-                                    <Button className="editBtn"
-                                        variant="primary"
-                                        onClick={() => { navigate(`/proofs/${entity.id}`) }}
-                                    >
-                                        <FaEdit
-                                            size={15}
-                                        />
-                                    </Button>
-                                    <Button className="uploadFileBtn" onClick={() => setFileModal(entity)}>
-                                        <FaUpload size={15}/>
-                                    </Button>
-
-                                    <Button className="trashBtn"
-                                        variant="danger"
-                                        onClick={() => (setEntityID(entity.id), setShowDeleteModal(true))}
-                                    >
-                                        <FaTrash
-                                            size={15}
-                                        />
-                                    </Button>
+                                   
+                                    <Row>
+                                        <Col>
+                                            <Button className="editBtn"
+                                                variant="primary"
+                                                onClick={() => { navigate(`/proofs/${entity.id}`) }}
+                                            >
+                                                <FaEdit
+                                                    size={15}
+                                                />
+                                            </Button>
+                                        </Col>
+                                        <Col>
+                                            <Button className="uploadFileBtn" onClick={() => setFileModal(entity)}>
+                                                <FaUpload size={15} />
+                                            </Button>
+                                        </Col>
+                                    </Row>
+                                    <Row>
+                                        <Col>
+                                        <Button className="downloadBtn"
+                                        onClick={()=> download(entityID)}
+                                        >
+                                            <FaDownload
+                                                size={15}                
+                                                />
+                                            </Button>
+                                        </Col>
+                                        <Col>
+                                            <Button className="trashBtn"
+                                                variant="danger"
+                                                onClick={() => (setEntityID(entity.id), setShowDeleteModal(true))}
+                                            >
+                                                <FaTrash
+                                                    size={15}
+                                                />
+                                            </Button>
+                                        </Col>
+                                    </Row>
 
                                 </td>
 

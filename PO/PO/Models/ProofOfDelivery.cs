@@ -25,6 +25,7 @@ namespace PO.Models
         /// Date the document was created on
         /// </summary>
         public DateTime? DateCreated { get; set; }
+        
 
         /// <summary>
         /// Tko je stvorio dokument
