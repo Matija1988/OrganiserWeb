@@ -72,7 +72,7 @@ export default function MembersCreate() {
                 <InputText atribute='Password' value=''/>
                 <InputText atribute='email' value='' />
                 <InputCheckbox atribute='Is team leader' value=''/>
-                <Actions cancel={RoutesNames.MEMBERS_READ} action='Add member'/>
+                <Actions cancel={RoutesNames.MEMBERS_READ} action='ADD MEMBER'/>
             </Form>
         </Container>
         </>

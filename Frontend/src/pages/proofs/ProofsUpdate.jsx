@@ -228,12 +228,11 @@ export default function ProofUpdate() {
                     <Form.Select
                     value={proof.activityID}
                     onChange= {((e)=> {
-                        setActivityID(e.target.value)
-                    })}
+                        setActivityID(e.target.value)})}
                     >
-                        {activity && activity.map((activity, index)=>(
-                            <option key={index} value={activity.id}>
-                                {activity.activityName}
+                        {activity && activity.map((e, index)=>(
+                            <option key={index} value={e.id}>
+                                {e.activityName}
                             </option>
                         ))}
 

@@ -101,7 +101,9 @@ export default function Proofs() {
     }
 
     async function setFile(e) {
-        if (e.currentTarget.files) {
+        showLoading();
+        if (e.currentTarget.files) 
+        {
             const formData = new FormData();
             formData.append('file', e.currentTarget.files[0]);
             const config = {
@@ -110,6 +112,7 @@ export default function Proofs() {
                 },
             };
             const response = await ProofsService.uploadFile(pickedEntity.id, formData, config);
+            hideLoading();
             alert(getAlertMessages(response.data));
             if (response.ok) {
                 fetchProofs();
@@ -120,9 +123,11 @@ export default function Proofs() {
 
     
     function onDownloadClick(id, name) {
+        showLoading();
           setProofID(id);
           setProofName(name);
          download(id, name);
+         hideLoading();
       
       }
 

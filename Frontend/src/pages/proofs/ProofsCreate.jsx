@@ -153,8 +153,6 @@ export default function ProofsCreate() {
                     />
                     </Col>
                 </Row>
-                    
-
                     <Form.Group controlId='activityID'>
                         <Form.Label>Activity</Form.Label>
                         <FormSelect required

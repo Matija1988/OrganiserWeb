@@ -115,7 +115,7 @@ export default function ProjectsCreate() {
 
                     <InputCheckbox atribute="isFinished" value={false} />
 
-                    <Actions cancel={RoutesNames.PROJECTS_READ} action="Add project" />
+                    <Actions cancel={RoutesNames.PROJECTS_READ} action="ADD PROJECT" />
                 </Form>
             </Container>
         </>
