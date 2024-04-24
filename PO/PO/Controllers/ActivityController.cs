@@ -77,25 +77,25 @@ namespace PO.Controllers
         /// <returns></returns>
 
         [HttpPost]
-        [Route("{id:int}/add/{memberID:int}")] 
+        [Route("{id:int}/add/{memberID:int}")]
 
         public IActionResult AssignMemberToActivity(int id, int memberID)
         {
-            if(!ModelState.IsValid)
+            if (!ModelState.IsValid)
             {
                 return BadRequest();
             }
 
-            if(id <= 0 || memberID <= 0)
+            if (id <= 0 || memberID <= 0)
             {
                 return BadRequest();
             }
 
             try
             {
-                var memberToActivity = _context.activities.Include(i =>i.Members).FirstOrDefault(i => i.ID == id);
+                var memberToActivity = _context.activities.Include(i => i.Members).FirstOrDefault(i => i.ID == id);
 
-                if(memberToActivity == null)
+                if (memberToActivity == null)
                 {
                     return BadRequest();
                 }
@@ -111,7 +111,8 @@ namespace PO.Controllers
 
                 return Ok();
 
-            } catch (Exception ex)
+            }
+            catch (Exception ex)
             {
                 return StatusCode(StatusCodes.Status503ServiceUnavailable, ex.Message);
             }

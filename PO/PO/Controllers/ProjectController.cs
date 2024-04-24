@@ -5,6 +5,7 @@ using Microsoft.EntityFrameworkCore.Query.SqlExpressions;
 using PO.Data;
 using PO.Extensions;
 using PO.Models;
+using System.IO.Compression;
 using System.Net.Mime;
 using System.Text;
 using System.Xml;
@@ -99,7 +100,7 @@ namespace PO.Controllers
         [HttpGet]
         [Route("getProjectFiles/{id:int}")]
 
-        public IActionResult getProjectFiles(int id)
+        public async Task<ActionResult> getProjectFiles(int id)
         {
             var project = _context.Projects.Find(id);
 
@@ -108,53 +109,74 @@ namespace PO.Controllers
                 return StatusCode(StatusCodes.Status404NotFound);
             }
 
-            var activities = _context.activities.Include(p => p.Project).Where(p => p.ID == id).ToList();
-            var proofs = _context.ProofOfDeliveries.Include(a => a.Activity).ToList();
+            var activities = _context.activities.Include(p => p.Project).Where(p => p.Project.ID == id).ToList();
+            var proofs = _context.ProofOfDeliveries.Include(a => a.Activity).Where(a => a.Activity.Project.ID == id).ToList();
+
+
 
             try
             {
-                var ds = Path.DirectorySeparatorChar;
 
-                string projectFolder = Path.Combine(Directory.GetCurrentDirectory()
-                    + ds + project.ProjectName);
-
-                if (!System.IO.Directory.Exists(projectFolder))
+                foreach (ProofOfDelivery pod in proofs)
                 {
-                    System.IO.Directory.CreateDirectory(projectFolder);
 
-                
+
+                    var filePath = Path.Combine(pod.Location);
+
+                    var fileContent = System.IO.File.ReadAllBytes(filePath);
+
+                    if (fileContent == null) return BadRequest("Not found");
+
+                    return File(fileContent, MediaTypeNames.Application.Octet,
+                           pod.DocumentName + System.IO.Path.GetExtension(pod.Location));
+
                 }
 
-                foreach (Activity activity in activities)
-                {
-                    if (activity.IsFinished == true)
-                    {
-                        string activityFolder = Path.Combine(Directory.GetCurrentDirectory()
-                        + ds + project.ProjectName + ds + activity.ActivityName);
 
-                        if (!System.IO.Directory.Exists(activityFolder))
-                        {
-                            System.IO.Directory.CreateDirectory(activityFolder);
+                //    var ds = Path.DirectorySeparatorChar;
 
-                
-                        }
+                //    string projectFolder = Path.Combine(Directory.GetCurrentDirectory()
+                //        + ds + project.UniqueID);
 
-                        foreach (ProofOfDelivery pod in proofs)
-                        {
-                            if (pod.Activity.ID == activity.ID && pod.Location != null && pod.Location.Length < 0)
-                            {
-                                var filePath = Path.Combine(activityFolder + ds);
+                //    if (!System.IO.Directory.Exists(projectFolder))
+                //    {
+                //        System.IO.Directory.CreateDirectory(projectFolder);
 
-                                var fileContent = System.IO.File.ReadAllBytes(filePath);
 
-                                if (fileContent == null) return BadRequest("Not found");
+                //    }
 
-                                return File(fileContent, MediaTypeNames.Application.Octet,
-                                    pod.DocumentName + System.IO.Path.GetExtension(pod.Location));
-                            }       
-                        }
-                    }
-                }
+                //    foreach (Activity activity in activities)
+                //    {
+
+                //        string activityFolder = Path.Combine(projectFolder + ds + activity.ActivityName);
+
+                //        if (!System.IO.Directory.Exists(activityFolder))
+                //        {
+                //            System.IO.Directory.CreateDirectory(activityFolder);
+
+                //        }
+
+
+                //        foreach (ProofOfDelivery pod in proofs)
+                //        {
+                //            if (activity.ID == pod.Activity.ID)
+                //            {
+
+                //                var filePath = Path.Combine(pod.Location);
+
+                //                var fileContent = System.IO.File.ReadAllBytes(filePath);
+
+                //                if (fileContent == null) return BadRequest("Not found");
+
+                //                File(fileContent, MediaTypeNames.Application.Octet,
+                //                      pod.DocumentName + System.IO.Path.GetExtension(pod.Location));
+
+
+                //            }
+
+                //        }
+
+                // }
             }
             catch (Exception ex)
             {
@@ -167,6 +189,7 @@ namespace PO.Controllers
             return StatusCode(StatusCodes.Status200OK);
 
         }
+
 
 
         /// <summary>

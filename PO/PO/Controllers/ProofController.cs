@@ -124,6 +124,7 @@ namespace PO.Controllers
                 var ds = Path.DirectorySeparatorChar;
                 string dir = Path.Combine(Directory.GetCurrentDirectory()
                     + ds + "wwwroot" + ds + "file" + ds + "proof");
+         
                 if (!System.IO.Directory.Exists(dir))
                 {
                     System.IO.Directory.CreateDirectory(dir);

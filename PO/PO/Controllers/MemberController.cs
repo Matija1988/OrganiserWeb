@@ -5,6 +5,7 @@ using PO.Models;
 using Microsoft.EntityFrameworkCore;
 using System.Text;
 using PO.Mappers;
+using BCrypt.Net;
 
 namespace PO.Controllers
 {
@@ -68,6 +69,8 @@ namespace PO.Controllers
 
         protected override Member UpdateEntity(MemberDTOInsertUpdate entityDTO, Member entityFromDB)
         {
+            if(entityDTO.Password == entityFromDB.Password) { throw new Exception("Password must be changed!"); }
+
             var passwordHash = BCrypt.Net.BCrypt.HashPassword(entityDTO.Password, 12);
             
             entityFromDB.FirstName = entityDTO.FirstName;
