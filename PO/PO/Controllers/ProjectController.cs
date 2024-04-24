@@ -1,4 +1,6 @@
-﻿using Microsoft.AspNetCore.Mvc;
+﻿using Azure;
+using FluentEmail.Core;
+using Microsoft.AspNetCore.Mvc;
 using Microsoft.Data.SqlClient;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Query.SqlExpressions;
@@ -110,73 +112,48 @@ namespace PO.Controllers
             }
 
             var activities = _context.activities.Include(p => p.Project).Where(p => p.Project.ID == id).ToList();
-            var proofs = _context.ProofOfDeliveries.Include(a => a.Activity).Where(a => a.Activity.Project.ID == id).ToList();
-
-
+            var proofs = _context.ProofOfDeliveries.Include(a=> a.Activity).ToList();
 
             try
             {
+                var ds = Path.DirectorySeparatorChar;
 
-                foreach (ProofOfDelivery pod in proofs)
+                var projectFolder = Path.Combine(Directory.GetCurrentDirectory() + ds + project.ProjectName);
+
+
+                foreach (Activity activity in activities)
                 {
 
+                    string activityFolder = Path.Combine(projectFolder + ds + activity.ActivityName);
 
-                    var filePath = Path.Combine(pod.Location);
+                    if (!System.IO.Directory.Exists(activityFolder))
+                    {
+                        System.IO.Directory.CreateDirectory(activityFolder);
 
-                    var fileContent = System.IO.File.ReadAllBytes(filePath);
+                    }
 
-                    if (fileContent == null) return BadRequest("Not found");
 
-                    return File(fileContent, MediaTypeNames.Application.Octet,
-                           pod.DocumentName + System.IO.Path.GetExtension(pod.Location));
+                    foreach (ProofOfDelivery pod in proofs)
+                    {
+                        if(activity.ID == pod.ID) { 
+
+                            var filePath = Path.Combine(pod.Location);
+
+                            if (pod.Location == null) return NotFound("Not found at location " + pod.Location);
+
+                            var fileContent = System.IO.File.ReadAllBytes(filePath);
+
+                            if (fileContent == null) return BadRequest("Not found");
+
+
+                            File(fileContent, MediaTypeNames.Application.Octet,
+                                   pod.DocumentName + System.IO.Path.GetExtension(pod.Location));
+                        }
+
+                        Console.Write(proofs.Count);
+                    }
 
                 }
-
-
-                //    var ds = Path.DirectorySeparatorChar;
-
-                //    string projectFolder = Path.Combine(Directory.GetCurrentDirectory()
-                //        + ds + project.UniqueID);
-
-                //    if (!System.IO.Directory.Exists(projectFolder))
-                //    {
-                //        System.IO.Directory.CreateDirectory(projectFolder);
-
-
-                //    }
-
-                //    foreach (Activity activity in activities)
-                //    {
-
-                //        string activityFolder = Path.Combine(projectFolder + ds + activity.ActivityName);
-
-                //        if (!System.IO.Directory.Exists(activityFolder))
-                //        {
-                //            System.IO.Directory.CreateDirectory(activityFolder);
-
-                //        }
-
-
-                //        foreach (ProofOfDelivery pod in proofs)
-                //        {
-                //            if (activity.ID == pod.Activity.ID)
-                //            {
-
-                //                var filePath = Path.Combine(pod.Location);
-
-                //                var fileContent = System.IO.File.ReadAllBytes(filePath);
-
-                //                if (fileContent == null) return BadRequest("Not found");
-
-                //                File(fileContent, MediaTypeNames.Application.Octet,
-                //                      pod.DocumentName + System.IO.Path.GetExtension(pod.Location));
-
-
-                //            }
-
-                //        }
-
-                // }
             }
             catch (Exception ex)
             {
