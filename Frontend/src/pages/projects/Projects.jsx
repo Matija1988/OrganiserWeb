@@ -2,7 +2,7 @@ import { useEffect, useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import { Container, Button, Table, InputGroup, Row, Col } from "react-bootstrap";
 import { IoIosAdd } from 'react-icons/io';
-import { FaEdit, FaSkull, FaTrash, FaWrench } from 'react-icons/fa';
+import { FaDownload, FaEdit, FaSkull, FaTrash, FaWrench } from 'react-icons/fa';
 import ProgressBar from "react-bootstrap/ProgressBar";
 import Form from 'react-bootstrap/Form';
 import moment from 'moment';
@@ -119,7 +119,7 @@ export default function Projects() {
     async function projectDelete(id) {
         showLoading();
         const response = await ProjectService.remove('Project', id);
-        
+
         if (response.ok) {
             readProjects();
         } else {
@@ -128,25 +128,64 @@ export default function Projects() {
         hideLoading();
     }
 
-    async function kill(input) {
+    async function kill(entityID, input) {
         showLoading();
-        const response = await ProjectService.killswitch(input);
-        if(!response.ok){
+        const response = await ProjectService.killswitch(entityID, input);
+        if (!response.ok) {
             showError(response.data);
             hideLoading();
-            console.log("This input in kill:" + input)
             return;
-        }    
+        }
         hideLoading();
     }
 
     async function handleKillSwitch(customInput) {
         showLoading();
-        console.log("This is the input costum input: " + customInput);
-        kill(customInput);
+        kill(entityID, customInput);
         setShowKillModal(false);
         await readProjects();
         hideLoading();
+    }
+
+     function onDownloadClick(id, name) {
+        showLoading();
+        download(id, name);
+        hideLoading();
+    }
+
+    async function download(id, name) {
+
+        const response = await ProjectService.downloadAllProofs(id);
+        
+        if(!response.ok){
+            hideLoading();
+            showError(response.data);
+            alert("Project might not have any files to download!!!");
+            return;
+        }
+
+        try
+
+        {
+            const url = window.URL.createObjectURL(new Blob([response.data]), {type:'application/zip'});
+   
+            const fileName = name;
+
+            const link = document.createElement('a');
+
+            link.href = url;
+
+            link.setAttribute('download', fileName + ".zip");
+            document.body.appendChild(link);
+
+            link.click();
+
+            document.body.removeChild(link);
+            readProjects();
+        } catch (error){
+            console.error('Error downloading file:', error);
+        }
+
     }
 
     return (
@@ -180,7 +219,7 @@ export default function Projects() {
                             <th>Unique ID</th>
                             <th>Start date / Deadline</th>
                             <th>Status</th>
-                            <th>Actions</th>
+                            <th className="tableProjectActions">Actions</th>
                         </tr>
                     </thead>
                     <tbody>
@@ -231,6 +270,16 @@ export default function Projects() {
                                             </Button>
                                         </Col>
                                         <Col>
+                                            <Button 
+                                            className="downloadBtn"
+                                            title="Download all proofs in a zip"
+                                            onClick={()=> onDownloadClick(project.id, project.projectName)}>
+                                                <FaDownload>
+
+                                                </FaDownload>
+                                            </Button>
+                                        </Col>
+                                        <Col>
                                             <Button className="editBtn"
                                                 variant="primary"
                                                 label="Edit project"
@@ -243,23 +292,26 @@ export default function Projects() {
                                     </Row>
                                     <Row>
                                         <Col>
+                                        </Col>
+                                        <Col>
                                             <Button className="trashBtn"
                                                 variant='danger'
                                                 label="Delete project"
-                                              //  onClick={() => projectDelete(project.id)}
-                                            onClick={()=> (setEntityID(project.id), setShowDeleteModal(true))}
+                                                //  onClick={() => projectDelete(project.id)}
+                                                onClick={() => (setEntityID(project.id), setShowDeleteModal(true))}
                                             >
                                                 <FaTrash
                                                     size={15}
                                                 />
                                             </Button>
-                                       
+
                                         </Col>
+
                                         <Col>
                                             <Button className="killBtn"
                                                 variant='danger'
                                                 label="Delete project"
-                                            onClick={() => (setShowKillModal(true))}
+                                                onClick={() => (setShowKillModal(true), setEntityID(project.id))}
                                             >
                                                 <FaSkull
                                                     size={15}
@@ -276,18 +328,18 @@ export default function Projects() {
                 </Table>
             </Container>
             <DeleteModal
-            show={showDeleteModal}
-            handleClose={()=>setShowDeleteModal(false)}
-            handleDelete={()=> (projectDelete(entityID), setShowDeleteModal(false))}
-            
+                show={showDeleteModal}
+                handleClose={() => setShowDeleteModal(false)}
+                handleDelete={() => (projectDelete(entityID), setShowDeleteModal(false))}
+
             />
-            <KillSwitchModal 
-            show={showKillModal}
-            handleClose={()=>setShowKillModal(false)}
-            handleKill={handleKillSwitch}                
+            <KillSwitchModal
+                show={showKillModal}
+                handleClose={() => setShowKillModal(false)}
+                handleKill={handleKillSwitch}
             />
 
         </>
     );
-x
+    x
 }

@@ -133,19 +133,12 @@ export default function Proofs() {
 
     
     async function download(id, name) {
-        showLoading();
-
-        console.log("ID ID ID:" + id);
 
         const response = await ProofsService.downloadFile(id);
         if (!response.ok) {
-            hideLoading();
             showError(response.data);
             return;
         }
-
-        console.log("Response is " + response.data);
-
         try {
             showLoading();
             const url = window.URL.createObjectURL(new Blob([response.data]));

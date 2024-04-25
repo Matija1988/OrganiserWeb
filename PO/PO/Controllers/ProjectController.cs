@@ -1,6 +1,8 @@
 ﻿using Azure;
 using FluentEmail.Core;
+using Microsoft.AspNetCore.Http.HttpResults;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.CodeAnalysis.CSharp.Syntax;
 using Microsoft.Data.SqlClient;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Query.SqlExpressions;
@@ -45,11 +47,17 @@ namespace PO.Controllers
         /// <returns></returns>
         /// <exception cref="Exception"></exception>
         [HttpDelete]
-        [Route("Project/Killswitchproject/{projectName}")]
-        public IActionResult KillSwitchProject(string projectName)
+        [Route("Project/Killswitchproject/{projectID:int}/{projectName}")]
+        public IActionResult KillSwitchProject(int projectID,string projectName)
         {
 
             var entity = _context.Projects.Where(p => p.ProjectName == projectName).FirstOrDefault();
+            var entityWithID = _context.Projects.Find(projectID);
+
+            if(entityWithID != entity) 
+            {
+                return StatusCode(StatusCodes.Status400BadRequest, "Project ID does not match project name");
+            }
 
             if (entity == null)
             {
@@ -150,7 +158,6 @@ namespace PO.Controllers
                                    pod.DocumentName + System.IO.Path.GetExtension(pod.Location));
                         }
 
-                        Console.Write(proofs.Count);
                     }
 
                 }
@@ -166,6 +173,69 @@ namespace PO.Controllers
             return StatusCode(StatusCodes.Status200OK);
 
         }
+
+        [HttpGet]
+        [Route("downloadAllProjectProofs/{projectID:int}")] 
+        
+        public  async Task<IActionResult> DownloadAllProjectFiles(int projectID)
+        {
+            var proofs = ProofList(projectID);
+
+            if(proofs == null)
+            {
+                return StatusCode(StatusCodes.Status409Conflict, "There are no files in this project to download!");
+            }
+
+            var project = _context.Projects.Find(projectID);
+
+            var zipName = project.ProjectName;
+
+            using(MemoryStream ms = new MemoryStream())
+            {
+                using (var zip = new ZipArchive(ms, ZipArchiveMode.Create, true)) 
+                {
+                    proofs.ForEach(pod =>
+                    {
+                        if(pod.Location == null)
+                        {
+                            return;
+                        }
+
+                        string fullPath = pod.Location;
+
+                        var fileContent = System.IO.File.ReadAllBytes(fullPath);
+
+                        var entry = zip.CreateEntry(pod.DocumentName + System.IO.Path.GetExtension(pod.Location));
+
+                        using (var fileStream = new MemoryStream(fileContent))
+
+                        using (var entryStream = entry.Open())
+                        {
+                           fileStream.CopyTo(entryStream);
+                        }
+                      
+                    });
+                }
+
+                return File(ms.ToArray(), "application/zip", zipName + ".zip");
+            }
+
+        }
+        
+
+
+        private List<ProofOfDelivery> ProofList(int projectID)
+        {
+
+            var proofs = _context.ProofOfDeliveries.Include(a => a.Activity)
+                .Where(p => p.Activity.Project.ID == projectID).ToList();
+
+            return proofs;
+
+        }
+
+
+        
 
 
 

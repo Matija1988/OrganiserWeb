@@ -34,22 +34,22 @@ export default function Login() {
                 <Row>
                     <Col className='LoginText2'>Launch your projects into cyberspace</Col>
                 </Row>
-                <Form.Label>texasranger</Form.Label>
+                <Form.Label>Username</Form.Label>
                 <Form.Group className="mb-3" controlId="formBasicEmail">
                     <Form.Control
                         type="username"
                         name="username"
-                        placeholder="texasranger"
+                        placeholder="Username"
                         maxLength={255}
                         
                     />
                 </Form.Group>
-                <Form.Label>chuckneedsnopassword</Form.Label>
+                <Form.Label>Password</Form.Label>
                 <Form.Group className="mb-3" controlId="formBasicPassword">
                     <Form.Control
                         type="password"
                         name="password"
-                        placeholder="chuckneedsnopassword"
+                        placeholder="Password"
                         required
                     />
                 </Form.Group>

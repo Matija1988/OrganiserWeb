@@ -19,9 +19,14 @@ async function listProjectActivities(id) {
     .then((res) => { return handleSuccess(res);}).catch((e) => { return processError(e);});
 }
 
-async function killswitch(input){
-    return await httpService.delete('/'+name+'/Project/Killswitchproject/' + input)
+async function killswitch(id, input){
+    return await httpService.delete('/'+name+'/Project/Killswitchproject/' + id +'/' + input)
     .then((res) => {return handleSuccess(res);}).catch((e)=> {return processError(e);});
 }
 
-export default { read, getByID, create, update, remove, searchProjectByName, listProjectActivities, killswitch};
+async function downloadAllProofs(id) {
+    return await httpService.get('/' + name + '/downloadAllProjectProofs/' + id, {responseType: 'blob'})
+    .then((res) => {return handleSuccess(res);}).catch((e)=>{return processError(e);});
+}
+
+export default { read, getByID, create, update, remove, searchProjectByName, listProjectActivities, killswitch, downloadAllProofs};

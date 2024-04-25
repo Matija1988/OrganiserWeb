@@ -122,6 +122,7 @@ namespace PO.Controllers
             try
             {
                 var ds = Path.DirectorySeparatorChar;
+
                 string dir = Path.Combine(Directory.GetCurrentDirectory()
                     + ds + "wwwroot" + ds + "file" + ds + "proof");
          
@@ -152,7 +153,7 @@ namespace PO.Controllers
         [HttpGet]
         [Route("getFile/{proofID:int}")]
 
-        public async Task<ActionResult> dowloadFile(int proofID)
+        public async Task<ActionResult> downloadFile(int proofID)
         {
             var proof = _context.ProofOfDeliveries.Find(proofID);
 
