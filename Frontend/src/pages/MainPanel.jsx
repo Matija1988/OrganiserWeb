@@ -67,24 +67,11 @@ export default function MainPanel() {
 
   
 
-    function selectSlot() {
-        const title = window.prompt('New Event name');
-       
-        if(title) {
-            setDes((Activity, Member) => [...Activity,{ startDate, dateFinish, activityDescription, id}, 
-                ...Member,{firstName, lastName}]);
-            
-        }
-        [setDes]
-        
-    } 
-
     const handleSelectedSlot = useCallback((start, end) => {
         const title = window.prompt('New Event name');
        
         if(title) {
-            setDes((Activity, Member) => [...Activity,{ startDate, dateFinish, activityDescription, id}, 
-                ...Member,{firstName, lastName}]);
+            setDes((Activity, Member) => [...Activity,{ startDate, dateFinish, activityDescription, id}]);
          
         }
         [setDes]
