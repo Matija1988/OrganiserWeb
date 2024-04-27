@@ -18,6 +18,7 @@ export default function MainPanel() {
     const [Activity, setActivity] = useState();
     const [Member, setMember] = useState();
 
+
     const [ActivityID, setActivityID] = useState(1);
     const [activityName, setActivityName] = useState('');
     const [activityDes, setActivityDes] = useState('');
@@ -44,11 +45,22 @@ export default function MainPanel() {
         hideLoading();
     }
 
-    
+    async function fetchActivityMembers(){
+        showLoading();
+        const response = await ActivitiesService.getActivityMembers(ActivityID);
+        if (!response.ok) {
+            showError(response.data);
+            return;
+        }
+        setMember(response.data);
+        hideLoading();
+    }
+ 
 
     async function load() {
         showLoading();
         fetchActivities();
+        fetchActivityMembers();
         hideLoading();
     }
 
@@ -57,10 +69,10 @@ export default function MainPanel() {
     },[]);
 
     const components = useMemo(()=>({
-        event: (Activity, Member),
+        event: (Activity),
      
         week :{           
-            event:(Activity, Member)
+            event:(Activity)
         },
         
     }),[])
@@ -71,17 +83,21 @@ export default function MainPanel() {
         const title = window.prompt('New Event name');
        
         if(title) {
-            setDes((Activity, Member) => [...Activity,{ startDate, dateFinish, activityDescription, id}]);
+            setDes((Activity, Member) => [...Activity,{ startDate, dateFinish, activityDescription, id},
+            ...Member,{firstName, lastName}]);
          
         }
         [setDes]
     });
 
     const handleSelectEvent = useCallback((des) => {
-                            setActivityID(des.id), 
-                            setActivityName(des.activityName), 
-                            setActivityDes(des.activityDescription),
-                            setShowInfoModal(true), []});
+            fetchActivityMembers(des.id),
+            setActivityID(des.id),
+            setActivityName(des.activityName),
+            setActivityDes(des.activityDescription),
+
+            setShowInfoModal(true), []
+    });
 
     return(
 
@@ -116,7 +132,7 @@ export default function MainPanel() {
             handleClose={()=>setShowInfoModal(false)}
             name = {activityName}
             description = {activityDes}
-            id = {ActivityID}
+            member={Member}
             />
             
         </>

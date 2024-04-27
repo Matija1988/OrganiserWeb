@@ -8,33 +8,11 @@ import useError from "../hooks/useError";
 import ActivitiesService from "../services/ActivitiesService";
 import { IoCodeSlashOutline } from "react-icons/io5";
 
-export default function CalendarDataModal({ show, handleClose, name, description, id }) {
-
-    const [member, setMember] = useState();
-
-    const [ID, setID] = useState(id);
+export default function CalendarDataModal({ show, handleClose, name, description, id, member }) {
 
     const { showLoading, hideLoading } = useLoading();
     const { showError } = useError();
-
-    async function fetchMembers(){
-        showLoading();
-        const response = await ActivitiesService.getActivityMembers(id);
-        if (!response.ok) {
-            showError(response.data);
-            return;
-        }
-        console.log("Members in modal:" + response.data);
-        setMember(response.data);
-        hideLoading();
-    }
-
-    useEffect(() => {
-        fetchMembers();
-    }, []);
-
-    console.log("ID IN MODAL:" + id);
-
+    
     return (
         <Modal show={show} onHide={handleClose} centered backdrop>
             <Modal.Header closeButton className="modalHeaderCalendar">

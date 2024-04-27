@@ -28,5 +28,5 @@ export const RoutesNames = {
 
 export const App = {
     URL: 'https://matijapavkovic-001-site1.itempurl.com',
-    DEV : true
+    DEV : false
 };
