@@ -155,7 +155,7 @@ export default function ActivitiesCreate() {
         });
 
     }
-
+ 
     return (
         <>
             <NavBar />

@@ -90,13 +90,17 @@ export default function MainPanel() {
         [setDes]
     });
 
-    const handleSelectEvent = useCallback((des) => {
-            fetchActivityMembers(des.id),
+    function handleModalInfo(des) {
+        fetchActivityMembers(des.id),
             setActivityID(des.id),
             setActivityName(des.activityName),
             setActivityDes(des.activityDescription),
 
-            setShowInfoModal(true), []
+            setShowInfoModal(true)
+    }
+
+    const handleSelectEvent = useCallback((des) => {
+            handleModalInfo(des), []
     });
 
     return(
