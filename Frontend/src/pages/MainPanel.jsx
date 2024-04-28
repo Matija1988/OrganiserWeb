@@ -33,21 +33,21 @@ export default function MainPanel() {
     const localizer = momentLocalizer(moment);
 
 
-    async function fetchActivities() {
+    async function fetchActivities() { 
         showLoading();
         const response = await ActivitiesService.read('Activity');
         if (!response.ok) {
             hideLoading();
             showError(response.data);
-            return;
+             return;
         }
         setActivity(response.data);
         hideLoading();
     }
 
-    async function fetchActivityMembers(){
+    async function fetchActivityMembers(des){
         showLoading();
-        const response = await ActivitiesService.getActivityMembers(ActivityID);
+        const response = await ActivitiesService.getActivityMembers(des.id);
         if (!response.ok) {
             showError(response.data);
             return;
@@ -60,7 +60,7 @@ export default function MainPanel() {
     async function load() {
         showLoading();
         fetchActivities();
-        fetchActivityMembers();
+      
         hideLoading();
     }
 
@@ -89,13 +89,13 @@ export default function MainPanel() {
         }
         [setDes]
     });
+    
 
     function handleModalInfo(des) {
-        fetchActivityMembers(des.id),
+        fetchActivityMembers(des),
             setActivityID(des.id),
             setActivityName(des.activityName),
             setActivityDes(des.activityDescription),
-
             setShowInfoModal(true)
     }
 
