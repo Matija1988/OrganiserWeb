@@ -1,0 +1,70 @@
+.projectTableHead{
+    font-family: "Tomorrow", sans-serif;
+    font-size: 1rem;
+    font-weight: 100;
+    color: #FF003C;
+
+}
+
+.projectTableHead{
+    font-family: "Tomorrow", sans-serif;
+    font-size: 1rem;
+    font-weight: 100;
+    color: #FF003C;
+
+
+}
+
+.projectTableHeadAlignCenter{
+    text-align: center;
+    
+}
+
+.mt-4 {
+ 
+    width: 100%;
+    font-family: "Tomorrow", sans-serif;
+    font-size: 1rem;
+    font-weight: 300;    
+    display:grid;
+
+    
+    
+}
+
+
+.btn {
+    width: 100%;
+    font-family: "Tomorrow", sans-serif;
+    color: #FF003C;
+    background-color: transparent;
+    outline-color: #FF003C;
+    border-color: #FF003C;
+    margin-top: 1%;
+    margin-bottom: 1%;
+
+}
+
+
+.FormMemberCreate{
+    font-family: "Tomorrow", sans-serif;
+    color: #FF003C;
+}
+
+
+.searchLabel{
+
+    background-color: transparent;
+
+    color: #FF003C;
+    
+    outline-color: #FF003C;
+    border-color: #FF003C;
+
+    margin-bottom: 1rcap;
+
+}
+
+.searchLabel::placeholder {
+    color: lightgray;
+}

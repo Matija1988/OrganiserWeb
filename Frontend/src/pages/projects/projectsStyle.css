@@ -1,0 +1,105 @@
+.projectTableHead{
+    font-family: "Tomorrow", sans-serif;
+    font-size: 1rem;
+    font-weight: 100;
+    color: #FF003C;
+
+}
+
+.tableProjectActions {
+    width: 20rcap;
+
+}
+
+.tableActivityActions{
+
+    width: 14rcap;
+}
+
+.killText{
+    font-family: "Tomorrow", sans-serif;
+    color: #FF003C;
+    text-align: center;
+}
+
+.killTextH1{
+    font-family: "Tomorrow", sans-serif;
+    color: #FF003C;
+    text-align: center;
+}
+
+.projectTableHeadAlignCenter{
+    text-align: center;
+    width: 10rcap;
+    
+}
+
+.mt-4 {
+ 
+    width: 100%;
+    font-family: "Tomorrow", sans-serif;
+    font-size: 1rem;
+    font-weight: 300;    
+    display:grid;
+
+}
+
+.FormProjectCreate{
+    font-family: "Tomorrow", sans-serif;
+    color: #FF003C;
+}
+
+.btn {
+    width: 100%;
+    font-family: "Tomorrow", sans-serif;
+    color: #FF003C;
+    background-color: transparent;
+    outline-color: #FF003C;
+    border-color: #FF003C;
+    
+    margin-bottom: 1%;
+
+}
+
+.btn:hover{
+    background-color: gray;
+}
+
+
+.form-select {
+    
+    background-color: transparent;
+    
+    border-radius: 1rcap;
+    color: #FF003C;
+    display: block;
+    outline-color: #FF003C;
+    border-color: #FF003C;
+    font-size: 1rem;
+    font-weight: 400;
+    line-height: 1.5;
+   
+    width: 100%;
+    margin-bottom: 1rcap;
+
+
+}
+
+.searchLabel{
+
+    background-color: transparent;
+
+    color: #FF003C;
+    
+    outline-color: #FF003C;
+    border-color: #FF003C;
+
+    margin-bottom: 1rcap;
+
+}
+
+.searchLabel::placeholder {
+    color: lightgray;
+}
+
+

@@ -1,0 +1,15 @@
+.navbar1 {
+    
+    cursor: pointer;
+
+}
+
+.bg-body-tertiary {
+    font-family: "Tomorrow", sans-serif;
+    color: gray;    
+       
+}
+
+.linkToMain{
+    margin-right: 1rem;
+}

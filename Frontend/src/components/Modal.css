@@ -1,0 +1,25 @@
+.modalHeader{
+    background-color: #212529;
+    color: red;
+    font-family: "Tomorrow", sans-serif;
+    font-size: x-large;
+    font-weight: 500;
+}
+
+.modalBody{
+    background-color: darkgray;
+    font-family: "Tomorrow", sans-serif;
+}
+
+.modalFooter{
+
+    background-color: #212529;
+}
+
+.modalHeaderCalendar{
+    background-color: #212529;
+    color: red;
+    font-family: "Tomorrow", sans-serif;
+    font-size: large;
+    font-weight: 400;
+}

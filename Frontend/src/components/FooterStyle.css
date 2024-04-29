@@ -1,0 +1,35 @@
+
+
+.footerMain{
+    background-color: #1c1e1f;
+        position: fixed;
+        bottom: 0;
+        left: 0;
+        right: 0;
+        z-index: 5;
+        width: 100%;
+        height: auto;
+        margin-top: auto;
+    
+}
+
+.footerMainText{
+    font-family: "Tomorrow", sans-serif;
+    color: #FF003C;
+}
+
+.footerLinkText{
+    font-family: "Tomorrow", sans-serif;
+    color: #FF003C;
+    opacity: 100%;
+    font-size: 15px;   
+    font-weight: 300;
+    text-align: left;
+    text-justify: auto;
+    align-self: center;
+}
+
+.links{
+    font-size: 10px;
+    text-align: left;
+}

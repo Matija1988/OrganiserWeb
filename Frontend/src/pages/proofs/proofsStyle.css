@@ -1,0 +1,79 @@
+.projectTableHead{
+    font-family: "Tomorrow", sans-serif;
+    font-size: 1rem;
+    font-weight: 100;
+    color: #FF003C;
+
+
+}
+
+.tableProofAction{
+    width: 15rcap;
+}
+
+
+.projectTableHeadAlignCenter{
+    text-align: center;
+    
+}
+
+.mt-4 {
+ 
+    width: 100%;
+    font-family: "Tomorrow", sans-serif;
+    font-size: 1rem;
+    font-weight: 300;    
+    display:grid;
+
+    
+    
+}
+
+.FormProjectCreate{
+    font-family: "Tomorrow", sans-serif;
+    color: #FF003C;
+}
+
+.btn {
+    width: 100%;
+    font-family: "Tomorrow", sans-serif;
+    color: #FF003C;
+    background-color: transparent;
+    outline-color: #FF003C;
+    border-color: #FF003C;
+    
+    margin-bottom: 1%;
+
+}
+
+.btn:hover{
+    background-color: gray;
+}
+
+
+
+.searchLabel{
+
+    background-color: transparent;
+
+    color: #FF003C;
+    
+    outline-color: #FF003C;
+    border-color: #FF003C;
+
+    margin-bottom: 1rcap;
+
+}
+
+
+.searchLabel::placeholder {
+    color: lightgray;
+}
+
+.dataModal .modal-content{
+    
+    background-color: #252526;
+    color: #FF003C;
+ 
+}
+

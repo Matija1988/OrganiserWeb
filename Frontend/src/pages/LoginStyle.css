@@ -1,0 +1,57 @@
+
+
+.LoginText{
+
+    font-family: "Rubik Doodle Shadow", system-ui;
+    font-size: 60px;
+    font-weight: 200;
+    color: #FF003C;
+    
+    flex-direction: column;
+    text-align: center;
+    align-self: center;
+    
+}
+
+.LoginText2 {
+    font-family: "Tomorrow", sans-serif;
+    color: #FF003C;
+    opacity: 100%;
+    font-size: 30px;
+    font-weight: 150;
+    text-align: center;
+    text-justify: auto;
+    align-self: center;
+    
+}
+
+.mb-3{
+    height: 200%;
+}
+
+
+
+.SignInButton{
+
+    font-family: "Tomorrow", sans-serif;
+    margin-top: 2%;
+    width: 80%;
+    align-self: auto;
+    color: #FF003C;
+    background-color: transparent;
+    
+    outline-color: #FF003C;
+    border-color: #FF003C;
+    
+    
+    }
+    
+    .SignInButton:hover {
+    
+       background-color: rgba(5,10,19,1);
+    }
+
+.loginContainer{
+    width: 80%;
+
+}
