@@ -5,6 +5,7 @@ using Microsoft.IdentityModel.Tokens;
 using System.IdentityModel.Tokens.Jwt;
 using System.Text;
 using Microsoft.AspNetCore.Mvc.ModelBinding;
+using System.Security.Claims;
 
 namespace PO.Controllers
 {
@@ -41,6 +42,7 @@ namespace PO.Controllers
 
             var tokenDescriptor = new SecurityTokenDescriptor
             {
+                Subject = new ClaimsIdentity(new[] { new Claim("id", user.Username), new Claim(ClaimTypes.Role, userBase.Role) }),
                 Expires = DateTime.UtcNow.Add(TimeSpan.FromHours(8)),
                 SigningCredentials = new SigningCredentials(new SymmetricSecurityKey(key), SecurityAlgorithms.HmacSha256)
             };

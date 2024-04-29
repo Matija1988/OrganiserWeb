@@ -58,8 +58,7 @@ namespace PO.Extensions
                         new List<string>()
                     }
                 });
-               
-
+             
                 var xmlFile = $"{Assembly.GetExecutingAssembly().GetName().Name}.xml";
                 var xmlPath = Path.Combine(AppContext.BaseDirectory, xmlFile);
                 sgo.IncludeXmlComments(xmlPath, includeControllerXmlComments: true);

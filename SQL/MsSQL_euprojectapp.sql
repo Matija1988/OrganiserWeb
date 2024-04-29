@@ -27,8 +27,9 @@ lastName varchar(50) not null,
 userName varchar(255) not null,
 password varchar(255) not null,
 email varchar(255) not null,
-isTeamLeader bit -- if true - pravo dodjeljivanja aktivnosti clanovima, promjene rokova, verifikacije 
+isTeamLeader bit, -- if true - pravo dodjeljivanja aktivnosti clanovima, promjene rokova, verifikacije 
 -- dokaznica
+role varchar(50)
 );
 
 create table activities(
@@ -96,26 +97,26 @@ values
 '2023-10-20',
 1);
 
-insert into members (firstName, lastName, userName, password, email, isTeamLeader)
+insert into members (firstName, lastName, userName, password, email, isTeamLeader, role)
 values 
 ('Chuck',
 'Norris',
 'texasranger',
 '$2a$12$yQlP0/3oJv0QGLJ5PJmM/eC5h47AgKGizapXB/ZC3pMHsksFImV6a', 
-'texasranger@gmail.com' ,1),
+'texasranger@gmail.com' ,1, 'TeamLeader'),
 ('Marko',
 'Marković',
-'MM007',
-'JamesBlond069', 
+'tester',
+'$2a$12$4EKW19NiUtct2iJsVPgzmOVIW.oAvHqaw.eBhtnYP/wvCE.7//.BC', 
 'matijapavkovic74@gmail.com',
-0),
+0, 'Member'),
 
 ('Petar',
 'Bočkaj',
 'Guc2A',
 'OsvetaKanižlićeve', 
 'matijapavkovic74@gmail.com',
-0);
+0, 'Member');
 
 insert activities (activityName, description, dateStart, dateFinish, isFinished, dateAccepted, projectID)
 values 

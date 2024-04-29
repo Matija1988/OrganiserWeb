@@ -6,6 +6,7 @@ using Microsoft.EntityFrameworkCore;
 using System.Text;
 using PO.Mappers;
 using BCrypt.Net;
+using Microsoft.AspNetCore.Authorization;
 
 namespace PO.Controllers
 {
@@ -93,6 +94,7 @@ namespace PO.Controllers
 
             return _mapper.MapReadList(entityList); 
         }
+
 
         protected override void ControlDelete(Member entity)
         {

@@ -1,4 +1,5 @@
-﻿using Microsoft.AspNetCore.Mvc;
+﻿using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Storage.Json;
 using PO.Data;
@@ -303,6 +304,7 @@ namespace PO.Controllers
 
 
 
+        [Authorize(Roles ="TeamLeader")]
         /// <summary>
         /// Premoscivanje i prilagodavanje delete metode
         /// Override and adaptation of delete method

@@ -107,6 +107,7 @@ namespace PO.Models
         string Username,
         [Required(ErrorMessage = "Mandatory input")]
         string Password
+
         );
 
    public record ProjectDTOKillswitch(

@@ -1,5 +1,6 @@
 ﻿using Azure;
 using FluentEmail.Core;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http.HttpResults;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.CodeAnalysis.CSharp.Syntax;
@@ -47,10 +48,10 @@ namespace PO.Controllers
         /// <returns></returns>
         /// <exception cref="Exception"></exception>
         [HttpDelete]
-        [Route("Project/Killswitchproject/{projectID:int}/{projectName}")]
+        [Route("Project/Killswitchproject/{projectID:int}/{projectName}"), Authorize(Roles ="TeamLeader")]
         public IActionResult KillSwitchProject(int projectID,string projectName)
         {
-
+            
             var entity = _context.Projects.Where(p => p.ProjectName == projectName).FirstOrDefault();
             var entityWithID = _context.Projects.Find(projectID);
 

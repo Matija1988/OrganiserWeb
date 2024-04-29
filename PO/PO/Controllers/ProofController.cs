@@ -1,4 +1,5 @@
-﻿using Microsoft.AspNetCore.Mvc;
+﻿using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.StaticFiles;
 using Microsoft.Build.Construction;
 using Microsoft.Data.SqlClient;
@@ -96,6 +97,7 @@ namespace PO.Controllers
 
         }
 
+        [Authorize(Roles = "TeamLeader")]
         protected override void ControlDelete(ProofOfDelivery entity)
         {
             var entityFromDB = _context.ProofOfDeliveries.Find(entity.ID);
