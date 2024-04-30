@@ -1,5 +1,4 @@
-﻿using Azure;
-using FluentEmail.Core;
+﻿using FluentEmail.Core;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http.HttpResults;
 using Microsoft.AspNetCore.Mvc;
@@ -50,6 +49,7 @@ namespace PO.Controllers
 
         [HttpDelete]
         [Route("Project/Killswitchproject/{projectID:int}/{projectName}"), Authorize(Roles ="TeamLeader")]
+        [ProducesResponseType(StatusCodes.Status403Forbidden)]
         public IActionResult KillSwitchProject(int projectID,string projectName)
         {
             
@@ -108,6 +108,8 @@ namespace PO.Controllers
             }
 
         }
+
+
 
         [HttpGet]
         [Route("getProjectFiles/{id:int}")]
@@ -175,6 +177,13 @@ namespace PO.Controllers
             return StatusCode(StatusCodes.Status200OK);
 
         }
+
+        /// <summary>
+        /// Skida sve dokaznice povezane sa projektom u zip datoteci
+        /// Downloads all proofs connected to a project in a zip file
+        /// </summary>
+        /// <param name="projectID"></param>
+        /// <returns></returns>
 
         [HttpGet]
         [Route("downloadAllProjectProofs/{projectID:int}")] 
@@ -247,7 +256,8 @@ namespace PO.Controllers
         /// </summary>
         /// <param name="entity"></param>
         /// <exception cref="Exception"></exception>
-       // [Authorize(Roles = "TeamLeader")]
+        [Authorize(Roles = "TeamLeader")]
+
         protected override void ControlDelete(Project entity)
         {
             var entityList = _context.activities.Include(x => x.Project)

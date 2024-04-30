@@ -19,7 +19,7 @@ namespace PO.Models
         bool? IsFinished);
 
     public record MemberDTORead(int Id, string FirstName, string LastName, 
-        string Username, string Password, string Email, bool IsTeamLeader);
+        string Username, string Password, string Email, bool IsTeamLeader, string Roles);
     /// <summary>
     /// 
     /// </summary>
@@ -41,7 +41,9 @@ namespace PO.Models
         [Required(ErrorMessage ="Improper format")]
         string Email,
         [Required(ErrorMessage ="Mandatory input")]
-        bool IsTeamLeader);
+        bool IsTeamLeader,
+        [Required(ErrorMessage = "Mandatory input")]
+        string Roles);
 
 
     public record ProofDTORead(int id, string? documentName, string? memberName, string? location, 

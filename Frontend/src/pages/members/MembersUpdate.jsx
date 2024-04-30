@@ -51,6 +51,15 @@ export default function MembersUpdate() {
         hideLoading();
     }
 
+    function role(e) {
+        const information = new FormData(e.target);
+        if(information.get('Is team leader')) {
+            return "TeamLeader";
+        } else {
+            return "Member";
+        }
+    }
+
     function handleSubmit(e) {
 
         e.preventDefault();
@@ -74,7 +83,8 @@ export default function MembersUpdate() {
             username: user,
             password: pass,
             email: mail,
-            isTeamLeader: information.get('Is team leader') == 'on' ? true : false
+            isTeamLeader: information.get('Is team leader') == 'on' ? true : false,
+            roles: role(e)
         });
         hideLoading();
     }
@@ -84,10 +94,23 @@ export default function MembersUpdate() {
         <NavBar />
         <Container>
             <Form onSubmit={handleSubmit} className='FormMemberCreate'>
-                <InputText atribute="First name" value={member.firstName}/>
-                <InputText atribute="Last name" value={member.lastName}/>                   
-                <InputText atribute="Username" value={member.username} />
-                <InputText atribute="Password" value={member.password} />
+                    <Row>
+                        <Col>
+                            <InputText atribute="First name" value={member.firstName} />
+                        </Col>
+                        <Col>
+                            <InputText atribute="Last name" value={member.lastName} />
+                        </Col>
+                    </Row>
+                    <Row>
+                        <Col>
+                            <InputText atribute="Username" value={member.username} />
+                        </Col>
+                        <Col>
+                            <InputText atribute="Password" value={member.password} />
+                        </Col>
+                    </Row>
+                    
                 <InputText atribute="email" value={member.email} />
                 <InputCheckbox atribute="Is team leader" value={member.isTeamLeader} />
                 <Actions cancel={RoutesNames.MEMBERS_READ} action="UPDATE MEMBER"/>                

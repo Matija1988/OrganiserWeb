@@ -19,7 +19,8 @@ namespace PO.Mappers
                             entity.Username,
                             entity.Password,
                             entity.Email,
-                            entity.IsTeamLeader
+                            entity.IsTeamLeader,
+                            entity.Roles
                             ));
                     }));
 

@@ -34,6 +34,15 @@ export default function MembersCreate() {
         showError(response.data);
     }
 
+    function role(e) {
+        const information = new FormData(e.target);
+        if(information.get('Is team leader')) {
+            return "TeamLeader";
+        } else {
+            return "Member";
+        }
+    }
+
     function handleSubmit(e) {
         e.preventDefault();
 
@@ -55,7 +64,8 @@ export default function MembersCreate() {
             userName: user,
             password: pass,
             email: mail,
-            isTeamLeader: information.get('Is team leader') == 'on' ? true : false
+            isTeamLeader: information.get('Is team leader') == 'on' ? true : false,
+            roles: role(e)
         });
         hideLoading();
 
@@ -66,10 +76,23 @@ export default function MembersCreate() {
         <NavBar />
         <Container>
             <Form onSubmit={handleSubmit} className='FormMemberCreate'>
-                <InputText atribute='First name' value='' />
-                <InputText atribute='Last name' value=''/>
-                <InputText atribute='Username' value=''/>
-                <InputText atribute='Password' value=''/>
+                    <Row>
+                        <Col>
+                            <InputText atribute='First name' value='' />
+                        </Col>
+                        <Col>
+                            <InputText atribute='Last name' value='' />
+                        </Col>
+                    </Row>
+                    <Row>
+                        <Col>
+                            <InputText atribute='Username' value='' />
+                        </Col>
+                        <Col>
+                            <InputText atribute='Password' value='' />
+                        </Col>
+                    </Row>
+               
                 <InputText atribute='email' value='' />
                 <InputCheckbox atribute='Is team leader' value=''/>
                 <Actions cancel={RoutesNames.MEMBERS_READ} action='ADD MEMBER'/>

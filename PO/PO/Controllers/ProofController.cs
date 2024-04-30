@@ -98,7 +98,7 @@ namespace PO.Controllers
 
         }
 
-      //  [Authorize(Roles = "TeamLeader")]
+        [Authorize(Roles = "TeamLeader")]
         protected override void ControlDelete(ProofOfDelivery entity)
         {
             var entityFromDB = _context.ProofOfDeliveries.Find(entity.ID);

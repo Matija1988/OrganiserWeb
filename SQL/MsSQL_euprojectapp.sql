@@ -29,7 +29,7 @@ password varchar(255) not null,
 email varchar(255) not null,
 isTeamLeader bit, -- if true - pravo dodjeljivanja aktivnosti clanovima, promjene rokova, verifikacije 
 -- dokaznica
-role varchar(50)
+roles varchar(100)
 );
 
 create table activities(
@@ -97,7 +97,7 @@ values
 '2023-10-20',
 1);
 
-insert into members (firstName, lastName, userName, password, email, isTeamLeader, role)
+insert into members (firstName, lastName, userName, password, email, isTeamLeader, roles)
 values 
 ('Chuck',
 'Norris',

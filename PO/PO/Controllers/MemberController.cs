@@ -10,13 +10,14 @@ using Microsoft.AspNetCore.Authorization;
 
 namespace PO.Controllers
 {
-
+    
     /// <summary>
     /// Namijenjeno za CRUD operacije nad entitetom members u bazi
     /// Ment for CRUD operations over entity members in DB
     /// </summary>
     [ApiController]
     [Route("api/v1/[controller]")]
+    [Authorize(Roles = "TeamLeader")]
     public class MemberController : POController<Member, MemberDTORead, MemberDTOInsertUpdate>
     {
         public MemberController(POContext context) : base(context)
@@ -56,7 +57,7 @@ namespace PO.Controllers
             }
 
         }
-    //    [Authorize(Roles = "TeamLeader")]
+
         protected override Member CreateEntity(MemberDTOInsertUpdate dto)
         {
             var passwordHash = BCrypt.Net.BCrypt.HashPassword(dto.Password, 12);
@@ -68,7 +69,6 @@ namespace PO.Controllers
             return entity;
         }
 
-     //   [Authorize(Roles = "TeamLeader")]
         protected override Member UpdateEntity(MemberDTOInsertUpdate entityDTO, Member entityFromDB)
         {
             if(entityDTO.Password == entityFromDB.Password) { throw new Exception("Password must be changed!"); }
@@ -80,6 +80,7 @@ namespace PO.Controllers
             entityFromDB.Username = entityDTO.Username;
             entityFromDB.Password = passwordHash;
             entityFromDB.IsTeamLeader = entityDTO.IsTeamLeader;
+            entityFromDB.Roles = entityDTO.Roles;
 
             return entityFromDB;
         }
