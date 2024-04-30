@@ -42,7 +42,7 @@ namespace PO.Controllers
 
             var tokenDescriptor = new SecurityTokenDescriptor
             {
-                Subject = new ClaimsIdentity(new[] { new Claim("id", user.Username), new Claim(ClaimTypes.Role, userBase.Role) }),
+                Subject = new ClaimsIdentity(new[] { new Claim("id", user.Username), new Claim(ClaimTypes.Role, userBase.Roles) }),
                 Expires = DateTime.UtcNow.Add(TimeSpan.FromHours(8)),
                 SigningCredentials = new SigningCredentials(new SymmetricSecurityKey(key), SecurityAlgorithms.HmacSha256)
             };

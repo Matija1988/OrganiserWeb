@@ -304,13 +304,14 @@ namespace PO.Controllers
 
 
 
-        [Authorize(Roles ="TeamLeader")]
         /// <summary>
         /// Premoscivanje i prilagodavanje delete metode
         /// Override and adaptation of delete method
         /// </summary>
         /// <param name="entity"></param>
         /// <exception cref="Exception"></exception>
+
+      //  [Authorize(Roles = "TeamLeader")]
         protected override void ControlDelete(Activity entity)
         {
             if(entity != null && entity.Members != null && entity.Members.Count() > 0)

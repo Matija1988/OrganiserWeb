@@ -56,7 +56,7 @@ namespace PO.Controllers
             }
 
         }
-
+    //    [Authorize(Roles = "TeamLeader")]
         protected override Member CreateEntity(MemberDTOInsertUpdate dto)
         {
             var passwordHash = BCrypt.Net.BCrypt.HashPassword(dto.Password, 12);
@@ -68,6 +68,7 @@ namespace PO.Controllers
             return entity;
         }
 
+     //   [Authorize(Roles = "TeamLeader")]
         protected override Member UpdateEntity(MemberDTOInsertUpdate entityDTO, Member entityFromDB)
         {
             if(entityDTO.Password == entityFromDB.Password) { throw new Exception("Password must be changed!"); }

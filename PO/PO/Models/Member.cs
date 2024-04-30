@@ -41,7 +41,7 @@ namespace PO.Models
         [Required]
         public string Password { get; set; }
 
-        public string Role { get; set; }
+        public string Roles { get; set; }
 
         /// <summary>
         /// Ovo oznacava je li korisnik voditelj tima 

@@ -31,6 +31,7 @@ namespace PO.Controllers
             _mapper = new ProofMapper();
         }
 
+      //  [Authorize(Roles = "TeamLeader")]
         protected override ProofOfDelivery UpdateEntity(ProofDTOInsertUpdate entityDTO, ProofOfDelivery entityFromDB)
         {
             var member = _context.members.Find(entityDTO.memberID)
@@ -97,7 +98,7 @@ namespace PO.Controllers
 
         }
 
-        [Authorize(Roles = "TeamLeader")]
+      //  [Authorize(Roles = "TeamLeader")]
         protected override void ControlDelete(ProofOfDelivery entity)
         {
             var entityFromDB = _context.ProofOfDeliveries.Find(entity.ID);

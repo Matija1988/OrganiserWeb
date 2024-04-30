@@ -28,11 +28,12 @@ create table members(
 id int not null primary key identity(1,1),
 firstName varchar(50) not null,
 lastName varchar(50) not null,
-userName varchar(50) not null,
+userName varchar(255) not null,
 password varchar(255) not null,
 email varchar(255) not null,
-isTeamLeader bit -- if true - pravo dodjeljivanja aktivnosti clanovima, promjene rokova, verifikacije 
+isTeamLeader bit, -- if true - pravo dodjeljivanja aktivnosti clanovima, promjene rokova, verifikacije 
 -- dokaznica
+roles varchar(100)
 );
 
 create table activities(
@@ -53,7 +54,7 @@ documentName varchar(100), -- dokument dokaznice npr. izvjesce o provedenoj
 memberID int,
 Location varchar(200),
 dateCreated datetime,
-activityID int, 
+activityID int,
 );
 
 
@@ -69,6 +70,8 @@ alter table activities add foreign key (projectID) references projects(id);
 alter table activitiesConnector add foreign key (activityID) references activities(id); 
 alter table activitiesConnector add foreign key (memberID) references members(id);
 alter table proofOfDeliveries add foreign key (memberID) references members(id);
+
+alter table members add roles varchar(100); 
 
 --------------INSERTS-------------
 
@@ -86,11 +89,26 @@ values
 ('INTER-HU-CRO-213-D-91','INTEREG-Hungary-Croatia cluster sustainability du dah'
 ,'2023-1-20 10:00:00','2023-10-20',1);
 
-insert into members (firstName, lastName, userName, password, email, isTeamLeader)
+insert into members (firstName, lastName, userName, password, email, isTeamLeader, roles)
 values 
-('Chuck','Norris','N0rr1s','Sifra12345678889', 'matijapavkovic74@gmail.com' ,1),
-('Marko','Marković','MM007','JamesBlond069', 'matijapavkovic74@gmail.com',0),
-('Petar','Bočkaj','Guc2A','OsvetaKanižlićeve', 'matijapavkovic74@gmail.com',0);
+('Chuck',
+'Norris',
+'texasranger',
+'$2a$12$yQlP0/3oJv0QGLJ5PJmM/eC5h47AgKGizapXB/ZC3pMHsksFImV6a', 
+'texasranger@gmail.com' ,1, 'TeamLeader'),
+('Marko',
+'Marković',
+'tester',
+'$2a$12$4EKW19NiUtct2iJsVPgzmOVIW.oAvHqaw.eBhtnYP/wvCE.7//.BC', 
+'matijapavkovic74@gmail.com',
+0, 'Member'),
+
+('Petar',
+'Bočkaj',
+'Guc2A',
+'OsvetaKanižlićeve', 
+'matijapavkovic74@gmail.com',
+0, 'Member');
 
 insert activities (activityName, description, dateStart, dateFinish, isFinished, dateAccepted, projectID)
 values 

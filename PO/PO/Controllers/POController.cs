@@ -112,7 +112,7 @@ namespace PO.Controllers
             }
         }
 
-        [Authorize(Roles = "TeamLeader")]
+       // [Authorize(Roles = "TeamLeader")]
         [HttpDelete]
         [Route("{id:int}")]
 

@@ -47,6 +47,7 @@ namespace PO.Controllers
         /// <param name="projectName"></param>
         /// <returns></returns>
         /// <exception cref="Exception"></exception>
+
         [HttpDelete]
         [Route("Project/Killswitchproject/{projectID:int}/{projectName}"), Authorize(Roles ="TeamLeader")]
         public IActionResult KillSwitchProject(int projectID,string projectName)
@@ -103,7 +104,7 @@ namespace PO.Controllers
             }
             catch (Exception ex)
             {
-                throw new Exception(ex.InnerException.Message);
+                throw new Exception(ex.Message);
             }
 
         }
@@ -236,7 +237,7 @@ namespace PO.Controllers
         }
 
 
-        
+
 
 
 
@@ -246,7 +247,7 @@ namespace PO.Controllers
         /// </summary>
         /// <param name="entity"></param>
         /// <exception cref="Exception"></exception>
-
+       // [Authorize(Roles = "TeamLeader")]
         protected override void ControlDelete(Project entity)
         {
             var entityList = _context.activities.Include(x => x.Project)
