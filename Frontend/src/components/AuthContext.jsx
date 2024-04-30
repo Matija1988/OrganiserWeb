@@ -5,6 +5,8 @@ import { RoutesNames } from "../constants";
 import useError from "../hooks/useError";
 import useLoading from "../hooks/useLoading";
 
+
+
 export const AuthContext = createContext();
 
 export function AuthProvider({children}) {
@@ -12,6 +14,8 @@ export function AuthProvider({children}) {
     const [isLoggedIn, setIsLoggedIn] = useState(false);
     const [authToken, setAuthToken] = useState('');
     const {showLoading,hideLoading} = useLoading();
+
+    const [role, setRole] = useState();
 
     const {showError} = useError;
     const navigate = useNavigate();

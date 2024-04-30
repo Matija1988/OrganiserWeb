@@ -233,8 +233,6 @@ namespace PO.Controllers
 
         }
         
-
-
         private List<ProofOfDelivery> ProofList(int projectID)
         {
 
@@ -246,16 +244,13 @@ namespace PO.Controllers
         }
 
 
-
-
-
-
         /// <summary>
         /// Brisanje entiteta projekt
         /// Delete project entity
         /// </summary>
         /// <param name="entity"></param>
         /// <exception cref="Exception"></exception>
+        
         [Authorize(Roles = "TeamLeader")]
 
         protected override void ControlDelete(Project entity)

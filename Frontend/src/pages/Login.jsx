@@ -34,7 +34,10 @@ export default function Login() {
                 <Row>
                     <Col className='LoginText2'>Launch your projects into cyberspace</Col>
                 </Row>
-                <Form.Label>texasranger</Form.Label>
+                <Row>
+                <Form.Label>Login as TeamLeader: texasranger</Form.Label>
+                </Row>
+                <Form.Label>Login as Member: tester</Form.Label>
                 <Form.Group className="mb-3" controlId="formBasicEmail">
                     <Form.Control
                         type="username"
@@ -44,7 +47,10 @@ export default function Login() {
                         
                     />
                 </Form.Group>
-                <Form.Label>chuckneedsnopassword</Form.Label>
+                <Row>
+                <Form.Label>Login as TeamLeader: chuckneedsnopassword</Form.Label>
+                </Row>
+                <Form.Label>Login as Member: tester</Form.Label>
                 <Form.Group className="mb-3" controlId="formBasicPassword">
                     <Form.Control
                         type="password"
@@ -56,7 +62,10 @@ export default function Login() {
                 <Button variant="primary" type="submit" className='SignInButton'>
                     Authorize                    
                 </Button>
-
+                <Form.Text className='LoginText3'>Napomena!!! Ako se logirate kao TeamLeader sve radi i sve je dostupno.</Form.Text>
+                <Form.Text className='LoginText3'>Memberima odbija većinu brisanja i učitavanje Member stranice. 
+                Autorizacija je učinjena u backendu te dok ne shvatim kako blokirat ulazak Membera u Member stranicu sa frontenda pokušaj će rezultirati u 
+                loading petlji. </Form.Text>
             </Form>
         </Container>
     )

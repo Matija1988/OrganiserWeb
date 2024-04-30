@@ -70,8 +70,13 @@ export function processError(e) {
     }
 
     switch (e.reponse.status) {
+
         case 503:
             return { ok: false, data: [generateMessage('Server issue', e.response.data)] };
+
+        case 403:
+            return { ok: false, data: [generateMessage('Action denied', e.response.data)]};
+
         case 400:
             if (typeof (e.response.data.errors) !== 'undefined') {
                 return handle400(e.response.data.errors);
