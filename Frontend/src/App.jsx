@@ -32,7 +32,7 @@ import LoadingSpinner from './components/LoadingSpinner';
 
 import './style.css';
 import useAuth from './hooks/useAuth';
-
+import ProtectedRouteTeamLeader from './components/ProtectedRouteTeamLeader';
 
 
 
@@ -55,11 +55,11 @@ function App() {
             <Route path={RoutesNames.PROJECTS_CREATE} element={<ProjectsCreate />} />
             <Route path={RoutesNames.PROJECTS_UPDATE} element={<ProjectsUpdate />} />
 
-             
-            <Route path={RoutesNames.MEMBERS_READ} element={<Members />} />
-            <Route path={RoutesNames.MEMBERS_CREATE} element={<MembersCreate />} />
-            <Route path={RoutesNames.MEMBERS_UPDATE} element={<MembersUpdate />} />
-            
+          <Route element={<ProtectedRouteTeamLeader />}> 
+              <Route path={RoutesNames.MEMBERS_READ} element={<Members />} />
+              <Route path={RoutesNames.MEMBERS_CREATE} element={<MembersCreate />} />
+              <Route path={RoutesNames.MEMBERS_UPDATE} element={<MembersUpdate />} />
+          </Route> 
 
             <Route path={RoutesNames.ACTIVITIES_READ} element={<Activities />} />
             <Route path={RoutesNames.ACTIVITIES_CREATE} element={<ActivitiesCreate />} />

@@ -4,8 +4,7 @@ import { useNavigate } from "react-router-dom";
 import { RoutesNames } from "../constants";
 import useError from "../hooks/useError";
 import useLoading from "../hooks/useLoading";
-
-
+import { jwtDecode } from "jwt-decode";
 
 export const AuthContext = createContext();
 
@@ -26,6 +25,7 @@ export function AuthProvider({children}) {
         if(token) {
             setAuthToken(token);
             setIsLoggedIn(true);
+            
         } else {
             navigate(RoutesNames.HOME);
         }
@@ -56,6 +56,7 @@ export function AuthProvider({children}) {
         setIsLoggedIn(false);
         navigate(RoutesNames.HOME);
     }
+
 
     const value = {
         isLoggedIn,

@@ -112,10 +112,9 @@ namespace PO.Controllers
             }
         }
 
-       // [Authorize(Roles = "TeamLeader")]
         [HttpDelete]
         [Route("{id:int}")]
-
+        [Authorize(Roles = "TeamLeader")]
         public IActionResult Delete (int id)
         {
             if(!ModelState.IsValid || id <= 0) { return BadRequest(); }

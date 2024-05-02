@@ -75,6 +75,10 @@ export function processError(e) {
             return { ok: false, data: [generateMessage('Server issue', e.response.data)] };
 
         case 403:
+            if(typeof(e.response.data.error) !== 'forbiden') {
+                return handle403(e.response.data.errors);
+            }
+
             return { ok: false, data: [generateMessage('Action denied', e.response.data)]};
 
         case 400:
@@ -93,6 +97,13 @@ function handle400(e) {
         message.push(generateMessage(key, e[key][0]));
     }
     return { ok: false, data: message };
+}
+
+function handle403(e) {
+    let message = [];
+    for(const key in e) {
+        message.push(generateMessage(key, e[key[0]]));
+    }
 }
 
 function generateMessage(property, message) {

@@ -84,7 +84,7 @@ namespace PO.Controllers
 
             return entityFromDB;
         }
-
+        
         protected override List<MemberDTORead> ReadAll()
         {
             var entityList = _context.members.ToList();
@@ -96,7 +96,6 @@ namespace PO.Controllers
 
             return _mapper.MapReadList(entityList); 
         }
-
 
         protected override void ControlDelete(Member entity)
         {
