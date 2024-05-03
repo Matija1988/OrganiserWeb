@@ -8,14 +8,19 @@ namespace PO.Models
 
     public record ProjectDTOInsertUpdate(
         [Required(ErrorMessage = "Mandatory input")]
-                string UniqueID,
-        [Required(ErrorMessage = "Mandatory input")]
+        [StringLength(50, ErrorMessage = "Maximum allowed characters = 50")]
+         string UniqueID,
         
+        [Required(ErrorMessage = "Mandatory input")]
+        [StringLength(100, ErrorMessage = "Maximum allowed characters = 100")]
         string ProjectName,
+
         [Required(ErrorMessage = "Mandatory input")]
         DateTime DateStart,
+        
         [Required(ErrorMessage = "Mandatory input")]
         DateTime DateEnd,
+        
         [Required(ErrorMessage = "Mandatory input")]
         bool? IsFinished);
 
@@ -32,15 +37,19 @@ namespace PO.Models
     /// <param name="IsTeamLeader"></param>
     public record MemberDTOInsertUpdate(
         [Required(ErrorMessage ="Mandatory input")]
+        [StringLength(50, ErrorMessage = "Maximum allowed characters = 50")]
         string FirstName,
         
         [Required(ErrorMessage ="Mandatory input")]
+        [StringLength(50, ErrorMessage = "Maximum allowed characters = 50")]
         string LastName,
   
         [Required(ErrorMessage ="Mandatory input")]
+        [StringLength(255, ErrorMessage = "Maximum allowed characters = 255")]
         string Username,
         
         [Required(ErrorMessage ="Mandatory input")]
+        [StringLength(255, ErrorMessage = "Maximum allowed characters = 255")]
         string Password,
 
         [Required(ErrorMessage ="Improper format")]
@@ -50,6 +59,7 @@ namespace PO.Models
         bool IsTeamLeader,
 
         [Required(ErrorMessage = "Mandatory input")]
+        [StringLength(100, ErrorMessage = "Maximum allowed characters = 100")]
         string Roles);
 
 
@@ -58,10 +68,15 @@ namespace PO.Models
 
     public record ProofDTOInsertUpdate(
         [Required(ErrorMessage ="Mandatory input")]
+        [StringLength(100, ErrorMessage = "Maximum allowed characters = 100")]
         string documentName, 
+      
         int? memberID, 
+        
         string? location,
+        
         DateTime? datecreated,
+        
         [Required(ErrorMessage ="Mandatory input")]
         int activityID);
 
@@ -93,9 +108,11 @@ namespace PO.Models
     /// <param name="DateAccepted"></param>
     /// <param name="Project"></param>
     public record ActivityDTOInsertUpdate(
-        [Required(ErrorMessage = "Mandatory input")] 
+        [Required(ErrorMessage = "Mandatory input")]
+        [StringLength(100, ErrorMessage = "Maximum allowed characters = 100")]
         string ActivityName,
-        
+
+        [StringLength(500, ErrorMessage = "Maximum allowed characters = 500")]
         string? Description,
         
         [Required(ErrorMessage ="Mandatory input")]
