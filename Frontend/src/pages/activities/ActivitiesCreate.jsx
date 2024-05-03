@@ -143,6 +143,13 @@ export default function ActivitiesCreate() {
             return;
         }
 
+        const descrip = information.get('Description');
+
+        if(descrip.length > 500) {
+            alert("Maximum allowed number of characters for activity description: 500");
+            return;
+        }
+
         addActivity({
             activityName: name,
             description: information.get('Description'),

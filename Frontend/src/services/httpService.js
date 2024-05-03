@@ -25,22 +25,22 @@ httpService.interceptors.response.use(
 
 export async function read(name) {
     return await httpService.get('/' + name)
-        .then((res) => { return handleSuccess(res); }).catch((e) => { return processError(res); })
+        .then((res) => { return handleSuccess(res); }).catch((e) => { return processError(e); })
 }
 
 export async function getByID(name, id) {
     return await httpService.get('/' + name + '/' + id)
-        .then((res) => { return handleSuccess(res); }).catch((e) => { return processError(res); })
+        .then((res) => { return handleSuccess(res); }).catch((e) => { return processError(e); })
 }
 
 export async function create(name, entity) {
     return await httpService.post('/' + name, entity)
-        .then((res) => { return handleSuccess(res); }).catch((e) => { return processError(res); })
+        .then((res) => { return handleSuccess(res); }).catch((e) => { return processError(e); })
 }
 
 export async function update(name, id, entity) {
     return await httpService.put('/' + name + '/' + id, entity)
-        .then((res) => { return handleSuccess(res); }).catch((e) => { return processError(res); })
+        .then((res) => { return handleSuccess(res); }).catch((e) => { return processError(e); })
 }
 
 export async function remove(name, id) {

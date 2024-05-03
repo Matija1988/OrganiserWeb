@@ -54,6 +54,10 @@ export default function MembersCreate() {
         const pass = information.get('Password');
         const mail = information.get('email');
 
+        if(name.length > 50 || surname.length > 50) {
+            alert("First name and last name fields must be from 1 to 50 characters long!!!");
+        }
+
         if(name == "" || surname == "" || user =="" || pass == ""  || mail == ""  ) {
             alert("ALERT!!! \nFOLLOWING FIELDS: \nFirst name \nLast name \nUsername \nPassword \nEmail \nare mandatory inputs!!!");
         }

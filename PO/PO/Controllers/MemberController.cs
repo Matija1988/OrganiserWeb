@@ -76,6 +76,7 @@ namespace PO.Controllers
 
             var passwordHash = BCrypt.Net.BCrypt.HashPassword(entityDTO.Password, 12);
             
+          
             entityFromDB.FirstName = entityDTO.FirstName;
             entityFromDB.LastName = entityDTO.LastName;
             entityFromDB.Username = entityDTO.Username;
