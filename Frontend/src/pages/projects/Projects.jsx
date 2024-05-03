@@ -137,6 +137,7 @@ export default function Projects() {
             return;
         }
         hideLoading();
+        location.reload();
     }
 
     async function handleKillSwitch(customInput) {
@@ -144,8 +145,8 @@ export default function Projects() {
         kill(entityID, customInput);
         setShowKillModal(false);
         await readProjects();
-        location.reload();
         hideLoading();
+        
     }
 
      function onDownloadClick(id, name) {
