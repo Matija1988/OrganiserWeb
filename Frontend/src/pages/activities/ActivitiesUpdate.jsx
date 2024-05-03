@@ -199,9 +199,29 @@ export default function ActivitiesUpdate() {
             return;
         }
 
+        const name = information.get('Activity name');
+
+        if (name == "") {
+            alert("ALERT!!! \nFOLLOWING FIELDS: \nActivity name"
+                + "\nDate start \nDeadline \nAssociated project \nare mandatory inputs!!!");
+            return;
+        }
+
+        if(name.length > 50) {
+            alert("Maximum allowed number of characters for activity description: 50");
+            return;
+        }
+
+        const descrip = information.get('Description');
+
+        if(descrip.length > 500) {
+            alert("Maximum allowed number of characters for activity description: 500");
+            return;
+        }
+
         UpdateActivity({
-            activityName: information.get('Activity'),
-            description: information.get('Description'),
+            activityName: name,
+            description: descrip,
             dateStart: startingDate,
             dateFinish: deadlineDate,
             isFinished: information.get('isFinished') == 'on' ? true : false,

@@ -20,7 +20,7 @@ namespace PO.Models
         /// Puni naziv projekta - U slucaju prevelike duzine moze i akronim
         /// Full project name - In case of lenght acronym is viable
         /// </summary>
-        [Required]
+        [Required(ErrorMessage = "Unos obavezan / Mandatory input")]
         public string ProjectName { get; set; }
 
         /// <summary>

@@ -72,8 +72,19 @@ export default function ProjectsCreate() {
         const name = information.get('Project name');
         const uID = information.get('Unique ID');
 
+        if(name.length > 100) {
+            alert("Maximum allowed characters for Project name is: 100");
+            return;
+        }
+
+        if(uID.length > 50) {
+            alert("Maximum allowed characters for Project name is: 50");
+            return;
+        }
+
         if(name == "" || uID == "") {
-            alert("ALERT!!! \nFOLLOWING FIELDS: \nProject name \nUnique ID \nare mandatory inputs!!!");  
+            alert("ALERT!!! \nFOLLOWING FIELDS: \nProject name \nUnique ID \nare mandatory inputs!!!"); 
+            return; 
         }
 
         showLoading();

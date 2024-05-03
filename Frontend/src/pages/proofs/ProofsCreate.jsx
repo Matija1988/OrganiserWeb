@@ -97,6 +97,11 @@ export default function ProofsCreate() {
 
         const name = information.get('Document name');
 
+        if(name.length > 100) {
+            alert("Maximum allowed characters for Document name is: 100");
+            return;
+        }
+
         if(name == "" || dateOfCreation == null) {
             alert("ALERT!!! \nFOLLOWING FIELDS: \nDocument name \nActivity \nare mandatory inputs!!!"); 
             return;

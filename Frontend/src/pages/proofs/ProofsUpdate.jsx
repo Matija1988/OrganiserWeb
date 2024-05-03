@@ -145,6 +145,11 @@ export default function ProofUpdate() {
 
         const name = information.get('Document name');
 
+        if(name.length > 100) {
+            alert("Maximum allowed characters for Document name is: 100");
+            return;
+        }
+
         if(name == "") {
             alert("ALERT!!! \nFOLLOWING FIELDS: \nDocument name \nActivity \nare mandatory inputs!!!");
             return; 
