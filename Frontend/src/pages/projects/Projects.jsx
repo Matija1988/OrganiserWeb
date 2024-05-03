@@ -144,6 +144,7 @@ export default function Projects() {
         kill(entityID, customInput);
         setShowKillModal(false);
         await readProjects();
+        location.reload();
         hideLoading();
     }
 
