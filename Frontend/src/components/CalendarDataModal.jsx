@@ -40,5 +40,4 @@ export default function CalendarDataModal({ show, handleClose, name, description
 CalendarDataModal.propTypes = {
     show: PropTypes.bool.isRequired,
 
-
 }

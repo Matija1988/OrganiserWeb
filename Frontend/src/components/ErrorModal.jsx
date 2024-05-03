@@ -8,7 +8,7 @@ export default function ErrorModal({show, onHide, errors}) {
     return (
         <Modal show={show} onHide={onHide}>
             <Modal.Header closeButton>
-                <Modal.Title>Whatever you did ... do it again!!!</Modal.Title>
+                <Modal.Title>Error!!!</Modal.Title>
             </Modal.Header>
             <Modal.Body>
                 <ul>
